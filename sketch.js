@@ -43,6 +43,15 @@ function draw() {
     asteroids[i].update();
     asteroids[i].display();
     asteroids[i].constrain();
+    if (asteroids[i].hasHitPlayer(player)) {
+      player.reduceShield();
+      if (asteroids[i].shouldCreateNewAsteroids()) {
+        var newAsteroids = asteroids[i].getNewAsteroids();
+        asteroids.push(...newAsteroids);
+      }
+      asteroids.splice(i, 1);
+      continue;
+    }
 
     for (var j = bullets.length-1; j >= 0; j--) {
       if (bullets[j].hasHit(asteroids[i])) {
@@ -70,37 +79,37 @@ function draw() {
     }
   }
 
-  processAsteroidsColliding();
+  // processAsteroidsColliding();
 
 
 
 }
 
 
-function processAsteroidsColliding() {
-  for (var i = asteroids.length-1; i >= 0; i--) {
-
-    for (var j = i-1; j >= 0; j--) {
-        if(asteroids[i].hasCollided(asteroids[j])) {
-          if (asteroids[i].shouldCreateNewAsteroids()) {
-            var newAsteroids = asteroids[i].getNewAsteroids();
-            asteroids.push(...newAsteroids);
-          }
-
-          if (asteroids[j].shouldCreateNewAsteroids()) {
-            var newAsteroids = asteroids[j].getNewAsteroids();
-            asteroids.push(...newAsteroids);
-          }
-          asteroids.splice(i, 1);
-          asteroids.splice(j, 1);
-          break;
-        }
-    }
-
-  }
-
-
-}
+// function processAsteroidsColliding() {
+//   for (var i = asteroids.length-1; i >= 0; i--) {
+//
+//     for (var j = i-1; j >= 0; j--) {
+//         if(asteroids[i].hasCollided(asteroids[j])) {
+//           if (asteroids[i].shouldCreateNewAsteroids()) {
+//             var newAsteroids = asteroids[i].getNewAsteroids();
+//             asteroids.push(...newAsteroids);
+//           }
+//           asteroids.splice(i, 1);
+//
+//           // if (asteroids[j].shouldCreateNewAsteroids()) {
+//           //   var newAsteroids = asteroids[j].getNewAsteroids();
+//           //   asteroids.push(...newAsteroids);
+//           // }
+//           //
+//           // asteroids.splice(j, 1);
+//           break;
+//         }
+//     }
+//
+//   }
+//
+// }
 
 
 function keyPressed() {

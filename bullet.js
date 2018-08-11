@@ -2,7 +2,7 @@ function Bullet(playerPosition, playerAngle) {
 
   this.pos = createVector(playerPosition.x, playerPosition.y);
   this.velocity = p5.Vector.fromAngle(playerAngle);
-  this.velocity.mult(3.5);
+  this.velocity.mult(10);
   this.r = 10;
   this.update = function() {
     this.r = lerp(this.r, 0, 0.005);

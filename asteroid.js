@@ -4,9 +4,9 @@ function Asteroid(pos, minSize, maxSize) {
   this.minSize = minSize;
   this.maxSize = maxSize;
   this.r = random(this.minSize ,this.maxSize);
-
   this.total = 6;
   this.offset = [];
+
   for (var i = 0; i < this.total; i++) {
     this.offset[i] = random(-15, 10);
   }
@@ -73,6 +73,10 @@ function Asteroid(pos, minSize, maxSize) {
 
   this.hasCollided = function(asteroid) {
     return dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y) <= this.r + asteroid.r;
+  }
+
+  this.hasHitPlayer = function(player) {
+     return dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) <= this.r + player.r;
   }
 
 

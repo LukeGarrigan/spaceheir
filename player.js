@@ -107,4 +107,12 @@ function Player() {
     this.isRight = false;
   }
 
+  this.reduceShield = function() {
+    if (this.shield > 75) {
+      this.shield -= 75;
+    } else {
+      this.shield = 0;
+    }
+  }
+
 }
