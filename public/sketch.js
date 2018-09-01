@@ -178,7 +178,7 @@ function keyPressed() {
 
 function mousePressed() {
 
-  if (timeSinceLastShot > 18) {
+  if (timeSinceLastShot > 20) {
     console.log("mouse pressed");
     let playerPosition = {
       x: player.pos.x,
