@@ -9,6 +9,7 @@ var bullets = [];
 
 let otherPlayers = [];
 
+let timeSinceLastShot = 0;
 function setup() {
 
   createCanvas(window.innerWidth, window.innerHeight);
@@ -77,6 +78,7 @@ function draw() {
   fill(255);
   text(floor(player.shield), width-54, 35);
   translate(width/2-player.pos.x, height/2-player.pos.y);
+  timeSinceLastShot++;
 
   for (var i = bullets.length-1; i >= 0; i--) {
     bullets[i].update();
@@ -176,18 +178,21 @@ function keyPressed() {
 
 function mousePressed() {
 
-  console.log("mouse pressed");
-  let playerPosition = {
-    x: player.pos.x,
-    y: player.pos.y,
-    angle: player.radians
+  if (timeSinceLastShot > 18) {
+    console.log("mouse pressed");
+    let playerPosition = {
+      x: player.pos.x,
+      y: player.pos.y,
+      angle: player.radians
+    }
+
+    console.log(playerPosition);
+    socket.emit('bullet', playerPosition);
+
+    let bullet = new Bullet(player.pos.x, player.pos.y, player.radians, false);
+    bullets.push(bullet);
+    timeSinceLastShot = 0;
   }
-
-  console.log(playerPosition);
-  socket.emit('bullet', playerPosition);
-
-  let bullet = new Bullet(player.pos.x, player.pos.y, player.radians, false);
-  bullets.push(bullet);
 }
 
 
