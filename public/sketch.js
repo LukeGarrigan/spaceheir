@@ -40,9 +40,9 @@ function setup() {
 
 function createNewBullet(player) {
   // create this bullet and add to the list of bullets
-  let bullet = new Bullet(player.x, player.y, player.angle);
+  console.log("creating other player bullet");
+  let bullet = new Bullet(player.x, player.y, player.angle, true);
   bullets.push(bullet);
-  console.log(player);
 }
 
 function updateOtherPlayers(data) {
@@ -78,14 +78,21 @@ function draw() {
   text(floor(player.shield), width-54, 35);
   translate(width/2-player.pos.x, height/2-player.pos.y);
 
-
-  // this needs to be done server side
   for (var i = bullets.length-1; i >= 0; i--) {
     bullets[i].update();
     bullets[i].display();
+    let bulletStillExist = true;
     if (bullets[i].shouldBeDestroyed()) {
       bullets.splice(i, 1);
+      bulletStillExist = false;
     }
+
+    if (bulletStillExist && bullets[i].hasHitPlayer(player) && bullets[i].isOtherPlayer) {
+      player.reduceShield();
+      bullets.splice(i, 1);
+    }
+
+
   }
 
   for (var i = asteroids.length-1; i >= 0; i--) {
@@ -178,6 +185,8 @@ function mousePressed() {
 
   console.log(playerPosition);
   socket.emit('bullet', playerPosition);
+
+  let bullet = new Bullet(player.pos.x, player.pos.y, player.radians, false);
   bullets.push(bullet);
 }
 

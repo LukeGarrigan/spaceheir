@@ -1,5 +1,8 @@
 function Player() {
 
+  const MAX_SHIELD_REDUCTION = 75;
+  const MAX_SHIELD = 1000;
+
   this.pos = createVector(width/2, height/2);
   this.r = 21;
   this.radians = 0;
@@ -10,7 +13,6 @@ function Player() {
   this.isDown = false;
   this.speed = 2;
 
-  this.health = 100;
   this.shield = 0;
 
 
@@ -67,10 +69,10 @@ function Player() {
   }
 
   this.increaseShield = function(sizeOfFood) {
-    if (this.shield < 1000) {
+    if (this.shield < MAX_SHIELD) {
       this.shield = this.shield + sizeOfFood;
-      if (this.shield > 1000) {
-        this.shield = 1000;
+      if (this.shield > MAX_SHIELD) {
+        this.shield = MAX_SHIELD;
       }
     }
   }
@@ -108,10 +110,11 @@ function Player() {
   }
 
   this.reduceShield = function() {
-    if (this.shield > 75) {
-      this.shield -= 75;
+    if (this.shield > MAX_SHIELD_REDUCTION) {
+      this.shield -= MAX_SHIELD_REDUCTION;
     } else {
       this.shield = 0;
+      this.pos = createVector(random(width), random(height));
     }
   }
 
