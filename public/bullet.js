@@ -4,16 +4,29 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
   this.velocity.mult(10);
   this.r = 10;
   this.isOtherPlayer = isOtherPlayer;
-  this.update = function() {
+
+
+  this.updateAndDisplay = function() {
     this.r = lerp(this.r, 0, 0.005);
     this.pos.add(this.velocity);
-  }
-
-  this.display = function() {
     fill(255);
     ellipse(this.pos.x, this.pos.y, this.r, this.r);
   }
 
+
+  this.checkCollisionsWithPlayers = function(bullets, player) {
+    let bulletStillExist = true;
+    if (this.hasDiminished()) {
+      bullets.splice(this, 1);
+      bulletStillExist = false;
+    }
+
+    if (bulletStillExist && this.hasHitPlayer(player) && this.isOtherPlayer) {
+      player.reduceShield();
+      bullets.splice(this, 1);
+    }
+
+  }
 
   this.hasHit = function(asteroid) {
     return dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y) <= asteroid.r;
@@ -23,7 +36,7 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
     return dist(player.pos.x, player.pos.y, this.pos.x, this.pos.y) <= player.r;
   }
 
-  this.shouldBeDestroyed = function() {
+  this.hasDiminished = function() {
     if (this.r <= 1) {
       return true;
     }

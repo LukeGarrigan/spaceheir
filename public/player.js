@@ -111,7 +111,7 @@ function Player() {
 
   this.reduceShield = function() {
     if (this.shield > MAX_SHIELD_REDUCTION) {
-      this.shield -= MAX_SHIELD_REDUCTION;
+      this.shield -= MAX_SHIELD_REDUCTION
     } else {
       this.shield = 0;
       this.pos = createVector(random(width), random(height));

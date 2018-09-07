@@ -8,7 +8,6 @@ var shieldImage;
 var bullets = [];
 
 let otherPlayers = [];
-
 let timeSinceLastShot = 0;
 function setup() {
 
@@ -29,46 +28,8 @@ function setup() {
 
   socket.on('player', updateOtherPlayers);
   socket.on('playerDisconnected', playerDisconnected);
-
-
-  // will handle updating of asteroids
-  socket.on('asteroids', function (data) {
-    console.log(data);
-  });
-
+  socket.on('shield', updatePlayerShield);
   socket.on('bullet', createNewBullet);
-}
-
-function createNewBullet(player) {
-  // create this bullet and add to the list of bullets
-  console.log("creating other player bullet");
-  let bullet = new Bullet(player.x, player.y, player.angle, true);
-  bullets.push(bullet);
-}
-
-function updateOtherPlayers(data) {
-  let exists = false;
-  for (let i = 0; i < otherPlayers.length; i++) {
-    if (otherPlayers[i].id == data.id) {
-      otherPlayers[i] = data;
-      exists = true;
-    }
-  }
-  if (!exists) {
-    otherPlayers.push(data);
-  }
-}
-
-function playerDisconnected(socketId) {
-  console.log(socketId);
-  for (let i = otherPlayers.length-1; i >= 0; i--) {
-    if (otherPlayers[i].id == socketId) {
-      console.log("Splicing " + socketId);
-      otherPlayers.splice(i, 1);
-    }
-  }
-
-
 }
 
 
@@ -81,35 +42,18 @@ function draw() {
   timeSinceLastShot++;
 
   for (var i = bullets.length-1; i >= 0; i--) {
-    bullets[i].update();
-    bullets[i].display();
-    let bulletStillExist = true;
-    if (bullets[i].shouldBeDestroyed()) {
-      bullets.splice(i, 1);
-      bulletStillExist = false;
-    }
+    bullets[i].updateAndDisplay();
+    bullets[i].checkCollisionsWithPlayers(bullets, player);
+  }
 
-    if (bulletStillExist && bullets[i].hasHitPlayer(player) && bullets[i].isOtherPlayer) {
-      player.reduceShield();
-      bullets.splice(i, 1);
-    }
-
-
+  for (let i = asteroids.length-1; i >= 0; i--) {
+    asteroids[i].checkCollisionsWithPlayers(asteroids, player, i);
   }
 
   for (var i = asteroids.length-1; i >= 0; i--) {
     asteroids[i].update();
     asteroids[i].display();
     asteroids[i].constrain();
-    if (asteroids[i].hasHitPlayer(player)) {
-      player.reduceShield();
-      if (asteroids[i].shouldCreateNewAsteroids()) {
-        var newAsteroids = asteroids[i].getNewAsteroids();
-        asteroids.push(...newAsteroids);
-      }
-      asteroids.splice(i, 1);
-      continue;
-    }
 
     for (var j = bullets.length-1; j >= 0; j--) {
       if (bullets[j].hasHit(asteroids[i])) {
@@ -147,6 +91,43 @@ function draw() {
   drawOtherPlayers();
 }
 
+
+
+function updatePlayerShield(shield) {
+  player.shield = shield.shield;
+}
+
+function createNewBullet(player) {
+  // create this bullet and add to the list of bullets
+  console.log("creating other player bullet");
+  let bullet = new Bullet(player.x, player.y, player.angle, true);
+  bullets.push(bullet);
+}
+
+function updateOtherPlayers(data) {
+  let exists = false;
+  for (let i = 0; i < otherPlayers.length; i++) {
+    if (otherPlayers[i].id == data.id) {
+      otherPlayers[i] = data;
+      exists = true;
+    }
+  }
+  if (!exists) {
+    otherPlayers.push(data);
+  }
+}
+
+function playerDisconnected(socketId) {
+  console.log(socketId);
+  for (let i = otherPlayers.length-1; i >= 0; i--) {
+    if (otherPlayers[i].id == socketId) {
+      console.log("Splicing " + socketId);
+      otherPlayers.splice(i, 1);
+    }
+  }
+}
+
+
 function drawOtherPlayers() {
 
   for (let i = 0; i < otherPlayers.length; i++) {
@@ -158,8 +139,6 @@ function drawOtherPlayers() {
     triangle(-21, 21,  0, -21, 21, 21);
     pop();
   }
-
-
 }
 
 

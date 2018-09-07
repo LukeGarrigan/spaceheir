@@ -32,9 +32,6 @@ function Asteroid(pos, minSize, maxSize) {
     endShape(CLOSE);
     pop();
 
-    // stroke(255);
-    // noFill();
-    // ellipse(this.pos.x, this.pos.y, this.r*2, this.r*2);
   }
 
   this.constrain = function() {
@@ -77,6 +74,19 @@ function Asteroid(pos, minSize, maxSize) {
 
   this.hasHitPlayer = function(player) {
      return dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) <= this.r + player.r;
+  }
+
+  this.checkCollisionsWithPlayers = function(asteroids, player, i) {
+    // console.log("Asteroids :" + i);
+    if (this.hasHitPlayer(player)) {
+      player.reduceShield();
+      if (this.shouldCreateNewAsteroids()) {
+        var newAsteroids = this.getNewAsteroids();
+        asteroids.push(...newAsteroids);
+      }
+      console.log("splicing");
+      asteroids.splice(this, 1);
+    }
   }
 
 
