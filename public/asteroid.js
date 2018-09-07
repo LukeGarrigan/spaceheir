@@ -85,7 +85,7 @@ function Asteroid(pos, minSize, maxSize) {
         asteroids.push(...newAsteroids);
       }
       console.log("splicing");
-      asteroids.splice(this, 1);
+      asteroids.splice(i, 1);
     }
   }
 

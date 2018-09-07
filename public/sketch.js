@@ -43,7 +43,7 @@ function draw() {
 
   for (var i = bullets.length-1; i >= 0; i--) {
     bullets[i].updateAndDisplay();
-    bullets[i].checkCollisionsWithPlayers(bullets, player);
+    bullets[i].checkCollisionsWithPlayers(bullets, player, i);
   }
 
   for (let i = asteroids.length-1; i >= 0; i--) {

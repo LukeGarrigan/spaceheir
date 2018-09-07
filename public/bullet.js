@@ -14,16 +14,16 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
   }
 
 
-  this.checkCollisionsWithPlayers = function(bullets, player) {
+  this.checkCollisionsWithPlayers = function(bullets, player, i) {
     let bulletStillExist = true;
     if (this.hasDiminished()) {
-      bullets.splice(this, 1);
+      bullets.splice(i, 1);
       bulletStillExist = false;
     }
 
     if (bulletStillExist && this.hasHitPlayer(player) && this.isOtherPlayer) {
       player.reduceShield();
-      bullets.splice(this, 1);
+      bullets.splice(i, 1);
     }
 
   }
