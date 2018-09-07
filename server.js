@@ -16,48 +16,124 @@ let io = socket(server);
 
 let playersLastShot = [];
 let playerShields = [];
-// playerId
-// time
-//
 
-io.sockets.on('connection', function newConnection(socket){
+let players = [];
+
+
+
+setInterval(broadcastPlayers, 16);
+
+function broadcastPlayers() {
+  for (let i = 0; i < players.length; i++) {
+    updatePlayerPosition(players[i]);
+    console.log(players[i]);
+  }
+
+  io.sockets.emit('heartbeat', players);
+}
+
+function updatePlayerPosition(player) {
+  if (player.isUp) {
+    player.y -= 2;
+  }
+  if (player.isDown) {
+    player.y += 2;
+  }
+
+  if (player.isLeft) {
+    player.x -= 2;
+  }
+
+  if (player.isRight) {
+    player.x += 2;
+  }
+}
+
+io.sockets.on('connection', function newConnection(socket) {
     console.log("new connection "+ socket.id);
-    setupPlayerShield(socket);
     setupPlayerLastShot(socket);
-
 
     socket.on('player', function playerMessage(playerData) {
       playerData.id = socket.id;
-      socket.broadcast.emit('player', playerData);
+      playerData.shield = 100;
+      playerData.isUp = false;
+      playerData.isDown = false;
+      playerData.isLeft = false;
+      playerData.isRight = false;
+      players.push(playerData);
+
+      // socket.broadcast.emit('player', playerData);
     });
 
     socket.on('bullet', function(player) {
       processPlayerShooting(player, socket);
     });
 
-    socket.on('shield', function(playerShield) {
-      console.log("changing shield")
-      for (let i = 0; i < playerShields.length; i++) {
-        if (socket.id == playerShields[i].id) {
-          playerShields[i].shield += playerShield.shield;
+
+    socket.on('disconnect', function (){
+      console.log("Player disconnected");
+
+      for (let i = players.length-1; i >= 0; i--) {
+        if (players[i].id == socket.id) {
+          console.log("Splicing " +  socket.id);
+          players.splice(i, 1);
+        }
+      }
+      socket.broadcast.emit('playerDisconnected', socket.id);
+    });
+
+    socket.on('keyPressed', function(direction){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          if (direction == "up") {
+            players[i].isUp = true;
+          } else if (direction == "down") {
+            players[i].isDown = true;
+          } else if (direction == "left") {
+            players[i].isLeft = true;
+          } else if (direction == "right") {
+            players[i].isRight = true;
+          }
         }
       }
     });
 
-    socket.on('disconnect', function (){
-      socket.broadcast.emit('playerDisconnected', socket.id);
+    socket.on('keyReleased', function(direction){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          if (direction == "up") {
+            players[i].isUp = false;
+          } else if (direction == "down") {
+            players[i].isDown = false;
+          } else if (direction == "left") {
+            players[i].isLeft = false;
+          } else if (direction == "right") {
+            players[i].isRight = false;
+          }
+        }
+      }
     });
+
+    socket.on('angle', function(angle){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          players[i].angle = angle;
+        }
+      }
+    });
+
+    socket.on('respawn', function(){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          players[i].x = 400;
+          players[i].y = 400;
+        }
+      }
+    });
+
 });
 
 
-function setupPlayerShield(socket) {
-  console.log("Setting up shield");
-  let playerShield = {
-    id : socket.id,
-    shield : 0
-  }
-  playerShields.push(playerShield);
-}
 
 function setupPlayerLastShot(socket) {
   let playerLastShot = {

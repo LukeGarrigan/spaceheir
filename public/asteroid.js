@@ -12,6 +12,12 @@ function Asteroid(pos, minSize, maxSize) {
   }
 
 
+  this.updateAndDisplayAsteroid = function() {
+    this.update();
+    this.display();
+    this.constrain();
+  }
+
   this.update = function() {
     this.pos.add(this.velocity);
   }
@@ -76,8 +82,7 @@ function Asteroid(pos, minSize, maxSize) {
      return dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) <= this.r + player.r;
   }
 
-  this.checkCollisionsWithPlayers = function(asteroids, player, i) {
-    // console.log("Asteroids :" + i);
+  this.checkCollisionsWithPlayer = function(asteroids, player, i) {
     if (this.hasHitPlayer(player)) {
       player.reduceShield();
       if (this.shouldCreateNewAsteroids()) {

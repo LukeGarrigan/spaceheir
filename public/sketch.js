@@ -10,7 +10,6 @@ var bullets = [];
 let otherPlayers = [];
 let timeSinceLastShot = 0;
 function setup() {
-
   createCanvas(window.innerWidth, window.innerHeight);
   player = new Player();
   shieldImage = loadImage("shield.png");
@@ -26,10 +25,11 @@ function setup() {
     asteroids.push(new Asteroid(pos, 40, 60));
   }
 
-  socket.on('player', updateOtherPlayers);
+
   socket.on('playerDisconnected', playerDisconnected);
-  socket.on('shield', updatePlayerShield);
   socket.on('bullet', createNewBullet);
+  socket.on('heartbeat',updateOtherPlayers);
+  emitPlayerPosition();
 }
 
 
@@ -43,18 +43,15 @@ function draw() {
 
   for (var i = bullets.length-1; i >= 0; i--) {
     bullets[i].updateAndDisplay();
-    bullets[i].checkCollisionsWithPlayers(bullets, player, i);
+    bullets[i].checkCollisionsWithPlayer(bullets, player, i);
   }
 
   for (let i = asteroids.length-1; i >= 0; i--) {
-    asteroids[i].checkCollisionsWithPlayers(asteroids, player, i);
+    asteroids[i].updateAndDisplayAsteroid();
+    asteroids[i].checkCollisionsWithPlayer(asteroids, player, i);
   }
 
   for (var i = asteroids.length-1; i >= 0; i--) {
-    asteroids[i].update();
-    asteroids[i].display();
-    asteroids[i].constrain();
-
     for (var j = bullets.length-1; j >= 0; j--) {
       if (bullets[j].hasHit(asteroids[i])) {
         if (asteroids[i].shouldCreateNewAsteroids()) {
@@ -68,19 +65,27 @@ function draw() {
     }
   }
 
-
-  player.update();
-  player.display();
-  player.constrain();
+  player.updateAndDisplayPlayer();
 
   for (var i = food.length-1; i >= 0; i--) {
     food[i].display();
-    if (food[i].hasBeenEaten(player)) {
-      food[i].resetPosition();
-      player.increaseShield(food[i].r);
-    }
+    food[i].checkCollisionsWithPlayer(player, i);
   }
 
+  emitPlayerAngle();
+  drawOtherPlayers();
+
+  // this needs to be done better
+  // note to self, need to make collisions register and update shield serverside
+  if (player.shield <= 0) {
+    socket.emit('respawn');
+  }
+}
+
+function emitPlayerAngle() {
+  socket.emit('angle', player.radians);
+}
+function emitPlayerPosition() {
   let playerPosition = {
     x: player.pos.x,
     y: player.pos.y,
@@ -88,37 +93,40 @@ function draw() {
   }
 
   socket.emit('player', playerPosition);
-  drawOtherPlayers();
 }
 
 
-
-function updatePlayerShield(shield) {
-  player.shield = shield.shield;
-}
 
 function createNewBullet(player) {
-  // create this bullet and add to the list of bullets
-  console.log("creating other player bullet");
   let bullet = new Bullet(player.x, player.y, player.angle, true);
   bullets.push(bullet);
 }
 
 function updateOtherPlayers(data) {
-  let exists = false;
-  for (let i = 0; i < otherPlayers.length; i++) {
-    if (otherPlayers[i].id == data.id) {
-      otherPlayers[i] = data;
-      exists = true;
+  for (let i = 0; i < data.length; i++) {
+    let exists = false;
+
+    if (data[i].id == socket.id) {
+      player.pos.x = data[i].x;
+      player.pos.y = data[i].y;
+      player.shield = data[i].shield;
+      continue;
+    }
+    for (let j = 0; j < otherPlayers.length; j++) {
+      if (data[i].id == otherPlayers[j].id) {
+        otherPlayers[j] = data[i];
+        exists = true;
+      }
+    }
+
+    if (!exists) {
+      otherPlayers.push(data[i]);
     }
   }
-  if (!exists) {
-    otherPlayers.push(data);
-  }
+
 }
 
 function playerDisconnected(socketId) {
-  console.log(socketId);
   for (let i = otherPlayers.length-1; i >= 0; i--) {
     if (otherPlayers[i].id == socketId) {
       console.log("Splicing " + socketId);
@@ -145,44 +153,40 @@ function drawOtherPlayers() {
 
 function keyPressed() {
   if (keyCode == UP_ARROW || keyCode == 87) {
-    player.up();
+    socket.emit('keyPressed', "up");
   } else if (keyCode == DOWN_ARROW || keyCode == 83) {
-    player.down();
+    socket.emit('keyPressed', "down");
   } else if (keyCode == LEFT_ARROW || keyCode == 65 ) {
-    player.left();
+    socket.emit('keyPressed', "left");
   } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
-    player.right();
+    socket.emit('keyPressed', "right");
+  }
+}
+
+function keyReleased() {
+  if (keyCode == UP_ARROW || keyCode == 87) {
+    socket.emit('keyReleased', "up");
+  } else if (keyCode == DOWN_ARROW || keyCode == 83) {
+    socket.emit('keyReleased', "down");
+  } else if (keyCode == LEFT_ARROW || keyCode == 65) {
+    socket.emit('keyReleased', "left");
+  } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
+    socket.emit('keyReleased', "right");
   }
 }
 
 function mousePressed() {
 
   if (timeSinceLastShot > 20) {
-    console.log("mouse pressed");
     let playerPosition = {
       x: player.pos.x,
       y: player.pos.y,
       angle: player.radians
     }
-
-    console.log(playerPosition);
     socket.emit('bullet', playerPosition);
 
     let bullet = new Bullet(player.pos.x, player.pos.y, player.radians, false);
     bullets.push(bullet);
     timeSinceLastShot = 0;
-  }
-}
-
-
-function keyReleased() {
-  if (keyCode == UP_ARROW || keyCode == 87) {
-    player.upReleased();
-  } else if (keyCode == DOWN_ARROW || keyCode == 83) {
-    player.downReleased();
-  } else if (keyCode == LEFT_ARROW || keyCode == 65) {
-    player.leftReleased();
-  } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
-    player.rightReleased();
   }
 }

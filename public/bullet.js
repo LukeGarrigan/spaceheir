@@ -14,7 +14,7 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
   }
 
 
-  this.checkCollisionsWithPlayers = function(bullets, player, i) {
+  this.checkCollisionsWithPlayer = function(bullets, player, i) {
     let bulletStillExist = true;
     if (this.hasDiminished()) {
       bullets.splice(i, 1);

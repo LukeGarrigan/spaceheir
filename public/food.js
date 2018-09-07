@@ -31,5 +31,11 @@ function Food() {
     this.x = random(width);
     this.y = random(height);
   }
+  this.checkCollisionsWithPlayer = function(player,i) {
+    if (food[i].hasBeenEaten(player)) {
+      food[i].resetPosition();
+      player.increaseShield(food[i].r);
+    }
+  }
 
 }

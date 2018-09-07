@@ -16,7 +16,11 @@ function Player() {
   this.shield = 0;
 
 
-
+  this.updateAndDisplayPlayer = function() {
+    this.update();
+    this.display();
+    this.constrain();
+  }
 
   this.update = function() {
     if (this.isUp) {
@@ -114,7 +118,7 @@ function Player() {
       this.shield -= MAX_SHIELD_REDUCTION
     } else {
       this.shield = 0;
-      this.pos = createVector(random(width), random(height));
+      //this.pos = createVector(random(width), random(height));
     }
   }
 
