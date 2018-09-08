@@ -24,6 +24,7 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
     if (bulletStillExist && this.hasHitPlayer(player) && this.isOtherPlayer) {
       player.reduceShield();
       bullets.splice(i, 1);
+      return true;
     }
 
   }

@@ -61,12 +61,14 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.isLeft = false;
       playerData.isRight = false;
       players.push(playerData);
-
-      // socket.broadcast.emit('player', playerData);
     });
 
-    socket.on('bullet', function(player) {
-      processPlayerShooting(player, socket);
+    socket.on('bullet', function() {
+      for (let i = players.length-1; i >= 0; i--) {
+        if (players[i].id == socket.id) {
+          processPlayerShooting(players[i], socket);
+        }
+      }
     });
 
 
@@ -125,15 +127,30 @@ io.sockets.on('connection', function newConnection(socket) {
     socket.on('respawn', function(){
       for (let i = 0; i < players.length; i++) {
         if (socket.id == players[i].id) {
-          players[i].x = 400;
-          players[i].y = 400;
+          players[i].x = Math.floor(Math.random() * 1920) + 1;
+          players[i].y = Math.floor(Math.random() * 1080) + 1;
+          players[i].shield = 100;
+        }
+      }
+    });
+
+    socket.on('reduceShield', function(){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          players[i].shield -= 75;
+        }
+      }
+    });
+
+    socket.on('increaseShield', function(size){
+      for (let i = 0; i < players.length; i++) {
+        if (socket.id == players[i].id) {
+          players[i].shield += size;
         }
       }
     });
 
 });
-
-
 
 function setupPlayerLastShot(socket) {
   let playerLastShot = {
@@ -142,6 +159,7 @@ function setupPlayerLastShot(socket) {
   }
   playersLastShot.push(playerLastShot);
 }
+
 function processPlayerShooting(player, socket) {
   for (let i = 0; i < playersLastShot.length; i++) {
     if (playersLastShot[i].id == socket.id) {

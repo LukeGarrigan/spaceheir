@@ -43,7 +43,9 @@ function draw() {
 
   for (var i = bullets.length-1; i >= 0; i--) {
     bullets[i].updateAndDisplay();
-    bullets[i].checkCollisionsWithPlayer(bullets, player, i);
+    if (bullets[i].checkCollisionsWithPlayer(bullets, player, i)) {
+      socket.emit('reduceShield');
+    }
   }
 
   for (let i = asteroids.length-1; i >= 0; i--) {
@@ -69,15 +71,18 @@ function draw() {
 
   for (var i = food.length-1; i >= 0; i--) {
     food[i].display();
-    food[i].checkCollisionsWithPlayer(player, i);
+    if (food[i].checkCollisionsWithPlayer(player, i)) {
+       console.log("I just ate");
+       socket.emit("increaseShield", food[i].r);
+    }
   }
 
   emitPlayerAngle();
   drawOtherPlayers();
 
   // this needs to be done better
-  // note to self, need to make collisions register and update shield serverside
   if (player.shield <= 0) {
+    console.log(player.shield);
     socket.emit('respawn');
   }
 }
@@ -178,12 +183,7 @@ function keyReleased() {
 function mousePressed() {
 
   if (timeSinceLastShot > 20) {
-    let playerPosition = {
-      x: player.pos.x,
-      y: player.pos.y,
-      angle: player.radians
-    }
-    socket.emit('bullet', playerPosition);
+    socket.emit('bullet');
 
     let bullet = new Bullet(player.pos.x, player.pos.y, player.radians, false);
     bullets.push(bullet);

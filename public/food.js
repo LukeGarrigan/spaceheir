@@ -34,7 +34,7 @@ function Food() {
   this.checkCollisionsWithPlayer = function(player,i) {
     if (food[i].hasBeenEaten(player)) {
       food[i].resetPosition();
-      player.increaseShield(food[i].r);
+      return true;
     }
   }
 
