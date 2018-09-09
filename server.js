@@ -62,6 +62,8 @@ function updatePlayerPosition(player) {
     player.x = Math.floor(Math.random() * 1920) + 1;
     player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
+  } else if (player.shield > MAX_SHIELD) {
+    player.shield = MAX_SHIELD;
   }
 
   if (player.isUp) {
