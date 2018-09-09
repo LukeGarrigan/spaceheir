@@ -1,9 +1,9 @@
-function Bullet(x, y, playerAngle, isOtherPlayer, id) {
+function Bullet(x, y, playerAngle, shooterId, id) {
   this.pos = createVector(x, y);
   this.velocity = p5.Vector.fromAngle(playerAngle);
   this.velocity.mult(10);
   this.r = 10;
-  this.isOtherPlayer = isOtherPlayer;
+  this.shooterId = shooterId;
   this.id = id;
 
 
@@ -21,7 +21,12 @@ function Bullet(x, y, playerAngle, isOtherPlayer, id) {
   }
 
   this.checkCollisionsWithPlayer = function(bullets, player, i) {
-    if (this.hasHitPlayer(player) && this.isOtherPlayer) {
+    // console.log(socket.id);
+    // console.log(bullets);
+    // console.log("Bullet clientId: " +bullets.clientId);
+    // console.log(socketId);
+
+    if (this.hasHitPlayer(player) && shooterId !== socket.id) {
       player.reduceShield();
       return true;
     }

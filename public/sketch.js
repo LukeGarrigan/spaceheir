@@ -200,9 +200,8 @@ function updateBullets(data) {
     }
 
     if (!exists) {
-      console.log("CREATING NEW BULLET");
-      console.log(data[i].id);
-      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, false, data[i].id);
+      console.log(data[i].clientId);
+      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id);
       bulletIds.push(data[i].id);
       bullets.push(bullet);
     }

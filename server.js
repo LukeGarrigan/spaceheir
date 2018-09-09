@@ -202,7 +202,8 @@ function processPlayerShooting(player, socket) {
           x: player.x,
           y: player.y,
           angle: player.angle,
-          id: lastBulletId
+          id: lastBulletId,
+          clientId: player.id
         };
         bullets.push(bullet);
       }
