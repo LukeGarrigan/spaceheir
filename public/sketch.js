@@ -14,7 +14,6 @@ function setup() {
   player = new Player();
   shieldImage = loadImage("shield.png");
   socket = io.connect('http://localhost:4000');
-  console.log(width);
 
   for (var i = 0; i < asteroidCount; i++) {
     var pos = createVector(random(1920 * 3), random(1080 * 3));
@@ -90,14 +89,12 @@ function emitPlayerAngle() {
 function emitPlayersBullets() {
   let myBullets = [];
   for (let i  = 0; i < bullets.length; i++) {
-    console.log(bullets[i].shooterId);
     if (bullets[i].shooterId == socket.id) {
       let bullet = {
         id : bullets[i].id,
         x : bullets[i].pos.x,
         y : bullets[i].pos.y
       };
-      console.log(bullet)
       myBullets.push(bullet);
     }
   }
@@ -145,7 +142,6 @@ function updateOtherPlayers(data) {
 function playerDisconnected(socketId) {
   for (let i = otherPlayers.length - 1; i >= 0; i--) {
     if (otherPlayers[i].id == socketId) {
-      console.log("Splicing " + socketId);
       otherPlayers.splice(i, 1);
     }
   }
@@ -203,7 +199,6 @@ function updateBullets(data) {
     }
 
     if (!exists) {
-      console.log(data[i].clientId);
       let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id);
       bulletIds.push(data[i].id);
       bullets.push(bullet);
@@ -213,7 +208,6 @@ function updateBullets(data) {
 }
 
 function updateFoods(data) {
-  console.log("CREATING FOOD");
   for (let i = 0; i < data.length; i++) {
     let exists = false;
     for (let j = 0; j < food.length; j++) {
@@ -248,7 +242,6 @@ function mousePressed() {
 
 
 function removeBullet(id) {
-  console.log("Removing bullet");
   for (let i = bullets.length-1; i >= 0; i--) {
     if (bullets[i].id == id) {
       bullets.splice(i, 1);

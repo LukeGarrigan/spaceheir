@@ -38,6 +38,7 @@ function Player() {
 
   }
 
+
   this.display = function() {
 
     push();
@@ -48,6 +49,7 @@ function Player() {
     rotate(this.radians + HALF_PI);
     // ellipse(0, 0, this.r*3, this.r*3);
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
+
 
 
     pop();

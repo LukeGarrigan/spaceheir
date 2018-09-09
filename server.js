@@ -104,7 +104,6 @@ function updatePlayerPosition(player) {
 function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x-player.x) + Math.abs(foods[i].y-player.y) < 21 + foods[i].r) {
-      console.log("EATEN!")
       player.shield += foods[i].r;
       let foodX = Math.floor(Math.random() * (1920*3)) + 1;
       let foodY = Math.floor(Math.random() * (1080*3)) + 1;
