@@ -1,9 +1,10 @@
-function Bullet(x, y, playerAngle, isOtherPlayer) {
+function Bullet(x, y, playerAngle, isOtherPlayer, id) {
   this.pos = createVector(x, y);
   this.velocity = p5.Vector.fromAngle(playerAngle);
   this.velocity.mult(10);
   this.r = 10;
   this.isOtherPlayer = isOtherPlayer;
+  this.id = id;
 
 
   this.updateAndDisplay = function() {
@@ -13,17 +14,15 @@ function Bullet(x, y, playerAngle, isOtherPlayer) {
     ellipse(this.pos.x, this.pos.y, this.r, this.r);
   }
 
+  this.hasBulletDiminished = function() {
+    if (this.hasDiminished()) {
+      return true;
+    }
+  }
 
   this.checkCollisionsWithPlayer = function(bullets, player, i) {
-    let bulletStillExist = true;
-    if (this.hasDiminished()) {
-      bullets.splice(i, 1);
-      bulletStillExist = false;
-    }
-
-    if (bulletStillExist && this.hasHitPlayer(player) && this.isOtherPlayer) {
+    if (this.hasHitPlayer(player) && this.isOtherPlayer) {
       player.reduceShield();
-      bullets.splice(i, 1);
       return true;
     }
 

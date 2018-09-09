@@ -4,7 +4,7 @@ function Player() {
   const MAX_SHIELD = 1000;
 
   this.pos = createVector(random(width*3), random(height*3));
-  this.r = 21;
+  this.r;
   this.radians = 0;
 
   this.isLeft = false;
@@ -56,17 +56,7 @@ function Player() {
 
 
   this.constrain = function() {
-    if (this.pos.x < 0) {
-      this.pos.x = width*3;
-    } else if (this.pos.x > width*3) {
-      this.pos.x = 0;
-    }
 
-    if (this.pos.y < 0) {
-      this.pos.y = height*3;
-    } else if (this.pos.y > height*3) {
-      this.pos.y =0;
-    }
 
   }
 

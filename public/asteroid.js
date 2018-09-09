@@ -84,13 +84,13 @@ function Asteroid(pos, minSize, maxSize) {
 
   this.checkCollisionsWithPlayer = function(asteroids, player, i) {
     if (this.hasHitPlayer(player)) {
-      player.reduceShield();
       if (this.shouldCreateNewAsteroids()) {
         var newAsteroids = this.getNewAsteroids();
         asteroids.push(...newAsteroids);
       }
       console.log("splicing");
       asteroids.splice(i, 1);
+      return true;
     }
   }
 

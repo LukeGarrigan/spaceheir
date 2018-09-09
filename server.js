@@ -18,18 +18,20 @@ let playersLastShot = [];
 let playerShields = [];
 
 let players = [];
+let bullets = [];
 
+let lastBulletId = 0;
 
+const MAX_SHIELD = 1000;
 
 setInterval(broadcastPlayers, 16);
 
 function broadcastPlayers() {
   for (let i = 0; i < players.length; i++) {
     updatePlayerPosition(players[i]);
-    console.log(players[i]);
   }
-
   io.sockets.emit('heartbeat', players);
+  io.sockets.emit('bullets', bullets);
 }
 
 function updatePlayerPosition(player) {
@@ -47,6 +49,21 @@ function updatePlayerPosition(player) {
   if (player.isRight) {
     player.x += 2;
   }
+
+  // constrain - so moving to the edge of the screen
+  if (player.x < 0) {
+    player.x = 1920*3;
+  } else if (player.x > 1920*3) {
+    player.x = 0;
+  }
+
+  if (player.y < 0) {
+    player.y = 1080*3;
+  } else if (player.y > 1080*3) {
+    player.y = 0;
+  }
+
+
 }
 
 io.sockets.on('connection', function newConnection(socket) {
@@ -60,6 +77,7 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.isDown = false;
       playerData.isLeft = false;
       playerData.isRight = false;
+      playerData.r = 21;
       players.push(playerData);
     });
 
@@ -146,6 +164,17 @@ io.sockets.on('connection', function newConnection(socket) {
       for (let i = 0; i < players.length; i++) {
         if (socket.id == players[i].id) {
           players[i].shield += size;
+          if (players[i].shield > MAX_SHIELD) {
+            players[i].shield = MAX_SHIELD;
+          }
+        }
+      }
+    });
+
+    socket.on('removeBullet', function(id){
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        if (bullets[i].id == id) {
+          bullets.splice(i, 1);
         }
       }
     });
@@ -165,11 +194,17 @@ function processPlayerShooting(player, socket) {
     if (playersLastShot[i].id == socket.id) {
       let previousShot = playersLastShot[i].date;
       let timeSinceLastShot = Date.now()-previousShot;
-      console.log(timeSinceLastShot);
       if (timeSinceLastShot > 200) {
-        console.log("Has been longer..");
         playersLastShot[i].date = Date.now();
-        socket.broadcast.emit('bullet', player);
+
+        lastBulletId = lastBulletId + 1;
+        let bullet = {
+          x: player.x,
+          y: player.y,
+          angle: player.angle,
+          id: lastBulletId
+        };
+        bullets.push(bullet);
       }
     }
   }
