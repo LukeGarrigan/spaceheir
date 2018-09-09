@@ -19,20 +19,43 @@ let playerShields = [];
 
 let players = [];
 let bullets = [];
+let foods = [];
 
 let lastBulletId = 0;
 
 const MAX_SHIELD = 1000;
+const NUM_FOOD = 400;
+setupFood();
 
+function setupFood() {
+
+  for (let i = 0; i < NUM_FOOD; i++ ) {
+    let foodX = Math.floor(Math.random() * (1920*3)) + 1;
+    let foodY = Math.floor(Math.random() * (1080*3)) + 1;
+    let foodRadius = Math.floor(Math.random() * 22) + 1;
+
+    let food = {
+      x : foodX,
+      y : foodY,
+      r : foodRadius,
+      id : i
+    };
+    foods.push(food);
+  }
+
+}
 setInterval(broadcastPlayers, 16);
 
 function broadcastPlayers() {
   for (let i = 0; i < players.length; i++) {
     updatePlayerPosition(players[i]);
   }
+
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
 }
+
+
 
 function updatePlayerPosition(player) {
   if (player.isUp) {
@@ -63,12 +86,26 @@ function updatePlayerPosition(player) {
     player.y = 0;
   }
 
+  for (let i = 0; i < foods.length; i++) {
+    if (Math.abs(foods[i].x-player.x) + Math.abs(foods[i].y-player.y) < 21 + foods[i].r) {
+      console.log("EATEN!")
+      player.shield += foods[i].r;
+      let foodX = Math.floor(Math.random() * (1920*3)) + 1;
+      let foodY = Math.floor(Math.random() * (1080*3)) + 1;
+      foods[i].x = foodX;
+      foods[i].y = foodY;
+
+      io.sockets.emit('foods', foods);
+    }
+  }
+
 
 }
 
 io.sockets.on('connection', function newConnection(socket) {
     console.log("new connection "+ socket.id);
     setupPlayerLastShot(socket);
+    socket.emit('foods', foods);
 
     socket.on('player', function playerMessage(playerData) {
       playerData.id = socket.id;
@@ -95,7 +132,6 @@ io.sockets.on('connection', function newConnection(socket) {
 
       for (let i = players.length-1; i >= 0; i--) {
         if (players[i].id == socket.id) {
-          console.log("Splicing " +  socket.id);
           players.splice(i, 1);
         }
       }
@@ -160,16 +196,6 @@ io.sockets.on('connection', function newConnection(socket) {
       }
     });
 
-    socket.on('increaseShield', function(size){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          players[i].shield += size;
-          if (players[i].shield > MAX_SHIELD) {
-            players[i].shield = MAX_SHIELD;
-          }
-        }
-      }
-    });
 
     socket.on('removeBullet', function(id){
       for (let i = bullets.length - 1; i >= 0; i--) {

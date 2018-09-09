@@ -2,7 +2,7 @@ var player;
 var food = [];
 var asteroids = [];
 var asteroidCount = 40;
-var foodCount = 400;
+var foodCount = 200;
 var shieldImage;
 var bullets = [];
 var bulletIds = [];
@@ -16,11 +16,6 @@ function setup() {
   socket = io.connect('http://localhost:4000');
   console.log(width);
 
-  for (var i = 0; i < foodCount; i++) {
-    food.push(new Food());
-    food[i].setup();
-  }
-
   for (var i = 0; i < asteroidCount; i++) {
     var pos = createVector(random(1920 * 3), random(1080 * 3));
     asteroids.push(new Asteroid(pos, 40, 60));
@@ -30,6 +25,7 @@ function setup() {
   socket.on('playerDisconnected', playerDisconnected);
   socket.on('heartbeat', updateOtherPlayers);
   socket.on('bullets', updateBullets);
+  socket.on('foods', updateFoods);
   emitPlayerPosition();
 }
 
@@ -82,10 +78,6 @@ function draw() {
 
   for (var i = food.length - 1; i >= 0; i--) {
     food[i].display();
-    if (food[i].checkCollisionsWithPlayer(player, i)) {
-      console.log("I just ate");
-      socket.emit("increaseShield", food[i].r);
-    }
   }
 
   emitPlayerAngle();
@@ -93,7 +85,6 @@ function draw() {
 
   // this needs to be done better
   if (player.shield <= 0) {
-    console.log(player.shield);
     socket.emit('respawn');
   }
 }
@@ -190,7 +181,6 @@ function keyReleased() {
 
 function updateBullets(data) {
   for (let i = 0; i < data.length; i++) {
-
     let exists = false;
     for (let j = 0; j < bulletIds.length; j++) {
       if (data[i].id == bulletIds[j]) {
@@ -205,6 +195,30 @@ function updateBullets(data) {
       bulletIds.push(data[i].id);
       bullets.push(bullet);
     }
+  }
+
+}
+
+function updateFoods(data) {
+  console.log("CREATING FOOD");
+  for (let i = 0; i < data.length; i++) {
+    let exists = false;
+    for (let j = 0; j < food.length; j++) {
+      if(data[i].id == food[j].id) {
+        exists = true;
+        if (data[i].x !== food[j].x || data[i].y !== food[j].y) {
+          food[j].x = data[i].x;
+          food[j].y = data[i].y;
+        }
+      }
+    }
+    if (!exists) {
+      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id);
+      food.push(aFood);
+    }
+
+
+
   }
 
 }
