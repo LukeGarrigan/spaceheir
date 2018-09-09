@@ -83,10 +83,6 @@ function draw() {
   emitPlayerAngle();
   drawOtherPlayers();
 
-  // this needs to be done better
-  if (player.shield <= 0) {
-    socket.emit('respawn');
-  }
 }
 
 function emitPlayerAngle() {

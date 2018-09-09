@@ -58,6 +58,12 @@ function broadcastPlayers() {
 
 
 function updatePlayerPosition(player) {
+  if (player.shield <= 0) {
+    player.x = Math.floor(Math.random() * 1920) + 1;
+    player.y = Math.floor(Math.random() * 1080) + 1;
+    player.shield = 100;
+  }
+
   if (player.isUp) {
     player.y -= 2;
   }
@@ -178,15 +184,6 @@ io.sockets.on('connection', function newConnection(socket) {
       }
     });
 
-    socket.on('respawn', function(){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          players[i].x = Math.floor(Math.random() * 1920) + 1;
-          players[i].y = Math.floor(Math.random() * 1080) + 1;
-          players[i].shield = 100;
-        }
-      }
-    });
 
     socket.on('reduceShield', function(){
       for (let i = 0; i < players.length; i++) {
