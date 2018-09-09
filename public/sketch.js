@@ -26,6 +26,7 @@ function setup() {
   socket.on('heartbeat', updateOtherPlayers);
   socket.on('bullets', updateBullets);
   socket.on('foods', updateFoods);
+  socket.on('bulletHit', removeBullet);
   emitPlayerPosition();
 }
 
@@ -34,7 +35,10 @@ function draw() {
   background(0);
   image(shieldImage, width - 80, 20, 23, 23);
   fill(255);
+  textSize(15);
   text(floor(player.shield), width - 54, 35);
+  text("X: " + floor(player.pos.x), width - 100, height -100);
+  text("Y: " + floor(player.pos.y), width - 100, height -75);
   translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
   timeSinceLastShot++;
 
@@ -43,12 +47,6 @@ function draw() {
     if (bullets[i].hasBulletDiminished()) {
       socket.emit('removeBullet', bullets[i].id);
       bullets.splice(i, 1);
-    } else {
-      if (bullets[i].checkCollisionsWithPlayer(bullets, player, i)) {
-        socket.emit('reduceShield');
-        socket.emit('removeBullet', bullets[i].id);
-        bullets.splice(i, 1);
-      }
     }
   }
 
@@ -82,11 +80,30 @@ function draw() {
 
   emitPlayerAngle();
   drawOtherPlayers();
-
+  emitPlayersBullets();
 }
 
 function emitPlayerAngle() {
   socket.emit('angle', player.radians);
+}
+
+function emitPlayersBullets() {
+  let myBullets = [];
+  for (let i  = 0; i < bullets.length; i++) {
+    console.log(bullets[i].shooterId);
+    if (bullets[i].shooterId == socket.id) {
+      let bullet = {
+        id : bullets[i].id,
+        x : bullets[i].pos.x,
+        y : bullets[i].pos.y
+      };
+      console.log(bullet)
+      myBullets.push(bullet);
+    }
+  }
+  socket.emit('playerBullets', myBullets);
+
+
 }
 
 function emitPlayerPosition() {
@@ -227,4 +244,16 @@ function mousePressed() {
     socket.emit('bullet');
     timeSinceLastShot = 0;
   }
+}
+
+
+function removeBullet(id) {
+  console.log("Removing bullet");
+  for (let i = bullets.length-1; i >= 0; i--) {
+    if (bullets[i].id == id) {
+      bullets.splice(i, 1);
+      break;
+    }
+  }
+
 }

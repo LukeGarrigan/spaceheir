@@ -94,6 +94,14 @@ function updatePlayerPosition(player) {
     player.y = 0;
   }
 
+
+  updatePlayerEatingFood(player);
+  updatePlayerGettingShot(player);
+
+
+}
+
+function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x-player.x) + Math.abs(foods[i].y-player.y) < 21 + foods[i].r) {
       console.log("EATEN!")
@@ -106,10 +114,20 @@ function updatePlayerPosition(player) {
       io.sockets.emit('foods', foods);
     }
   }
-
-
 }
 
+function updatePlayerGettingShot(player) {
+    for (let i = bullets.length -1; i >= 0; i--) {
+      if (player.id !== bullets[i].clientId) {
+        if (Math.abs(bullets[i].x-player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
+          io.sockets.emit('bulletHit', bullets[i].id);
+          bullets.splice(i, 1);
+          player.shield -= 75;
+
+        }
+      }
+    }
+}
 io.sockets.on('connection', function newConnection(socket) {
     console.log("new connection "+ socket.id);
     setupPlayerLastShot(socket);
@@ -202,6 +220,20 @@ io.sockets.on('connection', function newConnection(socket) {
           bullets.splice(i, 1);
         }
       }
+    });
+
+    socket.on('playerBullets', function(myBullets){
+      for (let i = 0; i < myBullets.length; i++) {
+        for (let j = 0; j < bullets.length; j++) {
+          if (myBullets[i].id == bullets[j].id) {
+            console.log("Updating my bullets!");
+            console.log(myBullets[i].x + " " + myBullets[i].y);
+            bullets[j].x = myBullets[i].x;
+            bullets[j].y = myBullets[i].y;
+          }
+        }
+      }
+
     });
 
 });
