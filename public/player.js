@@ -1,8 +1,9 @@
-function Player() {
+function Player(name) {
 
   const MAX_SHIELD_REDUCTION = 75;
   const MAX_SHIELD = 1000;
 
+  this.name = name;
   this.pos = createVector(random(width*3), random(height*3));
   this.r;
   this.radians = 0;
@@ -12,6 +13,7 @@ function Player() {
   this.isUp = false;
   this.isDown = false;
   this.speed = 2;
+  this.shield = 0;
 
 
   this.updateAndDisplayPlayer = function() {
@@ -50,10 +52,9 @@ function Player() {
     // ellipse(0, 0, this.r*3, this.r*3);
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
-
-
     pop();
-
+    textAlign(CENTER);
+    text(name, this.pos.x, this.pos.y+49);
   }
 
 

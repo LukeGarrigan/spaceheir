@@ -9,24 +9,41 @@ var bulletIds = [];
 let otherPlayers = [];
 let timeSinceLastShot = 0;
 
+let button, input;
+let gameStarted = false;
+
+
+
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
-  player = new Player();
   shieldImage = loadImage("shield.png");
-  socket = io.connect('http://localhost:4000');
+  input = createInput();
+  input.position(width/2-250, height/2);
 
-  for (var i = 0; i < asteroidCount; i++) {
-    var pos = createVector(random(1920 * 3), random(1080 * 3));
-    asteroids.push(new Asteroid(pos, 40, 60));
+  button = createButton("Play");
+  button.position(width/2-250, height/2+80);
+
+  button.mousePressed(setupGame);
+}
+
+function setupGame() {
+  if (input.value().length != 0 && input.value().length < 15) {
+    button.style("visibility", "hidden");
+    input.style("visibility", "hidden");
+    player = new Player(input.value());
+    socket = io.connect('http://localhost:4000');
+    for (var i = 0; i < asteroidCount; i++) {
+      var pos = createVector(random(1920 * 3), random(1080 * 3));
+      asteroids.push(new Asteroid(pos, 40, 60));
+    }
+    socket.on('playerDisconnected', playerDisconnected);
+    socket.on('heartbeat', updateOtherPlayers);
+    socket.on('bullets', updateBullets);
+    socket.on('foods', updateFoods);
+    socket.on('bulletHit', removeBullet);
+    gameStarted = true;
+    emitPlayerPosition();
   }
-
-
-  socket.on('playerDisconnected', playerDisconnected);
-  socket.on('heartbeat', updateOtherPlayers);
-  socket.on('bullets', updateBullets);
-  socket.on('foods', updateFoods);
-  socket.on('bulletHit', removeBullet);
-  emitPlayerPosition();
 }
 
 
@@ -35,51 +52,54 @@ function draw() {
   image(shieldImage, width - 80, 20, 23, 23);
   fill(255);
   textSize(15);
-  text(floor(player.shield), width - 54, 35);
-  text("X: " + floor(player.pos.x), width - 100, height -100);
-  text("Y: " + floor(player.pos.y), width - 100, height -75);
-  translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-  timeSinceLastShot++;
+  if (gameStarted) {
+    text(floor(player.shield), width - 54, 35);
+    text("X: " + floor(player.pos.x), width - 100, height -100);
+    text("Y: " + floor(player.pos.y), width - 100, height -75);
+    translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
+    timeSinceLastShot++;
 
-  for (var i = bullets.length - 1; i >= 0; i--) {
-    bullets[i].updateAndDisplay();
-    if (bullets[i].hasBulletDiminished()) {
-      socket.emit('removeBullet', bullets[i].id);
-      bullets.splice(i, 1);
-    }
-  }
-
-  for (let i = asteroids.length - 1; i >= 0; i--) {
-    asteroids[i].updateAndDisplayAsteroid();
-    if (asteroids[i].checkCollisionsWithPlayer(asteroids, player, i)) {
-      socket.emit('reduceShield');
-    }
-  }
-
-  for (var i = asteroids.length - 1; i >= 0; i--) {
-    for (var j = bullets.length - 1; j >= 0; j--) {
-      if (bullets[j].hasHit(asteroids[i])) {
-        if (asteroids[i].shouldCreateNewAsteroids()) {
-          var newAsteroids = asteroids[i].getNewAsteroids();
-          asteroids.push(...newAsteroids);
-        }
-        asteroids.splice(i, 1);
-        socket.emit('removeBullet', bullets[j].id);
-        bullets.splice(j, 1);
-        break;
+    for (var i = bullets.length - 1; i >= 0; i--) {
+      bullets[i].updateAndDisplay();
+      if (bullets[i].hasBulletDiminished()) {
+        socket.emit('removeBullet', bullets[i].id);
+        bullets.splice(i, 1);
       }
     }
+
+    for (let i = asteroids.length - 1; i >= 0; i--) {
+      asteroids[i].updateAndDisplayAsteroid();
+      if (asteroids[i].checkCollisionsWithPlayer(asteroids, player, i)) {
+        socket.emit('reduceShield');
+      }
+    }
+
+    for (var i = asteroids.length - 1; i >= 0; i--) {
+      for (var j = bullets.length - 1; j >= 0; j--) {
+        if (bullets[j].hasHit(asteroids[i])) {
+          if (asteroids[i].shouldCreateNewAsteroids()) {
+            var newAsteroids = asteroids[i].getNewAsteroids();
+            asteroids.push(...newAsteroids);
+          }
+          asteroids.splice(i, 1);
+          socket.emit('removeBullet', bullets[j].id);
+          bullets.splice(j, 1);
+          break;
+        }
+      }
+    }
+
+    player.updateAndDisplayPlayer();
+
+    for (var i = food.length - 1; i >= 0; i--) {
+      food[i].display();
+    }
+
+    emitPlayerAngle();
+    drawOtherPlayers();
+    emitPlayersBullets();
   }
 
-  player.updateAndDisplayPlayer();
-
-  for (var i = food.length - 1; i >= 0; i--) {
-    food[i].display();
-  }
-
-  emitPlayerAngle();
-  drawOtherPlayers();
-  emitPlayersBullets();
 }
 
 function emitPlayerAngle() {
@@ -107,9 +127,11 @@ function emitPlayerPosition() {
   let playerPosition = {
     x: player.pos.x,
     y: player.pos.y,
-    angle: player.radians
+    angle: player.radians,
+    name: player.name
   }
 
+  console.log(playerPosition);
   socket.emit('player', playerPosition);
 }
 
@@ -122,6 +144,7 @@ function updateOtherPlayers(data) {
       player.pos.x = data[i].x;
       player.pos.y = data[i].y;
       player.r = data[i].r;
+      player.name = data[i].name;
       player.shield = data[i].shield;
       continue;
     }
@@ -158,32 +181,40 @@ function drawOtherPlayers() {
     rotate(otherPlayers[i].angle + HALF_PI);
     triangle(-21, 21, 0, -21, 21, 21);
     pop();
+    textAlign(CENTER);
+    text(otherPlayers[i].name, otherPlayers[i].x, otherPlayers[i].y+49);
+
   }
 }
 
 
 
 function keyPressed() {
-  if (keyCode == UP_ARROW || keyCode == 87) {
-    socket.emit('keyPressed', "up");
-  } else if (keyCode == DOWN_ARROW || keyCode == 83) {
-    socket.emit('keyPressed', "down");
-  } else if (keyCode == LEFT_ARROW || keyCode == 65) {
-    socket.emit('keyPressed', "left");
-  } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
-    socket.emit('keyPressed', "right");
+  if (gameStarted) {
+    if (keyCode == UP_ARROW || keyCode == 87) {
+      socket.emit('keyPressed', "up");
+    } else if (keyCode == DOWN_ARROW || keyCode == 83) {
+      socket.emit('keyPressed', "down");
+    } else if (keyCode == LEFT_ARROW || keyCode == 65) {
+      socket.emit('keyPressed', "left");
+    } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
+      socket.emit('keyPressed', "right");
+    }
   }
+
 }
 
 function keyReleased() {
-  if (keyCode == UP_ARROW || keyCode == 87) {
-    socket.emit('keyReleased', "up");
-  } else if (keyCode == DOWN_ARROW || keyCode == 83) {
-    socket.emit('keyReleased', "down");
-  } else if (keyCode == LEFT_ARROW || keyCode == 65) {
-    socket.emit('keyReleased', "left");
-  } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
-    socket.emit('keyReleased', "right");
+  if (gameStarted) {
+    if (keyCode == UP_ARROW || keyCode == 87) {
+      socket.emit('keyReleased', "up");
+    } else if (keyCode == DOWN_ARROW || keyCode == 83) {
+      socket.emit('keyReleased', "down");
+    } else if (keyCode == LEFT_ARROW || keyCode == 65) {
+      socket.emit('keyReleased', "left");
+    } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
+      socket.emit('keyReleased', "right");
+    }
   }
 }
 

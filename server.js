@@ -140,6 +140,9 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.isLeft = false;
       playerData.isRight = false;
       playerData.r = 21;
+
+      let playersName = playerData.name.substring(0, 15);
+      playerData.name = playersName;
       players.push(playerData);
     });
 
@@ -225,8 +228,6 @@ io.sockets.on('connection', function newConnection(socket) {
       for (let i = 0; i < myBullets.length; i++) {
         for (let j = 0; j < bullets.length; j++) {
           if (myBullets[i].id == bullets[j].id) {
-            console.log("Updating my bullets!");
-            console.log(myBullets[i].x + " " + myBullets[i].y);
             bullets[j].x = myBullets[i].x;
             bullets[j].y = myBullets[i].y;
           }
