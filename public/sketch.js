@@ -25,10 +25,11 @@ function setup() {
 }
 
 function setupGame() {
-  if (input.value().length != 0 && input.value().length < 15) {
+  inputValue = input.value().replace(/[^\x00-\x7F]/g, "");
+  if (inputValue.length >= 2 && inputValue.length < 15) {
     button.style("visibility", "hidden");
     input.style("visibility", "hidden");
-    player = new Player(input.value());
+    player = new Player(inputValue);
     socket = io.connect('http://localhost:4000');
     for (var i = 0; i < asteroidCount; i++) {
       var pos = createVector(random(1920 * 3), random(1080 * 3));

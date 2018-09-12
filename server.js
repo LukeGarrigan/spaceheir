@@ -164,7 +164,7 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.score = 0;
 
       let playersName = playerData.name.substring(0, 15);
-      playerData.name = playersName;
+      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
       players.push(playerData);
 
       addNewPlayerToLeaderboard(playerData);
