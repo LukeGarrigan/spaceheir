@@ -20,6 +20,8 @@ let playerShields = [];
 let players = [];
 let bullets = [];
 let foods = [];
+let leaderboard = [];
+
 
 let lastBulletId = 0;
 
@@ -50,9 +52,9 @@ function broadcastPlayers() {
   for (let i = 0; i < players.length; i++) {
     updatePlayerPosition(players[i]);
   }
-
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
+  io.sockets.emit('leaderboard', leaderboard)
 }
 
 
@@ -62,6 +64,7 @@ function updatePlayerPosition(player) {
     player.x = Math.floor(Math.random() * 1920) + 1;
     player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
+    player.score = 0;
   } else if (player.shield > MAX_SHIELD) {
     player.shield = MAX_SHIELD;
   }
@@ -120,13 +123,28 @@ function updatePlayerGettingShot(player) {
       if (player.id !== bullets[i].clientId) {
         if (Math.abs(bullets[i].x-player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
           io.sockets.emit('bulletHit', bullets[i].id);
-          bullets.splice(i, 1);
+          console.log(player.shield);
           player.shield -= 75;
+          if (player.shield <= 0) {
+            player.score = 0;
+            updatePlayerScore(bullets[i].clientId);
+          }
+          bullets.splice(i, 1);
 
         }
       }
     }
 }
+
+function updatePlayerScore(id) {
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].id == id) {
+      console.log("Increasing players score!!!");
+      players[i].score++;
+    }
+  }
+}
+
 io.sockets.on('connection', function newConnection(socket) {
     console.log("new connection "+ socket.id);
     setupPlayerLastShot(socket);
@@ -140,6 +158,7 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.isLeft = false;
       playerData.isRight = false;
       playerData.r = 21;
+      playerData.score = 0;
 
       let playersName = playerData.name.substring(0, 15);
       playerData.name = playersName;

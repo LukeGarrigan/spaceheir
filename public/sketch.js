@@ -19,10 +19,8 @@ function setup() {
   shieldImage = loadImage("shield.png");
   input = createInput();
   input.position(width/2-250, height/2);
-
   button = createButton("Play");
   button.position(width/2-250, height/2+80);
-
   button.mousePressed(setupGame);
 }
 
@@ -49,7 +47,7 @@ function setupGame() {
 
 function draw() {
   background(0);
-  image(shieldImage, width - 80, 20, 23, 23);
+  image(shieldImage, width - 95, 20, 23, 23);
   fill(255);
   textSize(15);
   if (gameStarted) {
@@ -146,6 +144,7 @@ function updateOtherPlayers(data) {
       player.r = data[i].r;
       player.name = data[i].name;
       player.shield = data[i].shield;
+      player.score = data[i].score;
       continue;
     }
     for (let j = 0; j < otherPlayers.length; j++) {

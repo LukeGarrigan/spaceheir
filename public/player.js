@@ -14,6 +14,7 @@ function Player(name) {
   this.isDown = false;
   this.speed = 2;
   this.shield = 0;
+  this.score = 0;
 
 
   this.updateAndDisplayPlayer = function() {
@@ -54,7 +55,13 @@ function Player(name) {
 
     pop();
     textAlign(CENTER);
+
+
     text(name, this.pos.x, this.pos.y+49);
+    push();
+    textSize(30);
+    text(this.score, this.pos.x, this.pos.y - height/2 + 80);
+    pop();
   }
 
 
