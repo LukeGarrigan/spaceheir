@@ -11,7 +11,7 @@ let timeSinceLastShot = 0;
 
 let button, input;
 let gameStarted = false;
-
+let leaders = [];
 
 
 function setup() {
@@ -39,6 +39,7 @@ function setupGame() {
     socket.on('bullets', updateBullets);
     socket.on('foods', updateFoods);
     socket.on('bulletHit', removeBullet);
+    socket.on('leaderboard', updateLeaderboard);
     gameStarted = true;
     emitPlayerPosition();
   }
@@ -96,8 +97,19 @@ function draw() {
     emitPlayerAngle();
     drawOtherPlayers();
     emitPlayersBullets();
+    drawLeaders();
   }
 
+}
+
+function updateLeaderboard(leaderboard) {
+  leaders = leaderboard;
+}
+
+function drawLeaders() {
+  for (let i = 0; i < leaders.length; i++) {
+    text(leaders[i].name + " : " +leaders[i].score, player.pos.x-width/2+50, player.pos.y-height/2+50 + i*20);
+  }
 }
 
 function emitPlayerAngle() {

@@ -52,6 +52,7 @@ function broadcastPlayers() {
   for (let i = 0; i < players.length; i++) {
     updatePlayerPosition(players[i]);
   }
+
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
   io.sockets.emit('leaderboard', leaderboard)
@@ -65,6 +66,7 @@ function updatePlayerPosition(player) {
     player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
     player.score = 0;
+    updateLeaderboard();
   } else if (player.shield > MAX_SHIELD) {
     player.shield = MAX_SHIELD;
   }
@@ -148,6 +150,7 @@ function updatePlayerScore(id) {
 io.sockets.on('connection', function newConnection(socket) {
     console.log("new connection "+ socket.id);
     setupPlayerLastShot(socket);
+
     socket.emit('foods', foods);
 
     socket.on('player', function playerMessage(playerData) {
@@ -163,6 +166,8 @@ io.sockets.on('connection', function newConnection(socket) {
       let playersName = playerData.name.substring(0, 15);
       playerData.name = playersName;
       players.push(playerData);
+
+      addNewPlayerToLeaderboard(playerData);
     });
 
     socket.on('bullet', function() {
@@ -285,4 +290,29 @@ function processPlayerShooting(player, socket) {
       }
     }
   }
+}
+
+function updateLeaderboard() {
+  for (let i = 0; i < leaderboard.length; i++) {
+    for (let j = 0; j < players.length; j++) {
+      if (leaderboard[i].id == players[j].id) {
+        leaderboard[i].score = players[j].score;
+      }
+    }
+  }
+
+  console.log("sorting");
+  leaderboard.sort(function(a, b){
+    return a.score < b.score;
+  });
+}
+
+function addNewPlayerToLeaderboard(playerData) {
+    let player = {
+      id : playerData.id,
+      name : playerData.name,
+      score : playerData.score
+    };
+
+    leaderboard.push(player);
 }
