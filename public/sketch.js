@@ -91,7 +91,7 @@ function draw() {
       }
     }
 
-    player.updateAndDisplayPlayer();
+    player.updateAndDisplayPlayer(leaders);
 
     for (var i = food.length - 1; i >= 0; i--) {
       food[i].display();
@@ -190,11 +190,19 @@ function playerDisconnected(socketId) {
 
 function drawOtherPlayers() {
 
+  let leaderBoardWinnersId;
+  if (leaders.length > 0) {
+    leaderBoardWinnersId = leaders[0].id;
+  }
   for (let i = 0; i < otherPlayers.length; i++) {
     push();
     translate(otherPlayers[i].x, otherPlayers[i].y);
     fill(0);
-    stroke(255);
+    if (leaderBoardWinnersId == otherPlayers[i].id) {
+      stroke(255, 0, 0);
+    } else {
+      stroke(255);
+    }
     rotate(otherPlayers[i].angle + HALF_PI);
     triangle(-21, 21, 0, -21, 21, 21);
     pop();

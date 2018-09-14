@@ -17,19 +17,34 @@ function Player(name) {
   this.score = 0;
 
 
-  this.updateAndDisplayPlayer = function() {
-    this.display();
+  this.updateAndDisplayPlayer = function(leaders) {
+    this.display(leaders);
     this.constrain();
   }
-  this.display = function() {
+  this.display = function(leaders) {
 
     push();
     translate(this.pos.x, this.pos.y);
+
+
     fill(0);
-    stroke(255);
+
+    let leaderBoardWinnersId;
+    if (leaders.length > 0) {
+      leaderBoardWinnersId = leaders[0].id;
+    }
+
+    if (leaderBoardWinnersId == socket.id) {
+      stroke(255, 0, 0);
+    } else {
+      stroke(255);
+    }
+
+
+
     this.radians = atan2(mouseY-height/2, mouseX-width/2);
     rotate(this.radians + HALF_PI);
-    // ellipse(0, 0, this.r*3, this.r*3);
+
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
     pop();

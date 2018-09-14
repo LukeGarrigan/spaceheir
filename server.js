@@ -53,9 +53,10 @@ function broadcastPlayers() {
     updatePlayerPosition(players[i]);
   }
 
+  io.sockets.emit('leaderboard', leaderboard)
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
-  io.sockets.emit('leaderboard', leaderboard)
+
 }
 
 
