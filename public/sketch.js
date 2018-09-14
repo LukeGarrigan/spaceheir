@@ -84,7 +84,6 @@ function draw() {
             asteroids.push(...newAsteroids);
           }
           asteroids.splice(i, 1);
-          socket.emit('removeBullet', bullets[j].id);
           bullets.splice(j, 1);
           break;
         }

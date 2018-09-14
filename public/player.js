@@ -21,14 +21,11 @@ function Player(name) {
     this.display(leaders);
     this.constrain();
   }
-  this.display = function(leaders) {
 
+  this.display = function(leaders) {
     push();
     translate(this.pos.x, this.pos.y);
-
-
     fill(0);
-
     let leaderBoardWinnersId;
     if (leaders.length > 0) {
       leaderBoardWinnersId = leaders[0].id;

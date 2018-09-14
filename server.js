@@ -151,9 +151,12 @@ function updatePlayerGettingShot(player) {
           io.sockets.emit('bulletHit', bullets[i].id);
           console.log(player.shield);
           player.shield -= 75;
+
+          let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
+
           if (player.shield <= 0) {
+            updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
             player.score = 0;
-            updatePlayerScore(bullets[i].clientId);
           }
           bullets.splice(i, 1);
 
@@ -162,13 +165,31 @@ function updatePlayerGettingShot(player) {
     }
 }
 
-function updatePlayerScore(id) {
+function updatePlayerScore(id, isCurrentPlayerWinning, score) {
   for (let i = 0; i < players.length; i++) {
     if (players[i].id == id) {
       console.log("Increasing players score!!!");
       players[i].score++;
+      if (isCurrentPlayerWinning) {
+        players[i].shield += score * 100;
+        if (players[i].shield > MAX_SHIELD) {
+          player.shield = MAX_SHIELD;
+        }
+      }
     }
   }
+}
+
+function checkIfCurrentPlayerIsWinning(id) {
+
+  if (leaderboard.length > 0) {
+    if (id == leaderboard[0].id) {
+      return true;
+    }
+  }
+  return false;
+
+
 }
 
 io.sockets.on('connection', function newConnection(socket) {
@@ -275,14 +296,6 @@ io.sockets.on('connection', function newConnection(socket) {
     });
 
 
-    socket.on('removeBullet', function(id){
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        if (bullets[i].id == id) {
-          bullets.splice(i, 1);
-        }
-      }
-    });
-
     socket.on('playerBullets', function(myBullets){
       for (let i = 0; i < myBullets.length; i++) {
         for (let j = 0; j < bullets.length; j++) {
@@ -292,7 +305,6 @@ io.sockets.on('connection', function newConnection(socket) {
           }
         }
       }
-
     });
 
 });
