@@ -12,10 +12,12 @@ let timeSinceLastShot = 0;
 let button, input;
 let gameStarted = false;
 let leaders = [];
-
+let canvas;
 
 function setup() {
-  createCanvas(window.innerWidth, window.innerHeight);
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
+  console.log(window.innerWidth);
+  console.log(window.innerHeight);
   shieldImage = loadImage("shield.png");
   input = createInput();
   input.position(width/2-250, height/2);
@@ -281,7 +283,11 @@ function updateFoods(data) {
 
 }
 
-
+window.onresize = function() {
+  console.log("I JUST RESIZED");
+  console.log(canvas);
+  canvas.size(window.innerWidth, window.innerHeight);
+}
 
 function mousePressed() {
 
