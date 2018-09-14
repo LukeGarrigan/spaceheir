@@ -44,8 +44,8 @@ function setupFood() {
     };
     foods.push(food);
   }
-
 }
+
 setInterval(broadcastPlayers, 16);
 
 function broadcastPlayers() {
@@ -145,24 +145,24 @@ function updatePlayerEatingFood(player) {
 }
 
 function updatePlayerGettingShot(player) {
-    for (let i = bullets.length -1; i >= 0; i--) {
-      if (player.id !== bullets[i].clientId) {
-        if (Math.abs(bullets[i].x-player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
-          io.sockets.emit('bulletHit', bullets[i].id);
-          console.log(player.shield);
-          player.shield -= 75;
+  for (let i = bullets.length -1; i >= 0; i--) {
+    if (player.id !== bullets[i].clientId) {
+      if (Math.abs(bullets[i].x-player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
+        io.sockets.emit('bulletHit', bullets[i].id);
+        console.log(player.shield);
+        player.shield -= 75;
 
-          let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
+        let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
 
-          if (player.shield <= 0) {
-            updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
-            player.score = 0;
-          }
-          bullets.splice(i, 1);
-
+        if (player.shield <= 0) {
+          updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
+          player.score = 0;
         }
+        bullets.splice(i, 1);
+
       }
     }
+  }
 }
 
 function updatePlayerScore(id, isCurrentPlayerWinning, score) {
@@ -171,10 +171,17 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       console.log("Increasing players score!!!");
       players[i].score++;
       if (isCurrentPlayerWinning) {
-        players[i].shield += score * 100;
-        if (players[i].shield > MAX_SHIELD) {
-          player.shield = MAX_SHIELD;
-        }
+        let scoreIncrease = score * 100;
+        io.to(id).emit('increaseShield', scoreIncrease);
+        players[i].shield += scoreIncrease;
+      } else {
+        let scoreIncrease = score * 10;
+        io.to(id).emit('increaseShield', scoreIncrease);
+        players[i].shield += scoreIncrease;
+      }
+
+      if (players[i].shield > MAX_SHIELD) {
+        player.shield = MAX_SHIELD;
       }
     }
   }

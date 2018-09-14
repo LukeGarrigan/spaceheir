@@ -14,6 +14,8 @@ let gameStarted = false;
 let leaders = [];
 let canvas;
 
+let popup;
+
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   console.log(window.innerWidth);
@@ -43,11 +45,15 @@ function setupGame() {
     socket.on('foods', updateFoods);
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
+    socket.on('increaseShield', displayIncreasedShieldMessage)
     gameStarted = true;
     emitPlayerPosition();
   }
 }
 
+function displayIncreasedShieldMessage(data) {
+   popup = new Popup(player.pos.x, player.pos.y, data);
+}
 
 function draw() {
   background(0);
@@ -91,6 +97,9 @@ function draw() {
     }
 
     player.updateAndDisplayPlayer(leaders);
+    if (popup) {
+      popup.display();
+    }
 
     for (var i = food.length - 1; i >= 0; i--) {
       food[i].display();
@@ -100,6 +109,7 @@ function draw() {
     drawOtherPlayers();
     emitPlayersBullets();
     drawLeaders();
+
   }
 
 }
