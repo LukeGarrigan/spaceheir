@@ -14,7 +14,7 @@ let gameStarted = false;
 let leaders = [];
 let canvas;
 
-let popup;
+let popups = [];
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -22,9 +22,9 @@ function setup() {
   console.log(window.innerHeight);
   shieldImage = loadImage("shield.png");
   input = createInput();
-  input.position(width/2-250, height/2);
+  input.position(width / 2 - 250, height / 2);
   button = createButton("Play");
-  button.position(width/2-250, height/2+80);
+  button.position(width / 2 - 250, height / 2 + 80);
   button.mousePressed(setupGame);
 }
 
@@ -48,11 +48,12 @@ function setupGame() {
     socket.on('increaseShield', displayIncreasedShieldMessage)
     gameStarted = true;
     emitPlayerPosition();
+    popup = new Popup("100");
   }
 }
 
 function displayIncreasedShieldMessage(data) {
-   popup = new Popup(player.pos.x, player.pos.y, data);
+  popups.push(new Popup(data));
 }
 
 function draw() {
@@ -62,8 +63,8 @@ function draw() {
   textSize(15);
   if (gameStarted) {
     text(floor(player.shield), width - 54, 35);
-    text("X: " + floor(player.pos.x), width - 100, height -100);
-    text("Y: " + floor(player.pos.y), width - 100, height -75);
+    text("X: " + floor(player.pos.x), width - 100, height - 100);
+    text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
     timeSinceLastShot++;
 
@@ -97,8 +98,11 @@ function draw() {
     }
 
     player.updateAndDisplayPlayer(leaders);
-    if (popup) {
-      popup.display();
+
+    if (popups.length > 0) {
+      for (const popup of popups) {
+        popup.display();
+      }
     }
 
     for (var i = food.length - 1; i >= 0; i--) {
@@ -122,7 +126,7 @@ function drawLeaders() {
   for (let i = 0; i < leaders.length && i < 10; i++) {
     push();
     textAlign(LEFT);
-    text(leaders[i].name + " : " +leaders[i].score, player.pos.x-width/2+25, player.pos.y-height/2+50 + i*20);
+    text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
     pop();
   }
 }
@@ -133,12 +137,12 @@ function emitPlayerAngle() {
 
 function emitPlayersBullets() {
   let myBullets = [];
-  for (let i  = 0; i < bullets.length; i++) {
+  for (let i = 0; i < bullets.length; i++) {
     if (bullets[i].shooterId == socket.id) {
       let bullet = {
-        id : bullets[i].id,
-        x : bullets[i].pos.x,
-        y : bullets[i].pos.y
+        id: bullets[i].id,
+        x: bullets[i].pos.x,
+        y: bullets[i].pos.y
       };
       myBullets.push(bullet);
     }
@@ -216,7 +220,7 @@ function drawOtherPlayers() {
     triangle(-21, 21, 0, -21, 21, 21);
     pop();
     textAlign(CENTER);
-    text(otherPlayers[i].name, otherPlayers[i].x, otherPlayers[i].y+49);
+    text(otherPlayers[i].name, otherPlayers[i].x, otherPlayers[i].y + 49);
 
   }
 }
@@ -281,7 +285,7 @@ function updateFoods(data) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;
     for (let j = 0; j < food.length; j++) {
-      if(data[i].id == food[j].id) {
+      if (data[i].id == food[j].id) {
         exists = true;
         if (data[i].x !== food[j].x || data[i].y !== food[j].y) {
           food[j].x = data[i].x;
@@ -300,7 +304,7 @@ function updateFoods(data) {
 
 }
 
-window.onresize = function() {
+window.onresize = function () {
   console.log("I JUST RESIZED");
   console.log(canvas);
   canvas.size(window.innerWidth, window.innerHeight);
@@ -316,7 +320,7 @@ function mousePressed() {
 
 
 function removeBullet(id) {
-  for (let i = bullets.length-1; i >= 0; i--) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
     if (bullets[i].id == id) {
       bullets.splice(i, 1);
       break;

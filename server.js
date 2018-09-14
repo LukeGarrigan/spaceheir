@@ -31,16 +31,16 @@ setupFood();
 
 function setupFood() {
 
-  for (let i = 0; i < NUM_FOOD; i++ ) {
-    let foodX = Math.floor(Math.random() * (1920*3)) + 1;
-    let foodY = Math.floor(Math.random() * (1080*3)) + 1;
+  for (let i = 0; i < NUM_FOOD; i++) {
+    let foodX = Math.floor(Math.random() * (1920 * 3)) + 1;
+    let foodY = Math.floor(Math.random() * (1080 * 3)) + 1;
     let foodRadius = Math.floor(Math.random() * 22) + 1;
 
     let food = {
-      x : foodX,
-      y : foodY,
-      r : foodRadius,
-      id : i
+      x: foodX,
+      y: foodY,
+      r: foodRadius,
+      id: i
     };
     foods.push(food);
   }
@@ -110,14 +110,14 @@ function updatePlayerPosition(player) {
 
   // constrain - so moving to the edge of the screen
   if (player.x < 0) {
-    player.x = 1920*3;
-  } else if (player.x > 1920*3) {
+    player.x = 1920 * 3;
+  } else if (player.x > 1920 * 3) {
     player.x = 0;
   }
 
   if (player.y < 0) {
-    player.y = 1080*3;
-  } else if (player.y > 1080*3) {
+    player.y = 1080 * 3;
+  } else if (player.y > 1080 * 3) {
     player.y = 0;
   }
 
@@ -132,10 +132,11 @@ function updatePlayerPosition(player) {
 
 function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
-    if (Math.abs(foods[i].x-player.x) + Math.abs(foods[i].y-player.y) < 21 + foods[i].r) {
+    if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       player.shield += foods[i].r;
-      let foodX = Math.floor(Math.random() * (1920*3)) + 1;
-      let foodY = Math.floor(Math.random() * (1080*3)) + 1;
+      io.to(player.id).emit('increaseShield', foods[i].r);
+      let foodX = Math.floor(Math.random() * (1920 * 3)) + 1;
+      let foodY = Math.floor(Math.random() * (1080 * 3)) + 1;
       foods[i].x = foodX;
       foods[i].y = foodY;
 
@@ -145,9 +146,9 @@ function updatePlayerEatingFood(player) {
 }
 
 function updatePlayerGettingShot(player) {
-  for (let i = bullets.length -1; i >= 0; i--) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
     if (player.id !== bullets[i].clientId) {
-      if (Math.abs(bullets[i].x-player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
+      if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
         io.sockets.emit('bulletHit', bullets[i].id);
         console.log(player.shield);
         player.shield -= 75;
@@ -200,126 +201,126 @@ function checkIfCurrentPlayerIsWinning(id) {
 }
 
 io.sockets.on('connection', function newConnection(socket) {
-    console.log("new connection "+ socket.id);
-    setupPlayerLastShot(socket);
+  console.log("new connection " + socket.id);
+  setupPlayerLastShot(socket);
 
-    socket.emit('foods', foods);
+  socket.emit('foods', foods);
 
-    socket.on('player', function playerMessage(playerData) {
-      playerData.id = socket.id;
-      playerData.shield = 100;
-      playerData.isUp = false;
-      playerData.isDown = false;
-      playerData.isLeft = false;
-      playerData.isRight = false;
-      playerData.isBoosting = false;
-      playerData.r = 21;
-      playerData.score = 0;
+  socket.on('player', function playerMessage(playerData) {
+    playerData.id = socket.id;
+    playerData.shield = 100;
+    playerData.isUp = false;
+    playerData.isDown = false;
+    playerData.isLeft = false;
+    playerData.isRight = false;
+    playerData.isBoosting = false;
+    playerData.r = 21;
+    playerData.score = 0;
 
-      let playersName = playerData.name.substring(0, 15);
-      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
-      players.push(playerData);
+    let playersName = playerData.name.substring(0, 15);
+    playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
+    players.push(playerData);
 
-      addNewPlayerToLeaderboard(playerData);
-    });
+    addNewPlayerToLeaderboard(playerData);
+  });
 
-    socket.on('bullet', function() {
-      for (let i = players.length-1; i >= 0; i--) {
-        if (players[i].id == socket.id) {
-          processPlayerShooting(players[i], socket);
+  socket.on('bullet', function () {
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id) {
+        processPlayerShooting(players[i], socket);
+      }
+    }
+  });
+
+
+  socket.on('disconnect', function () {
+    console.log("Player disconnected");
+
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id) {
+        players.splice(i, 1);
+      }
+    }
+
+    for (let i = leaderboard.length - 1; i >= 0; i--) {
+      if (leaderboard[i].id == socket.id) {
+        leaderboard.splice(i, 1);
+      }
+    }
+    socket.broadcast.emit('playerDisconnected', socket.id);
+  });
+
+  socket.on('keyPressed', function (direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = true;
+        } else if (direction == "down") {
+          players[i].isDown = true;
+        } else if (direction == "left") {
+          players[i].isLeft = true;
+        } else if (direction == "right") {
+          players[i].isRight = true;
+        } else if (direction == "spacebar") {
+          players[i].isBoosting = true;
         }
       }
-    });
+    }
+  });
 
-
-    socket.on('disconnect', function (){
-      console.log("Player disconnected");
-
-      for (let i = players.length-1; i >= 0; i--) {
-        if (players[i].id == socket.id) {
-          players.splice(i, 1);
+  socket.on('keyReleased', function (direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = false;
+        } else if (direction == "down") {
+          players[i].isDown = false;
+        } else if (direction == "left") {
+          players[i].isLeft = false;
+        } else if (direction == "right") {
+          players[i].isRight = false;
+        } else if (direction == "spacebar") {
+          players[i].isBoosting = false;
         }
       }
+    }
+  });
 
-      for (let i = leaderboard.length-1; i >= 0; i--) {
-        if (leaderboard[i].id == socket.id) {
-          leaderboard.splice(i, 1);
+  socket.on('angle', function (angle) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        players[i].angle = angle;
+      }
+    }
+  });
+
+
+  socket.on('reduceShield', function () {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        players[i].shield -= 75;
+      }
+    }
+  });
+
+
+  socket.on('playerBullets', function (myBullets) {
+    for (let i = 0; i < myBullets.length; i++) {
+      for (let j = 0; j < bullets.length; j++) {
+        if (myBullets[i].id == bullets[j].id) {
+          bullets[j].x = myBullets[i].x;
+          bullets[j].y = myBullets[i].y;
         }
       }
-      socket.broadcast.emit('playerDisconnected', socket.id);
-    });
-
-    socket.on('keyPressed', function(direction){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          if (direction == "up") {
-            players[i].isUp = true;
-          } else if (direction == "down") {
-            players[i].isDown = true;
-          } else if (direction == "left") {
-            players[i].isLeft = true;
-          } else if (direction == "right") {
-            players[i].isRight = true;
-          } else if (direction == "spacebar") {
-            players[i].isBoosting = true;
-          }
-        }
-      }
-    });
-
-    socket.on('keyReleased', function(direction){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          if (direction == "up") {
-            players[i].isUp = false;
-          } else if (direction == "down") {
-            players[i].isDown = false;
-          } else if (direction == "left") {
-            players[i].isLeft = false;
-          } else if (direction == "right") {
-            players[i].isRight = false;
-          } else if (direction == "spacebar") {
-            players[i].isBoosting = false;
-          }
-        }
-      }
-    });
-
-    socket.on('angle', function(angle){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          players[i].angle = angle;
-        }
-      }
-    });
-
-
-    socket.on('reduceShield', function(){
-      for (let i = 0; i < players.length; i++) {
-        if (socket.id == players[i].id) {
-          players[i].shield -= 75;
-        }
-      }
-    });
-
-
-    socket.on('playerBullets', function(myBullets){
-      for (let i = 0; i < myBullets.length; i++) {
-        for (let j = 0; j < bullets.length; j++) {
-          if (myBullets[i].id == bullets[j].id) {
-            bullets[j].x = myBullets[i].x;
-            bullets[j].y = myBullets[i].y;
-          }
-        }
-      }
-    });
+    }
+  });
 
 });
 
 function setupPlayerLastShot(socket) {
   let playerLastShot = {
-    id : socket.id,
-    date : Date.now()
+    id: socket.id,
+    date: Date.now()
   }
   playersLastShot.push(playerLastShot);
 }
@@ -328,7 +329,7 @@ function processPlayerShooting(player, socket) {
   for (let i = 0; i < playersLastShot.length; i++) {
     if (playersLastShot[i].id == socket.id) {
       let previousShot = playersLastShot[i].date;
-      let timeSinceLastShot = Date.now()-previousShot;
+      let timeSinceLastShot = Date.now() - previousShot;
       if (timeSinceLastShot > 200) {
         playersLastShot[i].date = Date.now();
 
@@ -356,17 +357,17 @@ function updateLeaderboard() {
   }
 
   console.log("sorting");
-  leaderboard.sort(function(a, b){
+  leaderboard.sort(function (a, b) {
     return a.score < b.score;
   });
 }
 
 function addNewPlayerToLeaderboard(playerData) {
-    let player = {
-      id : playerData.id,
-      name : playerData.name,
-      score : playerData.score
-    };
+  let player = {
+    id: playerData.id,
+    name: playerData.name,
+    score: playerData.score
+  };
 
-    leaderboard.push(player);
+  leaderboard.push(player);
 }
