@@ -18,30 +18,9 @@ function Player(name) {
 
 
   this.updateAndDisplayPlayer = function() {
-    this.update();
     this.display();
     this.constrain();
   }
-
-  this.update = function() {
-    if (this.isUp) {
-      this.pos.y -= this.speed;
-    }
-    if (this.isDown) {
-      this.pos.y += this.speed;
-    }
-
-    if (this.isLeft) {
-      this.pos.x -= this.speed;
-    }
-
-    if (this.isRight) {
-      this.pos.x += this.speed;
-    }
-
-  }
-
-
   this.display = function() {
 
     push();

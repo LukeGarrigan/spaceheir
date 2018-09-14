@@ -108,8 +108,11 @@ function updateLeaderboard(leaderboard) {
 }
 
 function drawLeaders() {
-  for (let i = 0; i < leaders.length; i++) {
-    text(leaders[i].name + " : " +leaders[i].score, player.pos.x-width/2+50, player.pos.y-height/2+50 + i*20);
+  for (let i = 0; i < leaders.length && i < 10; i++) {
+    push();
+    textAlign(LEFT);
+    text(leaders[i].name + " : " +leaders[i].score, player.pos.x-width/2+25, player.pos.y-height/2+50 + i*20);
+    pop();
   }
 }
 
@@ -202,6 +205,7 @@ function drawOtherPlayers() {
 
 
 function keyPressed() {
+  console.log(keyCode);
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
@@ -211,6 +215,8 @@ function keyPressed() {
       socket.emit('keyPressed', "left");
     } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
       socket.emit('keyPressed', "right");
+    } else if (keyCode == 32) {
+      socket.emit('keyPressed', "spacebar");
     }
   }
 
@@ -226,6 +232,8 @@ function keyReleased() {
       socket.emit('keyReleased', "left");
     } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
       socket.emit('keyReleased', "right");
+    } else if (keyCode == 32) {
+      socket.emit('keyReleased', "spacebar");
     }
   }
 }

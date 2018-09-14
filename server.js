@@ -61,7 +61,7 @@ function broadcastPlayers() {
 
 
 function updatePlayerPosition(player) {
-  if (player.shield <= 0) {
+  if (player.shield < 0) {
     player.x = Math.floor(Math.random() * 1920) + 1;
     player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
@@ -72,19 +72,40 @@ function updatePlayerPosition(player) {
   }
 
   if (player.isUp) {
-    player.y -= 2;
+    if (player.isBoosting && player.shield > 0) {
+      player.y -= 5;
+    } else {
+      player.y -= 2;
+    }
   }
   if (player.isDown) {
-    player.y += 2;
+    if (player.isBoosting && player.shield > 0) {
+      player.y += 5;
+    } else {
+      player.y += 2;
+    }
   }
 
   if (player.isLeft) {
-    player.x -= 2;
+    if (player.isBoosting && player.shield > 0) {
+      player.x -= 5;
+    } else {
+      player.x -= 2;
+    }
   }
 
   if (player.isRight) {
-    player.x += 2;
+    if (player.isBoosting && player.shield > 0) {
+      player.x += 5;
+    } else {
+      player.x += 2;
+    }
   }
+
+  if (player.isBoosting && player.shield > 0) {
+    player.shield--;
+  }
+
 
   // constrain - so moving to the edge of the screen
   if (player.x < 0) {
@@ -98,6 +119,8 @@ function updatePlayerPosition(player) {
   } else if (player.y > 1080*3) {
     player.y = 0;
   }
+
+
 
 
   updatePlayerEatingFood(player);
@@ -160,6 +183,7 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.isDown = false;
       playerData.isLeft = false;
       playerData.isRight = false;
+      playerData.isBoosting = false;
       playerData.r = 21;
       playerData.score = 0;
 
@@ -187,6 +211,12 @@ io.sockets.on('connection', function newConnection(socket) {
           players.splice(i, 1);
         }
       }
+
+      for (let i = leaderboard.length-1; i >= 0; i--) {
+        if (leaderboard[i].id == socket.id) {
+          leaderboard.splice(i, 1);
+        }
+      }
       socket.broadcast.emit('playerDisconnected', socket.id);
     });
 
@@ -201,6 +231,8 @@ io.sockets.on('connection', function newConnection(socket) {
             players[i].isLeft = true;
           } else if (direction == "right") {
             players[i].isRight = true;
+          } else if (direction == "spacebar") {
+            players[i].isBoosting = true;
           }
         }
       }
@@ -217,6 +249,8 @@ io.sockets.on('connection', function newConnection(socket) {
             players[i].isLeft = false;
           } else if (direction == "right") {
             players[i].isRight = false;
+          } else if (direction == "spacebar") {
+            players[i].isBoosting = false;
           }
         }
       }
