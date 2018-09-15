@@ -17,11 +17,6 @@ function Player(name) {
   this.score = 0;
 
 
-  this.updateAndDisplayPlayer = function(leaders) {
-    this.display(leaders);
-    this.constrain();
-  }
-
   this.display = function(leaders) {
     push();
     translate(this.pos.x, this.pos.y);
@@ -55,11 +50,6 @@ function Player(name) {
     pop();
   }
 
-
-  this.constrain = function() {
-
-
-  }
 
   this.increaseShield = function(sizeOfFood) {
     if (this.shield < MAX_SHIELD) {

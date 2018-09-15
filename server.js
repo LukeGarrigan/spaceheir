@@ -147,6 +147,7 @@ function updatePlayerGettingShot(player) {
         io.sockets.emit('bulletHit', bullets[i].id);
         console.log(player.shield);
         player.shield -= 75;
+        io.to(player.id).emit('increaseShield', -75);
 
         let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
 
@@ -155,7 +156,6 @@ function updatePlayerGettingShot(player) {
           player.score = 0;
         }
         bullets.splice(i, 1);
-
       }
     }
   }
@@ -168,6 +168,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       players[i].score++;
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
+        scoreIncrease = score == 0 ? 50 : score;
         io.to(id).emit('increaseShield', scoreIncrease);
         players[i].shield += scoreIncrease;
       } else {

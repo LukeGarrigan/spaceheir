@@ -17,14 +17,13 @@ let canvas;
 let popups = [];
 
 function setup() {
+  background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  console.log(window.innerWidth);
-  console.log(window.innerHeight);
   shieldImage = loadImage("shield.png");
   input = createInput();
-  input.position(width / 2 - 250, height / 2);
+  input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
   button = createButton("Play");
-  button.position(width / 2 - 250, height / 2 + 80);
+  button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(setupGame);
 }
 
@@ -52,7 +51,6 @@ function setupGame() {
 }
 
 function displayIncreasedShieldMessage(data) {
-  console.log("Increase by " + data);
   let popup;
   if (data < 0) {
     popup = new DecreaseShield(data);
@@ -104,7 +102,8 @@ function draw() {
       }
     }
 
-    player.updateAndDisplayPlayer(leaders);
+    player.display(leaders);
+
 
     if (popups.length > 0) {
       for (let i = popups.length - 1; i >= 0; i--) {
@@ -142,7 +141,13 @@ function drawLeaders() {
   for (let i = 0; i < leaders.length && i < 10; i++) {
     push();
     textAlign(LEFT);
-    text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    if (i == 0) {
+      fill(255, 0, 0);
+      stroke(255,0, 0);
+      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    } else {
+      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    }
     pop();
   }
 }
@@ -176,7 +181,6 @@ function emitPlayerPosition() {
     name: player.name
   }
 
-  console.log(playerPosition);
   socket.emit('player', playerPosition);
 }
 
@@ -244,7 +248,6 @@ function drawOtherPlayers() {
 
 
 function keyPressed() {
-  console.log(keyCode);
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
@@ -321,9 +324,12 @@ function updateFoods(data) {
 }
 
 window.onresize = function () {
-  console.log("I JUST RESIZED");
-  console.log(canvas);
+  background(0);
   canvas.size(window.innerWidth, window.innerHeight);
+  if (!gameStarted) {
+    input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
+    button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+  }
 }
 
 function mousePressed() {

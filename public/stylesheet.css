@@ -1,4 +1,5 @@
 
+
 input {
     font-size: 20px;
     width:500px;
@@ -26,6 +27,7 @@ button {
 
 
 body {
+  background: black;
   height: 100vh;
   width:100vw;
   overflow:hidden;
