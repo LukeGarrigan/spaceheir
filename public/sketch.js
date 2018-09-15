@@ -46,6 +46,13 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
+    socket.on('respawn-start', timeOut => {
+      player.respawning = true;
+      console.log(player)
+    })
+    socket.on('respawn-end', () => {
+      player.respawning = false;
+    })
     gameStarted = true;
     emitPlayerPosition();
   }
@@ -236,8 +243,11 @@ function drawOtherPlayers() {
     triangle(-21, 21, 0, -21, 21, 21);
     pop();
     textAlign(CENTER);
-    text(otherPlayers[i].name, otherPlayers[i].x, otherPlayers[i].y + 49);
-
+    let name = otherPlayers[i].name
+    if (otherPlayers[i].lastDeath !== null) {
+      name += ' [respawning...]'
+    }
+    text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
 }
 

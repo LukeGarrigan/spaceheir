@@ -15,6 +15,7 @@ function Player(name) {
   this.speed = 2;
   this.shield = 0;
   this.score = 0;
+  this.respawning = false;
 
 
   this.updateAndDisplayPlayer = function(leaders) {
@@ -48,7 +49,11 @@ function Player(name) {
     textAlign(CENTER);
 
 
-    text(name, this.pos.x, this.pos.y+49);
+    if (this.respawning) {
+      fill(255, 0, 0)
+      textSize(32)
+    }
+    text(this.respawning ? 'respawning...' : name, this.pos.x, this.pos.y+49);
     push();
     textSize(30);
     text(this.score, this.pos.x, this.pos.y - height/2 + 80);

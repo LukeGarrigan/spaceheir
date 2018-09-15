@@ -62,12 +62,29 @@ function broadcastPlayers() {
 
 
 function updatePlayerPosition(player) {
+  if (player.lastDeath !== null) {
+    const currentDate = new Date()
+    if (player.lastDeath > currentDate) {
+      return
+    } else {
+      io.to(player.id).emit('respawn-end')
+      player.lastDeath = null
+    }
+  }
+
   if (player.shield < 0) {
-    player.x = Math.floor(Math.random() * 1920) + 1;
-    player.y = Math.floor(Math.random() * 1080) + 1;
+    player.x = 50;
+    player.y = 50;
     player.shield = 100;
     player.score = 0;
-    updateLeaderboard();
+
+    const timeOutInSeconds = 5;
+    player.lastDeath = new Date();
+    player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
+
+    io.sockets.emit('heartbeat', players);
+    io.to(player.id).emit('respawn-start', timeOutInSeconds)
+    return
   } else if (player.shield > MAX_SHIELD) {
     player.shield = MAX_SHIELD;
   }
@@ -221,7 +238,7 @@ io.sockets.on('connection', function newConnection(socket) {
 
   socket.on('bullet', function () {
     for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id) {
+      if (players[i].id == socket.id && players[i].lastDeath === null) {
         processPlayerShooting(players[i], socket);
       }
     }
@@ -361,7 +378,8 @@ function addNewPlayerToLeaderboard(playerData) {
   let player = {
     id: playerData.id,
     name: playerData.name,
-    score: playerData.score
+    score: playerData.score,
+    lastDeath: null
   };
 
   leaderboard.push(player);
