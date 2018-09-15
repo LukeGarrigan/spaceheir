@@ -48,12 +48,18 @@ function setupGame() {
     socket.on('increaseShield', displayIncreasedShieldMessage)
     gameStarted = true;
     emitPlayerPosition();
-    popup = new Popup("100");
   }
 }
 
 function displayIncreasedShieldMessage(data) {
-  popups.push(new Popup(data));
+  console.log("Increase by " + data);
+  let popup;
+  if (data < 0) {
+    popup = new DecreaseShield(data);
+  } else {
+    popup = new Popup(data);
+  }
+  popups.push(popup);
 }
 
 function draw() {
@@ -80,6 +86,7 @@ function draw() {
       asteroids[i].updateAndDisplayAsteroid();
       if (asteroids[i].checkCollisionsWithPlayer(asteroids, player, i)) {
         socket.emit('reduceShield');
+        displayIncreasedShieldMessage(-75)
       }
     }
 
@@ -100,9 +107,18 @@ function draw() {
     player.updateAndDisplayPlayer(leaders);
 
     if (popups.length > 0) {
-      for (const popup of popups) {
-        popup.display();
+      for (let i = popups.length - 1; i >= 0; i--) {
+
+        popups[i].update();
+        popups[i].display();
+
+        if (!popups[i].isVisible) {
+          popups.splice(i, 1);
+        }
       }
+
+
+
     }
 
     for (var i = food.length - 1; i >= 0; i--) {

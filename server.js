@@ -105,6 +105,7 @@ function updatePlayerPosition(player) {
 
   if (player.isBoosting && player.shield > 0) {
     player.shield--;
+    io.to(player.id).emit('increaseShield', -1);
   }
 
 
@@ -120,14 +121,8 @@ function updatePlayerPosition(player) {
   } else if (player.y > 1080 * 3) {
     player.y = 0;
   }
-
-
-
-
   updatePlayerEatingFood(player);
   updatePlayerGettingShot(player);
-
-
 }
 
 function updatePlayerEatingFood(player) {
