@@ -73,8 +73,8 @@ function updatePlayerPosition(player) {
   }
 
   if (player.shield < 0) {
-    player.x = 50;
-    player.y = 50;
+    player.x = Math.floor(Math.random() * 1920) + 1;
+    player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
     player.score = 0;
 
