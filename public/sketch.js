@@ -259,6 +259,7 @@ function drawOtherPlayers() {
     if (otherPlayers[i].lastDeath !== null) {
       name += ' [respawning...]'
     }
+    textSize(15);
     text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
 }
