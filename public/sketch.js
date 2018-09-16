@@ -50,7 +50,15 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
-    socket.on('respawn-start', () => player.respawning = true);
+    socket.on('respawn-start', timeOutInSeconds => {
+      player.respawning = true;
+
+      for (let i = 0; i < timeOutInSeconds; i++) {
+        setTimeout(() => {
+          popups.push(new BasicTextPopup(timeOutInSeconds - i, 32));
+        }, i * 1000);
+      }
+    });
     socket.on('respawn-end', () => player.respawning = false);
     socket.on('playExplosion', playExplosion)
     gameStarted = true;
