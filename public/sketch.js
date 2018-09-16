@@ -18,6 +18,7 @@ let popups = [];
 function preload() {
   boostSound = loadSound('assets/sounds/boost.wav');
   shotSound =  loadSound('assets/sounds/shot.wav');
+  explosionSound = loadSound('assets/sounds/explode1.wav');
   shotSound.setVolume(0.1)
 }
 function setup() {
@@ -49,11 +50,15 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
+    socket.on('playExplosion', playExplosion)
     gameStarted = true;
     emitPlayerPosition();
   }
 }
 
+function playExplosion(){
+  explosionSound.play();
+}
 function displayIncreasedShieldMessage(data) {
   let popup;
   if (data < 0) {
