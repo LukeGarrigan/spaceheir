@@ -53,7 +53,7 @@ function broadcastPlayers() {
     updatePlayerPosition(players[i]);
   }
 
-  io.sockets.emit('leaderboard', leaderboard)
+  io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
 
@@ -82,8 +82,10 @@ function updatePlayerPosition(player) {
     player.lastDeath = new Date();
     player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
 
+    updateLeaderboard();
     io.sockets.emit('heartbeat', players);
     io.to(player.id).emit('respawn-start', timeOutInSeconds)
+    io.to(player.id).emit('playExplosion');
     return
   } else if (player.shield > MAX_SHIELD) {
     player.shield = MAX_SHIELD;
@@ -164,15 +166,17 @@ function updatePlayerGettingShot(player) {
         io.sockets.emit('bulletHit', bullets[i].id);
         console.log(player.shield);
         player.shield -= 75;
+        io.to(player.id).emit('increaseShield', -75);
 
         let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
 
         if (player.shield <= 0) {
           updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
           player.score = 0;
+          io.to(player.id).emit('playExplosion');
+          io.to(bullets[i].clientId).emit('playExplosion');
         }
         bullets.splice(i, 1);
-
       }
     }
   }
@@ -185,6 +189,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       players[i].score++;
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
+        scoreIncrease = score == 0 ? 50 : score;
         io.to(id).emit('increaseShield', scoreIncrease);
         players[i].shield += scoreIncrease;
       } else {
@@ -292,6 +297,7 @@ io.sockets.on('connection', function newConnection(socket) {
         } else if (direction == "right") {
           players[i].isRight = false;
         } else if (direction == "spacebar") {
+
           players[i].isBoosting = false;
         }
       }
@@ -326,7 +332,10 @@ io.sockets.on('connection', function newConnection(socket) {
       }
     }
   });
-
+  socket.on('playerDestruction', function() {
+    console.log("Player Destruction fired")
+    sounds.playSound(explosionSound)
+  });
 });
 
 function setupPlayerLastShot(socket) {

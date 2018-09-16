@@ -15,16 +15,20 @@ let leaders = [];
 let canvas;
 
 let popups = [];
-
+function preload() {
+  boostSound = loadSound('assets/sounds/boost.wav');
+  shotSound =  loadSound('assets/sounds/shot.wav');
+  explosionSound = loadSound('assets/sounds/explode1.wav');
+  shotSound.setVolume(0.1)
+}
 function setup() {
+  background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  console.log(window.innerWidth);
-  console.log(window.innerHeight);
   shieldImage = loadImage("shield.png");
   input = createInput();
-  input.position(width / 2 - 250, height / 2);
+  input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
   button = createButton("Play");
-  button.position(width / 2 - 250, height / 2 + 80);
+  button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(setupGame);
 }
 
@@ -46,20 +50,18 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
-    socket.on('respawn-start', timeOut => {
-      player.respawning = true;
-      console.log(player)
-    })
-    socket.on('respawn-end', () => {
-      player.respawning = false;
-    })
+    socket.on('respawn-start', () => player.respawning = true);
+    socket.on('respawn-end', () => player.respawning = false);
+    socket.on('playExplosion', playExplosion)
     gameStarted = true;
     emitPlayerPosition();
   }
 }
 
+function playExplosion(){
+  explosionSound.play();
+}
 function displayIncreasedShieldMessage(data) {
-  console.log("Increase by " + data);
   let popup;
   if (data < 0) {
     popup = new DecreaseShield(data);
@@ -111,7 +113,10 @@ function draw() {
       }
     }
 
-    player.updateAndDisplayPlayer(leaders);
+    player.display(leaders);
+    if(player.shield <= 0){ // This should be somewhere more sensible.
+      boostSound.stop();
+    }
 
     if (popups.length > 0) {
       for (let i = popups.length - 1; i >= 0; i--) {
@@ -149,7 +154,13 @@ function drawLeaders() {
   for (let i = 0; i < leaders.length && i < 10; i++) {
     push();
     textAlign(LEFT);
-    text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    if (i == 0) {
+      fill(255, 0, 0);
+      stroke(255,0, 0);
+      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    } else {
+      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
+    }
     pop();
   }
 }
@@ -170,6 +181,7 @@ function emitPlayersBullets() {
       myBullets.push(bullet);
     }
   }
+
   socket.emit('playerBullets', myBullets);
 
 
@@ -183,7 +195,6 @@ function emitPlayerPosition() {
     name: player.name
   }
 
-  console.log(playerPosition);
   socket.emit('player', playerPosition);
 }
 
@@ -254,7 +265,6 @@ function drawOtherPlayers() {
 
 
 function keyPressed() {
-  console.log(keyCode);
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
@@ -266,6 +276,9 @@ function keyPressed() {
       socket.emit('keyPressed', "right");
     } else if (keyCode == 32) {
       socket.emit('keyPressed', "spacebar");
+      if(player.shield > 0) {
+       boostSound.play();
+      }
     }
   }
 
@@ -283,6 +296,7 @@ function keyReleased() {
       socket.emit('keyReleased', "right");
     } else if (keyCode == 32) {
       socket.emit('keyReleased', "spacebar");
+      boostSound.stop();
     }
   }
 }
@@ -331,14 +345,18 @@ function updateFoods(data) {
 }
 
 window.onresize = function () {
-  console.log("I JUST RESIZED");
-  console.log(canvas);
+  background(0);
   canvas.size(window.innerWidth, window.innerHeight);
+  if (!gameStarted) {
+    input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
+    button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+  }
 }
 
 function mousePressed() {
 
   if (timeSinceLastShot > 20) {
+    shotSound.play();
     socket.emit('bullet');
     timeSinceLastShot = 0;
   }
