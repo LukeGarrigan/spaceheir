@@ -50,6 +50,16 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
+    socket.on('respawn-start', timeOutInSeconds => {
+      player.respawning = true;
+
+      for (let i = 0; i < timeOutInSeconds; i++) {
+        setTimeout(() => {
+          popups.push(new BasicTextPopup(timeOutInSeconds - i, 32));
+        }, i * 1000);
+      }
+    });
+    socket.on('respawn-end', () => player.respawning = false);
     socket.on('playExplosion', playExplosion)
     gameStarted = true;
     emitPlayerPosition();
@@ -155,6 +165,7 @@ function drawLeaders() {
     if (i == 0) {
       fill(255, 0, 0);
       stroke(255,0, 0);
+      textSize(15);
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
     } else {
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
@@ -240,6 +251,9 @@ function drawOtherPlayers() {
     leaderBoardWinnersId = leaders[0].id;
   }
   for (let i = 0; i < otherPlayers.length; i++) {
+    if (otherPlayers[i].lastDeath !== null) {
+      continue;
+    }
     push();
     translate(otherPlayers[i].x, otherPlayers[i].y);
     fill(0);
@@ -252,8 +266,12 @@ function drawOtherPlayers() {
     triangle(-21, 21, 0, -21, 21, 21);
     pop();
     textAlign(CENTER);
-    text(otherPlayers[i].name, otherPlayers[i].x, otherPlayers[i].y + 49);
-
+    let name = otherPlayers[i].name
+    if (otherPlayers[i].lastDeath !== null) {
+      name += ' [respawning...]'
+    }
+    textSize(15);
+    text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
 }
 
@@ -350,7 +368,7 @@ window.onresize = function () {
 
 function mousePressed() {
 
-  if (timeSinceLastShot > 20) {
+  if (timeSinceLastShot > 20 && !player.respawning) {
     shotSound.play();
     socket.emit('bullet');
     timeSinceLastShot = 0;
