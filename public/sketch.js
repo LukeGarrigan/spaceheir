@@ -15,7 +15,12 @@ let leaders = [];
 let canvas;
 
 let popups = [];
-
+function preload() {
+  boostSound = loadSound('assets/sounds/boost.wav');
+  shotSound =  loadSound('assets/sounds/shot.wav');
+  explosionSound = loadSound('assets/sounds/explode1.wav');
+  shotSound.setVolume(0.1)
+}
 function setup() {
   background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -45,11 +50,15 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
+    socket.on('playExplosion', playExplosion)
     gameStarted = true;
     emitPlayerPosition();
   }
 }
 
+function playExplosion(){
+  explosionSound.play();
+}
 function displayIncreasedShieldMessage(data) {
   let popup;
   if (data < 0) {
@@ -103,7 +112,9 @@ function draw() {
     }
 
     player.display(leaders);
-
+    if(player.shield <= 0){ // This should be somewhere more sensible.
+      boostSound.stop();
+    }
 
     if (popups.length > 0) {
       for (let i = popups.length - 1; i >= 0; i--) {
@@ -168,6 +179,7 @@ function emitPlayersBullets() {
       myBullets.push(bullet);
     }
   }
+
   socket.emit('playerBullets', myBullets);
 
 
@@ -259,6 +271,9 @@ function keyPressed() {
       socket.emit('keyPressed', "right");
     } else if (keyCode == 32) {
       socket.emit('keyPressed', "spacebar");
+      if(player.shield > 0) {
+       boostSound.play();
+      }
     }
   }
 
@@ -276,6 +291,7 @@ function keyReleased() {
       socket.emit('keyReleased', "right");
     } else if (keyCode == 32) {
       socket.emit('keyReleased', "spacebar");
+      boostSound.stop();
     }
   }
 }
@@ -335,6 +351,7 @@ window.onresize = function () {
 function mousePressed() {
 
   if (timeSinceLastShot > 20) {
+    shotSound.play();
     socket.emit('bullet');
     timeSinceLastShot = 0;
   }

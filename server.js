@@ -53,7 +53,7 @@ function broadcastPlayers() {
     updatePlayerPosition(players[i]);
   }
 
-  io.sockets.emit('leaderboard', leaderboard)
+  io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
 
@@ -62,12 +62,15 @@ function broadcastPlayers() {
 
 
 function updatePlayerPosition(player) {
+
   if (player.shield < 0) {
     player.x = Math.floor(Math.random() * 1920) + 1;
     player.y = Math.floor(Math.random() * 1080) + 1;
     player.shield = 100;
     player.score = 0;
     updateLeaderboard();
+    io.to(player.id).emit('playExplosion');
+
   } else if (player.shield > MAX_SHIELD) {
     player.shield = MAX_SHIELD;
   }
@@ -154,6 +157,8 @@ function updatePlayerGettingShot(player) {
         if (player.shield <= 0) {
           updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
           player.score = 0;
+          io.to(player.id).emit('playExplosion');
+          io.to(bullets[i].clientId).emit('playExplosion');
         }
         bullets.splice(i, 1);
       }
@@ -276,6 +281,7 @@ io.sockets.on('connection', function newConnection(socket) {
         } else if (direction == "right") {
           players[i].isRight = false;
         } else if (direction == "spacebar") {
+
           players[i].isBoosting = false;
         }
       }
@@ -310,7 +316,10 @@ io.sockets.on('connection', function newConnection(socket) {
       }
     }
   });
-
+  socket.on('playerDestruction', function() {
+    console.log("Player Destruction fired")
+    sounds.playSound(explosionSound)
+  });
 });
 
 function setupPlayerLastShot(socket) {
