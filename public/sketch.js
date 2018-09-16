@@ -157,6 +157,7 @@ function drawLeaders() {
     if (i == 0) {
       fill(255, 0, 0);
       stroke(255,0, 0);
+      textSize(15);
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
     } else {
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
@@ -355,7 +356,7 @@ window.onresize = function () {
 
 function mousePressed() {
 
-  if (timeSinceLastShot > 20) {
+  if (timeSinceLastShot > 20 && !player.respawning) {
     shotSound.play();
     socket.emit('bullet');
     timeSinceLastShot = 0;

@@ -51,6 +51,7 @@ function Player(name) {
     text(this.respawning ? 'respawning...' : name, this.pos.x, this.pos.y+49);
     push();
     textSize(30);
+    fill(255);
     text(this.score, this.pos.x, this.pos.y - height/2 + 80);
     pop();
   }
