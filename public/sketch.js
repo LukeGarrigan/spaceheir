@@ -243,6 +243,9 @@ function drawOtherPlayers() {
     leaderBoardWinnersId = leaders[0].id;
   }
   for (let i = 0; i < otherPlayers.length; i++) {
+    if (otherPlayers[i].lastDeath !== null) {
+      continue;
+    }
     push();
     translate(otherPlayers[i].x, otherPlayers[i].y);
     fill(0);
