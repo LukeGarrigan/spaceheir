@@ -61,6 +61,7 @@ function broadcastPlayers() {
 
 
 
+
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
     const currentDate = new Date()
@@ -91,40 +92,30 @@ function updatePlayerPosition(player) {
     player.shield = MAX_SHIELD;
   }
 
-  if (player.isUp) {
-    if (player.isBoosting && player.shield > 0) {
-      player.y -= 5;
-    } else {
-      player.y -= 2;
-    }
-  }
-  if (player.isDown) {
-    if (player.isBoosting && player.shield > 0) {
-      player.y += 5;
-    } else {
-      player.y += 2;
-    }
-  }
-
-  if (player.isLeft) {
-    if (player.isBoosting && player.shield > 0) {
-      player.x -= 5;
-    } else {
-      player.x -= 2;
-    }
-  }
-
-  if (player.isRight) {
-    if (player.isBoosting && player.shield > 0) {
-      player.x += 5;
-    } else {
-      player.x += 2;
-    }
-  }
+  let playerSpeed = player.isBoosting && player.shield > 0 ? 3 : 0;
 
   if (player.isBoosting && player.shield > 0) {
     player.shield--;
     io.to(player.id).emit('increaseShield', -1);
+    playerSpeed = 3;
+  } else {
+    playerSpeed = 0;
+  }
+
+  if (player.isUp) {
+    player.y -= 2 + playerSpeed;
+  }
+
+  if (player.isDown) {
+    player.y += 2 + playerSpeed;
+  }
+
+  if (player.isLeft) {
+    player.x -= 2 + playerSpeed;
+  }
+
+  if (player.isRight) {
+    player.x += 2 + playerSpeed;
   }
 
 
@@ -189,11 +180,12 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       players[i].score++;
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
-        scoreIncrease = score == 0 ? 50 : score;
+        scoreIncrease = scoreIncrease == 0 ? 100 : scoreIncrease;
         io.to(id).emit('increaseShield', scoreIncrease);
         players[i].shield += scoreIncrease;
       } else {
         let scoreIncrease = score * 10;
+        scoreIncrease = scoreIncrease == 0 ? 50 : scoreIncrease;
         io.to(id).emit('increaseShield', scoreIncrease);
         players[i].shield += scoreIncrease;
       }
@@ -241,7 +233,7 @@ io.sockets.on('connection', function newConnection(socket) {
     addNewPlayerToLeaderboard(playerData);
   });
 
-  socket.on('bullet', function () {
+  socket.on('bullet', function() {
     for (let i = players.length - 1; i >= 0; i--) {
       if (players[i].id == socket.id && players[i].lastDeath === null) {
         processPlayerShooting(players[i], socket);
@@ -250,7 +242,7 @@ io.sockets.on('connection', function newConnection(socket) {
   });
 
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function() {
     console.log("Player disconnected");
 
     for (let i = players.length - 1; i >= 0; i--) {
@@ -267,7 +259,7 @@ io.sockets.on('connection', function newConnection(socket) {
     socket.broadcast.emit('playerDisconnected', socket.id);
   });
 
-  socket.on('keyPressed', function (direction) {
+  socket.on('keyPressed', function(direction) {
     for (let i = 0; i < players.length; i++) {
       if (socket.id == players[i].id) {
         if (direction == "up") {
@@ -285,7 +277,7 @@ io.sockets.on('connection', function newConnection(socket) {
     }
   });
 
-  socket.on('keyReleased', function (direction) {
+  socket.on('keyReleased', function(direction) {
     for (let i = 0; i < players.length; i++) {
       if (socket.id == players[i].id) {
         if (direction == "up") {
@@ -304,7 +296,7 @@ io.sockets.on('connection', function newConnection(socket) {
     }
   });
 
-  socket.on('angle', function (angle) {
+  socket.on('angle', function(angle) {
     for (let i = 0; i < players.length; i++) {
       if (socket.id == players[i].id) {
         players[i].angle = angle;
@@ -313,7 +305,7 @@ io.sockets.on('connection', function newConnection(socket) {
   });
 
 
-  socket.on('reduceShield', function () {
+  socket.on('reduceShield', function() {
     for (let i = 0; i < players.length; i++) {
       if (socket.id == players[i].id) {
         players[i].shield -= 75;
@@ -322,7 +314,7 @@ io.sockets.on('connection', function newConnection(socket) {
   });
 
 
-  socket.on('playerBullets', function (myBullets) {
+  socket.on('playerBullets', function(myBullets) {
     for (let i = 0; i < myBullets.length; i++) {
       for (let j = 0; j < bullets.length; j++) {
         if (myBullets[i].id == bullets[j].id) {
@@ -378,7 +370,7 @@ function updateLeaderboard() {
   }
 
   console.log("sorting");
-  leaderboard.sort(function (a, b) {
+  leaderboard.sort(function(a, b) {
     return a.score < b.score;
   });
 }

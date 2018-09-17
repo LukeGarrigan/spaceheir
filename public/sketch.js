@@ -1,7 +1,7 @@
 var player;
 var food = [];
 var asteroids = [];
-var asteroidCount = 40;
+var asteroidCount = 0;
 var foodCount = 200;
 var shieldImage;
 var bullets = [];
@@ -50,15 +50,8 @@ function setupGame() {
     socket.on('bulletHit', removeBullet);
     socket.on('leaderboard', updateLeaderboard);
     socket.on('increaseShield', displayIncreasedShieldMessage)
-    socket.on('respawn-start', timeOutInSeconds => {
-      player.respawning = true;
 
-      for (let i = 0; i < timeOutInSeconds; i++) {
-        setTimeout(() => {
-          popups.push(new BasicTextPopup(timeOutInSeconds - i, 32));
-        }, i * 1000);
-      }
-    });
+    socket.on('respawn-start', processRespawn);
     socket.on('respawn-end', () => player.respawning = false);
     socket.on('playExplosion', playExplosion)
     gameStarted = true;
@@ -66,18 +59,6 @@ function setupGame() {
   }
 }
 
-function playExplosion(){
-  explosionSound.play();
-}
-function displayIncreasedShieldMessage(data) {
-  let popup;
-  if (data < 0) {
-    popup = new DecreaseShield(data);
-  } else {
-    popup = new Popup(data);
-  }
-  popups.push(popup);
-}
 
 function draw() {
   background(0);
@@ -153,6 +134,30 @@ function draw() {
   }
 
 }
+
+function processRespawn(timeOutInSeconds) {
+  player.respawning = true;
+
+  for (let i = 0; i < timeOutInSeconds; i++) {
+    setTimeout(() => {
+      popups.push(new BasicTextPopup(timeOutInSeconds - i, 32));
+    }, i * 1000);
+  }
+}
+
+function playExplosion(){
+  explosionSound.play();
+}
+function displayIncreasedShieldMessage(data) {
+  let popup;
+  if (data < 0) {
+    popup = new DecreaseShield(data);
+  } else {
+    popup = new Popup(data);
+  }
+  popups.push(popup);
+}
+
 
 function updateLeaderboard(leaderboard) {
   leaders = leaderboard;
@@ -266,10 +271,7 @@ function drawOtherPlayers() {
     triangle(-21, 21, 0, -21, 21, 21);
     pop();
     textAlign(CENTER);
-    let name = otherPlayers[i].name
-    if (otherPlayers[i].lastDeath !== null) {
-      name += ' [respawning...]'
-    }
+    let name = otherPlayers[i].name;
     textSize(15);
     text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
