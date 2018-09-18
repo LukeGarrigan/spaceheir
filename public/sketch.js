@@ -18,6 +18,7 @@ let popups = [];
 
 function preload() {
   boostSound = loadSound('assets/sounds/boost.wav');
+  boostSound.setLoop(true);
   shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
   shotSound.setVolume(0.1)
