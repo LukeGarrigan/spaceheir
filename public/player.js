@@ -28,7 +28,7 @@ function Player(name) {
     }
 
     if (leaderBoardWinnersId == socket.id) {
-      stroke(255, 0, 0);
+      stroke(255, 69, 0);
     } else {
       stroke(255);
     }

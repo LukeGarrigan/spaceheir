@@ -1,7 +1,7 @@
 var player;
 var food = [];
 var asteroids = [];
-var asteroidCount = 0;
+var asteroidCount = 30;
 var foodCount = 200;
 var shieldImage;
 var bullets = [];
@@ -15,18 +15,20 @@ let leaders = [];
 let canvas;
 
 let popups = [];
+
 function preload() {
   boostSound = loadSound('assets/sounds/boost.wav');
-  shotSound =  loadSound('assets/sounds/shot.wav');
+  shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
   shotSound.setVolume(0.1)
 }
+
 function setup() {
   background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   shieldImage = loadImage("shield.png");
   input = createInput();
-  input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
+  input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button = createButton("Play");
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(setupGame);
@@ -103,7 +105,7 @@ function draw() {
     }
 
     player.display(leaders);
-    if(player.shield <= 0){ // This should be somewhere more sensible.
+    if (player.shield <= 0) { // This should be somewhere more sensible.
       boostSound.stop();
     }
 
@@ -145,9 +147,10 @@ function processRespawn(timeOutInSeconds) {
   }
 }
 
-function playExplosion(){
+function playExplosion() {
   explosionSound.play();
 }
+
 function displayIncreasedShieldMessage(data) {
   let popup;
   if (data < 0) {
@@ -168,8 +171,8 @@ function drawLeaders() {
     push();
     textAlign(LEFT);
     if (i == 0) {
-      fill(255, 0, 0);
-      stroke(255,0, 0);
+      fill(255, 69, 0);
+      stroke(255, 69, 0);
       textSize(15);
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
     } else {
@@ -263,7 +266,7 @@ function drawOtherPlayers() {
     translate(otherPlayers[i].x, otherPlayers[i].y);
     fill(0);
     if (leaderBoardWinnersId == otherPlayers[i].id) {
-      stroke(255, 0, 0);
+      stroke(255, 69, 0);
     } else {
       stroke(255);
     }
@@ -291,8 +294,8 @@ function keyPressed() {
       socket.emit('keyPressed', "right");
     } else if (keyCode == 32) {
       socket.emit('keyPressed', "spacebar");
-      if(player.shield > 0) {
-       boostSound.play();
+      if (player.shield > 0) {
+        boostSound.play();
       }
     }
   }
@@ -359,11 +362,11 @@ function updateFoods(data) {
 
 }
 
-window.onresize = function () {
+window.onresize = function() {
   background(0);
   canvas.size(window.innerWidth, window.innerHeight);
   if (!gameStarted) {
-    input.position(window.innerWidth / 2 - 250,  window.innerHeight / 2);
+    input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
     button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   }
 }
