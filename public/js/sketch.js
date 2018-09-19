@@ -27,7 +27,7 @@ function preload() {
 function setup() {
   background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  shieldImage = loadImage("shield.png");
+  shieldImage = loadImage("./assets/shield.png");
   input = createInput();
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button = createButton("Play");
