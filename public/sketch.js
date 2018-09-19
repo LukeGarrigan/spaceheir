@@ -63,8 +63,6 @@ function setupGame() {
 }
 
 function mouseWheel(event) {
-  zoom += 0.005 * event.delta;
-  zoom = constrain(1, 1, 1);
   return false;
 }
 
