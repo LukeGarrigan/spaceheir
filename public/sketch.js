@@ -62,11 +62,18 @@ function setupGame() {
   }
 }
 
+function mouseWheel(event) {
+  zoom += 0.005 * event.delta;
+  zoom = constrain(1, 1, 1);
+  return false;
+}
+
 
 function draw() {
   background(0);
   image(shieldImage, width - 95, 20, 23, 23);
   fill(255);
+  scale(1);
   textSize(15);
   if (gameStarted) {
     text(floor(player.shield), width - 54, 35);
