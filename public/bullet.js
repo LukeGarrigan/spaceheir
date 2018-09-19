@@ -1,15 +1,17 @@
-function Bullet(x, y, playerAngle, shooterId, id) {
+function Bullet(x, y, playerAngle, shooterId, id, bulletSize) {
   this.pos = createVector(x, y);
   this.velocity = p5.Vector.fromAngle(playerAngle);
   this.velocity.mult(10);
   this.r = 10;
   this.shooterId = shooterId;
   this.id = id;
+  this.bulletSize = bulletSize;
 
 
   this.updateAndDisplay = function() {
-    this.r = lerp(this.r, 0, 0.005);
+    this.r = lerp(this.r, 0, 0.01);
     this.pos.add(this.velocity);
+    this.bulletSize--;
     fill(255);
     ellipse(this.pos.x, this.pos.y, this.r, this.r);
   }

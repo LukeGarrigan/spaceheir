@@ -1,7 +1,7 @@
 var player;
 var food = [];
 var asteroids = [];
-var asteroidCount = 30;
+var asteroidCount = 0;
 var foodCount = 200;
 var shieldImage;
 var bullets = [];
@@ -194,7 +194,8 @@ function emitPlayersBullets() {
       let bullet = {
         id: bullets[i].id,
         x: bullets[i].pos.x,
-        y: bullets[i].pos.y
+        y: bullets[i].pos.y,
+        bulletSize: bullets[i].bulletSize
       };
       myBullets.push(bullet);
     }
@@ -332,7 +333,7 @@ function updateBullets(data) {
     }
 
     if (!exists) {
-      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id);
+      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id, data[i].bulletSize);
       bulletIds.push(data[i].id);
       bullets.push(bullet);
     }
