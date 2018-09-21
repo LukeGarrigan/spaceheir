@@ -151,9 +151,7 @@ function updatePlayerEatingFood(player) {
 
 function updatePlayerGettingShot(player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
-    console.log("Bullet Size:" +bullets[i].bulletSize);
     if (bullets[i].bulletSize < 0) {
-     console.log("Splicing bullet because it's too bloody small");
      io.sockets.emit('bulletHit', bullets[i].id);
      bullets.splice(i, 1);
    } else {
@@ -167,6 +165,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
       io.sockets.emit('bulletHit', bullets[i].id);
+
       player.shield -= 75;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
@@ -178,6 +177,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
         io.to(player.id).emit('playExplosion');
         io.to(bullets[i].clientId).emit('playExplosion');
       }
+      io.to(bullets[i].clientId).emit('hitMarker', player);
       bullets.splice(i, 1);
     }
   }

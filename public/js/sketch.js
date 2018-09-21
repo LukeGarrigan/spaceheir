@@ -3,13 +3,16 @@ function preload() {
   boostSound.setLoop(true);
   shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
+  shieldImage = loadImage("assets/images/shield.png");
+  hitMarkerImage = loadImage("assets/images/hitmarker.png");
+  hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
   shotSound.setVolume(0.1)
+  explosionSound.setVolume(0.4);
 }
 
 function setup() {
   background(0);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  shieldImage = loadImage("./assets/shield.png");
   input = createInput();
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button = createButton("Play");
@@ -24,6 +27,7 @@ function setupGame() {
     input.style("visibility", "hidden");
     player = new Player(inputValue);
     socket = io.connect('http://localhost:4000');
+    hitMarker = new HitMarker();
     for (var i = 0; i < asteroidCount; i++) {
       var pos = createVector(random(1920 * 3), random(1080 * 3));
       asteroids.push(new Asteroid(pos, 40, 60));
@@ -39,6 +43,7 @@ function setupGame() {
     socket.on('respawn-start', processRespawn);
     socket.on('respawn-end', () => player.respawning = false);
     socket.on('playExplosion', playExplosion)
+    socket.on('hitMarker', processHitmarker);
     gameStarted = true;
     emitPlayerPosition();
   }
@@ -116,8 +121,10 @@ function draw() {
       food[i].display();
     }
 
+
     emitPlayerAngle();
     drawOtherPlayers();
+    hitMarker.display();
     emitPlayersBullets();
     drawLeaders();
 
@@ -377,5 +384,9 @@ function removeBullet(id) {
       break;
     }
   }
+}
 
+function processHitmarker(player) {
+  hitMarker = new HitMarker(player);
+  hitMarkerSound.play();
 }

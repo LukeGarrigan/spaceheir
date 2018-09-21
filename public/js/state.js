@@ -15,3 +15,6 @@ let leaders = [];
 let canvas;
 
 let popups = [];
+let hitMarker;
+let hitMarkerImage;
+let hitMarkerSound;
