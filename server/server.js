@@ -1,39 +1,160 @@
+let config = require('../configs/defaults.js')
 let express = require('express');
 let app = express();
 
-
 let server = app.listen(4000);
-
-app.use(express.static('public'));
+app.use(express.static('../public/'));
 
 console.log("Server is now running");
 
-
 let socket = require('socket.io');
-
 let io = socket(server);
 
-
 let playersLastShot = [];
-let playerShields = [];
-
 let players = [];
 let bullets = [];
 let foods = [];
 let leaderboard = [];
-
-
 let lastBulletId = 0;
 
-const MAX_SHIELD = 1000;
-const NUM_FOOD = 400;
+setInterval(broadcastPlayers, 16);
 setupFood();
 
-function setupFood() {
+io.sockets.on('connection', function newConnection(socket) {
+  console.log("new connection " + socket.id);
+  setupPlayerLastShot(socket);
 
-  for (let i = 0; i < NUM_FOOD; i++) {
-    let foodX = Math.floor(Math.random() * (1920 * 3)) + 1;
-    let foodY = Math.floor(Math.random() * (1080 * 3)) + 1;
+  socket.emit('foods', foods);
+
+  socket.on('player', onPlayerMessage);
+  socket.on('bullet', onBullet);
+  socket.on('disconnect', onDisconnect);
+  socket.on('keyPressed', onKeyPress);
+  socket.on('keyReleased', onKeyReleased);
+  socket.on('angle', onAngle);
+  socket.on('reduceShield', onReduceShield);
+  socket.on('playerBullets', onPlayerBullets);
+  socket.on('playerDestruction', onPlayerDestruction);
+
+
+  function onPlayerMessage(playerData) {
+    playerData.id = socket.id;
+    playerData.shield = config.settings.BASE_SHIELD;
+    playerData.isUp = false;
+    playerData.isDown = false;
+    playerData.isLeft = false;
+    playerData.isRight = false;
+    playerData.isBoosting = false;
+    playerData.r = 21;
+    playerData.score = 0;
+
+    let playersName = playerData.name.substring(0, 15);
+    playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
+    players.push(playerData);
+
+    addNewPlayerToLeaderboard(playerData);
+  }
+
+  function onBullet(){
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id && players[i].lastDeath === null) {
+        processPlayerShooting(players[i], socket);
+      }
+    }
+  }
+
+  function onDisconnect(){
+    console.log("Player disconnected");
+
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id) {
+        players.splice(i, 1);
+      }
+    }
+
+    for (let i = leaderboard.length - 1; i >= 0; i--) {
+      if (leaderboard[i].id == socket.id) {
+        leaderboard.splice(i, 1);
+      }
+    }
+    socket.broadcast.emit('playerDisconnected', socket.id);
+  }
+
+  function onKeyPress(direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = true;
+        } else if (direction == "down") {
+          players[i].isDown = true;
+        } else if (direction == "left") {
+          players[i].isLeft = true;
+        } else if (direction == "right") {
+          players[i].isRight = true;
+        } else if (direction == "spacebar") {
+          players[i].isBoosting = true;
+        }
+      }
+    }
+  }
+
+  function onKeyReleased(direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = false;
+        } else if (direction == "down") {
+          players[i].isDown = false;
+        } else if (direction == "left") {
+          players[i].isLeft = false;
+        } else if (direction == "right") {
+          players[i].isRight = false;
+        } else if (direction == "spacebar") {
+
+          players[i].isBoosting = false;
+        }
+      }
+    }
+  }
+
+  function onAngle(angle) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        players[i].angle = angle;
+      }
+    }
+  }
+
+  function onReduceShield() {
+   for (let i = 0; i < players.length; i++) {
+     if (socket.id == players[i].id) {
+       players[i].shield -= 75;
+     }
+   }
+  }
+
+  function onPlayerBullets(myBullets) {
+   for (let i = 0; i < myBullets.length; i++) {
+     for (let j = 0; j < bullets.length; j++) {
+       if (myBullets[i].id == bullets[j].id) {
+         bullets[j].x = myBullets[i].x;
+         bullets[j].y = myBullets[i].y;
+       }
+     }
+   }
+ }
+
+  function onPlayerDestruction() {
+   console.log("Player Destruction fired")
+   sounds.playSound(explosionSound)
+ }
+
+});
+
+function setupFood() {
+  for (let i = 0; i < config.settings.NUM_FOOD; i++) {
+    let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
+    let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
     let foodRadius = Math.floor(Math.random() * 22) + 1;
 
     let food = {
@@ -46,8 +167,6 @@ function setupFood() {
   }
 }
 
-setInterval(broadcastPlayers, 16);
-
 function broadcastPlayers() {
   for (let i = 0; i < players.length; i++) {
     updatePlayerPosition(players[i]);
@@ -56,10 +175,8 @@ function broadcastPlayers() {
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
+
 }
-
-
-
 
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
@@ -75,7 +192,7 @@ function updatePlayerPosition(player) {
   if (player.shield < 0) {
     player.x = Math.floor(Math.random() * 1920) + 1;
     player.y = Math.floor(Math.random() * 1080) + 1;
-    player.shield = 100;
+    player.shield = config.settings.BASE_SHIELD;
     player.score = 0;
 
     const timeOutInSeconds = 5;
@@ -87,8 +204,8 @@ function updatePlayerPosition(player) {
     io.to(player.id).emit('respawn-start', timeOutInSeconds)
     io.to(player.id).emit('playExplosion');
     return
-  } else if (player.shield > MAX_SHIELD) {
-    player.shield = MAX_SHIELD;
+  } else if (player.shield > config.settings.MAX_SHIELD) {
+    player.shield = config.settings.MAX_SHIELD;
   }
 
   let playerSpeed = player.isBoosting && player.shield > 0 ? 3 : 0;
@@ -102,32 +219,32 @@ function updatePlayerPosition(player) {
   }
 
   if (player.isUp) {
-    player.y -= 2 + playerSpeed;
+    player.y -= config.settings.BASE_SPEED + playerSpeed;
   }
 
   if (player.isDown) {
-    player.y += 2 + playerSpeed;
+    player.y += config.settings.BASE_SPEED + playerSpeed;
   }
 
   if (player.isLeft) {
-    player.x -= 2 + playerSpeed;
+    player.x -= config.settings.BASE_SPEED + playerSpeed;
   }
 
   if (player.isRight) {
-    player.x += 2 + playerSpeed;
+    player.x += config.settings.BASE_SPEED + playerSpeed;
   }
 
 
   // constrain - so moving to the edge of the screen
   if (player.x < 0) {
-    player.x = 1920 * 3;
-  } else if (player.x > 1920 * 3) {
+    player.x = config.settings.PLAYAREA_WIDTH;
+  } else if (player.x > config.settings.PLAYAREA_WIDTH) {
     player.x = 0;
   }
 
   if (player.y < 0) {
-    player.y = 1080 * 3;
-  } else if (player.y > 1080 * 3) {
+    player.y = config.settings.PLAYAREA_HEIGHT;
+  } else if (player.y > config.settings.PLAYAREA_HEIGHT) {
     player.y = 0;
   }
   updatePlayerEatingFood(player);
@@ -139,8 +256,8 @@ function updatePlayerEatingFood(player) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       player.shield += foods[i].r;
       io.to(player.id).emit('increaseShield', foods[i].r);
-      let foodX = Math.floor(Math.random() * (1920 * 3)) + 1;
-      let foodY = Math.floor(Math.random() * (1080 * 3)) + 1;
+      let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
+      let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
       foods[i].x = foodX;
       foods[i].y = foodY;
 
@@ -200,8 +317,8 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
         players[i].shield += scoreIncrease;
       }
 
-      if (players[i].shield > MAX_SHIELD) {
-        players[i].shield = MAX_SHIELD;
+      if (players[i].shield > config.settings.MAX_SHIELD) {
+        player.shield = config.settings.MAX_SHIELD;
       }
     }
   }
@@ -215,130 +332,9 @@ function checkIfCurrentPlayerIsWinning(id) {
     }
   }
   return false;
+
+
 }
-
-io.sockets.on('connection', function newConnection(socket) {
-  console.log("new connection " + socket.id);
-  setupPlayerLastShot(socket);
-
-  socket.emit('foods', foods);
-
-  socket.on('player', function playerMessage(playerData) {
-    playerData.id = socket.id;
-    playerData.shield = 100;
-    playerData.isUp = false;
-    playerData.isDown = false;
-    playerData.isLeft = false;
-    playerData.isRight = false;
-    playerData.isBoosting = false;
-    playerData.r = 21;
-    playerData.score = 0;
-
-    let playersName = playerData.name.substring(0, 15);
-    playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
-    players.push(playerData);
-
-    addNewPlayerToLeaderboard(playerData);
-  });
-
-  socket.on('bullet', function() {
-    for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id && players[i].lastDeath === null) {
-        processPlayerShooting(players[i], socket);
-      }
-    }
-  });
-
-
-  socket.on('disconnect', function() {
-    console.log("Player disconnected");
-
-    for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id) {
-        players.splice(i, 1);
-      }
-    }
-
-    for (let i = leaderboard.length - 1; i >= 0; i--) {
-      if (leaderboard[i].id == socket.id) {
-        leaderboard.splice(i, 1);
-      }
-    }
-    socket.broadcast.emit('playerDisconnected', socket.id);
-  });
-
-  socket.on('keyPressed', function(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = true;
-        } else if (direction == "down") {
-          players[i].isDown = true;
-        } else if (direction == "left") {
-          players[i].isLeft = true;
-        } else if (direction == "right") {
-          players[i].isRight = true;
-        } else if (direction == "spacebar") {
-          players[i].isBoosting = true;
-        }
-      }
-    }
-  });
-
-  socket.on('keyReleased', function(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = false;
-        } else if (direction == "down") {
-          players[i].isDown = false;
-        } else if (direction == "left") {
-          players[i].isLeft = false;
-        } else if (direction == "right") {
-          players[i].isRight = false;
-        } else if (direction == "spacebar") {
-
-          players[i].isBoosting = false;
-        }
-      }
-    }
-  });
-
-  socket.on('angle', function(angle) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].angle = angle;
-      }
-    }
-  });
-
-
-  socket.on('reduceShield', function() {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].shield -= 75;
-      }
-    }
-  });
-
-
-  // updates bullets from a specific player
-  socket.on('playerBullets', function(myBullets) {
-    for (let i = 0; i < myBullets.length; i++) {
-      for (let j = 0; j < bullets.length; j++) {
-        if (myBullets[i].id == bullets[j].id) {
-          bullets[j].x = myBullets[i].x;
-          bullets[j].y = myBullets[i].y;
-          bullets[j].bulletSize = myBullets[i].bulletSize;
-        }
-      }
-    }
-  });
-  socket.on('playerDestruction', function() {
-    console.log("Player Destruction fired")
-    sounds.playSound(explosionSound)
-  });
-});
 
 function setupPlayerLastShot(socket) {
   let playerLastShot = {
@@ -362,8 +358,7 @@ function processPlayerShooting(player, socket) {
           y: player.y,
           angle: player.angle,
           id: lastBulletId,
-          clientId: player.id,
-          bulletSize: 100
+          clientId: player.id
         };
         bullets.push(bullet);
       }
@@ -380,6 +375,7 @@ function updateLeaderboard() {
     }
   }
 
+  console.log("sorting");
   leaderboard.sort(function(a, b) {
     return a.score < b.score;
   });

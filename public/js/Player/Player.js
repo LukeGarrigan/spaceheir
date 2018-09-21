@@ -53,13 +53,21 @@ class Player {
     pop();
   }
 
-
   increaseShield(sizeOfFood) {
-    if (this.shield < MAX_SHIELD) {
+    if (this.shield < config.settings.MAX_SHIELD) {
       this.shield = this.shield + sizeOfFood;
-      if (this.shield > MAX_SHIELD) {
-        this.shield = MAX_SHIELD;
+      if (this.shield > config.settings.MAX_SHIELD) {
+        this.shield = config.settings.MAX_SHIELD;
       }
+    }
+  }
+
+  reduceShield() {
+    if (this.shield > config.settings.MAX_SHIELD_REDUCTION) {
+      this.shield -= config.settings.MAX_SHIELD_REDUCTION
+    } else {
+      this.shield = 0;
+      //this.pos = createVector(random(width), random(height));
     }
   }
 
@@ -95,16 +103,4 @@ class Player {
     this.isRight = false;
   }
 
-  reduceShield() {
-    if (this.shield > Player.MAX_SHIELD_REDUCTION) {
-      this.shield -= Player.MAX_SHIELD_REDUCTION
-    } else {
-      this.shield = 0;
-      //this.pos = createVector(random(width), random(height));
-    }
-  }
-
 }
-
-Player.MAX_SHIELD_REDUCTION = 75;
-Player.MAX_SHIELD = 1000;
