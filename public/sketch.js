@@ -62,11 +62,16 @@ function setupGame() {
   }
 }
 
+function mouseWheel(event) {
+  return false;
+}
+
 
 function draw() {
   background(0);
   image(shieldImage, width - 95, 20, 23, 23);
   fill(255);
+  scale(1);
   textSize(15);
   if (gameStarted) {
     text(floor(player.shield), width - 54, 35);
