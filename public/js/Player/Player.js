@@ -1,24 +1,21 @@
-function Player(name) {
+class Player {
+  constructor(name) {
+    this.name = name;
+    this.pos = createVector(random(width*3), random(height*3));
+    this.r;
+    this.radians = 0;
 
-  const MAX_SHIELD_REDUCTION = 75;
-  const MAX_SHIELD = 1000;
+    this.isLeft = false;
+    this.isRight = false;
+    this.isUp = false;
+    this.isDown = false;
+    this.speed = 2;
+    this.shield = 0;
+    this.score = 0;
+    this.respawning = false;
+  }
 
-  this.name = name;
-  this.pos = createVector(random(width*3), random(height*3));
-  this.r;
-  this.radians = 0;
-
-  this.isLeft = false;
-  this.isRight = false;
-  this.isUp = false;
-  this.isDown = false;
-  this.speed = 2;
-  this.shield = 0;
-  this.score = 0;
-  this.respawning = false;
-
-
-  this.display = function(leaders) {
+  display(leaders) {
     push();
     translate(this.pos.x, this.pos.y);
     fill(0);
@@ -57,7 +54,7 @@ function Player(name) {
   }
 
 
-  this.increaseShield = function(sizeOfFood) {
+  increaseShield(sizeOfFood) {
     if (this.shield < MAX_SHIELD) {
       this.shield = this.shield + sizeOfFood;
       if (this.shield > MAX_SHIELD) {
@@ -66,41 +63,41 @@ function Player(name) {
     }
   }
 
-  this.up = function() {
+  up() {
     this.isUp = true;
   }
 
-  this.down = function() {
+  down() {
     this.isDown = true;
   }
 
-  this.left = function() {
+  left() {
     this.isLeft = true;
   }
 
-  this.right = function() {
+  right() {
     this.isRight = true;
   }
 
-  this.upReleased = function() {
+  upReleased() {
     this.isUp = false;
   }
 
-  this.downReleased = function() {
+  downReleased() {
     this.isDown = false;
   }
 
-  this.leftReleased = function() {
+  leftReleased() {
     this.isLeft = false;
   }
 
-  this.rightReleased = function() {
+  rightReleased() {
     this.isRight = false;
   }
 
-  this.reduceShield = function() {
-    if (this.shield > MAX_SHIELD_REDUCTION) {
-      this.shield -= MAX_SHIELD_REDUCTION
+  reduceShield() {
+    if (this.shield > Player.MAX_SHIELD_REDUCTION) {
+      this.shield -= Player.MAX_SHIELD_REDUCTION
     } else {
       this.shield = 0;
       //this.pos = createVector(random(width), random(height));
@@ -108,3 +105,6 @@ function Player(name) {
   }
 
 }
+
+Player.MAX_SHIELD_REDUCTION = 75;
+Player.MAX_SHIELD = 1000;

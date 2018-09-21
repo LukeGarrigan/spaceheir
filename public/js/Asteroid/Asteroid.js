@@ -1,28 +1,27 @@
-function Asteroid(pos, minSize, maxSize) {
-  this.pos = createVector(pos.x, pos.y);
-  this.velocity = p5.Vector.random2D();
-  this.minSize = minSize;
-  this.maxSize = maxSize;
-  this.r = random(this.minSize ,this.maxSize);
-  this.total = 6;
-  this.offset = [];
-
-  for (var i = 0; i < this.total; i++) {
-    this.offset[i] = random(-15, 10);
+class Asteroid{
+  constructor(pos, minSize, maxSize) {
+    this.pos = createVector(pos.x, pos.y);
+    this.velocity = p5.Vector.random2D();
+    this.minSize = minSize;
+    this.maxSize = maxSize;
+    this.r = random(this.minSize ,this.maxSize);
+    this.total = 6;
+    this.offset = [];
+    for (var i = 0; i < this.total; i++) {
+      this.offset[i] = random(-15, 10);
+    }
   }
-
-
-  this.updateAndDisplayAsteroid = function() {
+updateAndDisplayAsteroid() {
     this.update();
     this.display();
     this.constrain();
   }
 
-  this.update = function() {
+  update() {
     this.pos.add(this.velocity);
   }
 
-  this.display = function() {
+  display() {
     push();
     translate(this.pos.x, this.pos.y);
     noFill();
@@ -40,7 +39,7 @@ function Asteroid(pos, minSize, maxSize) {
 
   }
 
-  this.constrain = function() {
+  constrain() {
     if (this.pos.x < 0) {
       this.pos.x = width*3;
     } else if (this.pos.x > width*3) {
@@ -55,14 +54,14 @@ function Asteroid(pos, minSize, maxSize) {
   }
 
 
-  this.shouldCreateNewAsteroids = function() {
+  shouldCreateNewAsteroids() {
      if (this.minSize >= 15) {
        return true;
      }
      return false;
   }
 
-  this.getNewAsteroids = function() {
+  getNewAsteroids() {
     var asteroids = [];
 
     if (this.minSize >= 5) {
@@ -74,15 +73,15 @@ function Asteroid(pos, minSize, maxSize) {
     return asteroids;
   }
 
-  this.hasCollided = function(asteroid) {
+  hasCollided(asteroid) {
     return dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y) <= this.r + asteroid.r;
   }
 
-  this.hasHitPlayer = function(player) {
+  hasHitPlayer(player) {
      return dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) <= this.r + player.r;
   }
 
-  this.checkCollisionsWithPlayer = function(asteroids, player, i) {
+  checkCollisionsWithPlayer(asteroids, player, i) {
     if (this.hasHitPlayer(player)) {
       if (this.shouldCreateNewAsteroids()) {
         var newAsteroids = this.getNewAsteroids();
@@ -93,6 +92,4 @@ function Asteroid(pos, minSize, maxSize) {
       return true;
     }
   }
-
-
 }

@@ -1,23 +1,3 @@
-var player;
-var food = [];
-var asteroids = [];
-var asteroidCount = 0;
-var foodCount = 200;
-var shieldImage;
-var bullets = [];
-var bulletIds = [];
-let otherPlayers = [];
-let timeSinceLastShot = 0;
-
-let button, input;
-let gameStarted = false;
-let leaders = [];
-let canvas;
-
-let popups = [];
-let hitMarker;
-let hitMarkerImage;
-let hitMarkerSound;
 function preload() {
   boostSound = loadSound('assets/sounds/boost.wav');
   boostSound.setLoop(true);

@@ -3,20 +3,32 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
-    <style> body {padding: 0; margin: 0;} </style>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css"/>
+  </head>
+  <body>
+    <!-- lib -->
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/addons/p5.dom.min.js"></script>
     <script src="libraries/addons/p5.sound.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="sketch.js"></script>
-    <script src="player.js"></script>
-    <script src="food.js"></script>
-    <script src="asteroid.js"></script>
-    <script src="bullet.js"></script>
-    <script src="popup.js"></script>
-    <script src="hitmarker.js"></script>
-    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
-  </head>
-  <body>
+
+    <!-- Player -->
+    <script src="js/Player/Player.js"></script>
+    <!-- Food -->
+    <script src="js/Food/Food.js"></script>
+    <!-- Bullet -->
+    <script src="js/Bullet/Bullet.js"></script>
+    <!-- Asteroid -->
+    <script src="js/Asteroid/Asteroid.js"></script>
+    <!-- Popup -->
+    <script src="js/Popup/Popup.js"></script>
+    <script src="js/Popup/DecreaseShield.js"></script>
+    <script src="js/Popup/BasicTextPopup.js"></script>
+    <!-- Hitmarker -->
+    <script src="js/Hitmarker/Hitmarker.js"></script>
+
+    <script src="js/state.js"></script>
+    <!-- Defer executes the script after the whole page has finished loading (parsing) -->
+    <script src="js/sketch.js" defer></script>
   </body>
 </html>
