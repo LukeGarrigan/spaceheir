@@ -201,7 +201,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       }
 
       if (players[i].shield > MAX_SHIELD) {
-        player.shield = MAX_SHIELD;
+        players[i].shield = MAX_SHIELD;
       }
     }
   }
