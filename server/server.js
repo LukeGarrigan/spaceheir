@@ -56,7 +56,6 @@ function broadcastPlayers() {
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
-
 }
 
 
@@ -152,23 +151,34 @@ function updatePlayerEatingFood(player) {
 
 function updatePlayerGettingShot(player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
-    if (player.id !== bullets[i].clientId) {
-      if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
-        io.sockets.emit('bulletHit', bullets[i].id);
-        console.log(player.shield);
-        player.shield -= 75;
-        io.to(player.id).emit('increaseShield', -75);
+    console.log("Bullet Size:" +bullets[i].bulletSize);
+    if (bullets[i].bulletSize < 0) {
+     console.log("Splicing bullet because it's too bloody small");
+     io.sockets.emit('bulletHit', bullets[i].id);
+     bullets.splice(i, 1);
+   } else {
+     processPlayerGettingShotByAnotherPlayer(player, i);
+   }
 
-        let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
+  }
+}
 
-        if (player.shield <= 0) {
-          updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
-          player.score = 0;
-          io.to(player.id).emit('playExplosion');
-          io.to(bullets[i].clientId).emit('playExplosion');
-        }
-        bullets.splice(i, 1);
+function processPlayerGettingShotByAnotherPlayer(player, i) {
+  if (player.id !== bullets[i].clientId) {
+    if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
+      io.sockets.emit('bulletHit', bullets[i].id);
+      player.shield -= 75;
+      io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
+
+      let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
+
+      if (player.shield <= 0) {
+        updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
+        player.score = 0;
+        io.to(player.id).emit('playExplosion');
+        io.to(bullets[i].clientId).emit('playExplosion');
       }
+      bullets.splice(i, 1);
     }
   }
 }
@@ -205,8 +215,6 @@ function checkIfCurrentPlayerIsWinning(id) {
     }
   }
   return false;
-
-
 }
 
 io.sockets.on('connection', function newConnection(socket) {
@@ -314,12 +322,14 @@ io.sockets.on('connection', function newConnection(socket) {
   });
 
 
+  // updates bullets from a specific player
   socket.on('playerBullets', function(myBullets) {
     for (let i = 0; i < myBullets.length; i++) {
       for (let j = 0; j < bullets.length; j++) {
         if (myBullets[i].id == bullets[j].id) {
           bullets[j].x = myBullets[i].x;
           bullets[j].y = myBullets[i].y;
+          bullets[j].bulletSize = myBullets[i].bulletSize;
         }
       }
     }
@@ -352,7 +362,8 @@ function processPlayerShooting(player, socket) {
           y: player.y,
           angle: player.angle,
           id: lastBulletId,
-          clientId: player.id
+          clientId: player.id,
+          bulletSize: 100
         };
         bullets.push(bullet);
       }
@@ -369,7 +380,6 @@ function updateLeaderboard() {
     }
   }
 
-  console.log("sorting");
   leaderboard.sort(function(a, b) {
     return a.score < b.score;
   });

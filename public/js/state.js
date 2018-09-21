@@ -1,7 +1,7 @@
 let player;
 let food = [];
 let asteroids = [];
-let asteroidCount = 30;
+let asteroidCount = 0;
 let foodCount = 200;
 let shieldImage;
 let bullets = [];
