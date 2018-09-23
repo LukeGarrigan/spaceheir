@@ -37,7 +37,6 @@ io.sockets.on('connection', function newConnection(socket) {
   socket.on('angle', onAngle);
   socket.on('reduceShield', onReduceShield);
   socket.on('playerBullets', onPlayerBullets);
-  socket.on('playerDestruction', onPlayerDestruction);
 
   function onPlayerMessage(playerData) {
     if (!playerExists) {
@@ -150,10 +149,7 @@ function onPlayerBullets(myBullets) {
   }
 }
 
-function onPlayerDestruction() {
-  console.log("Player Destruction fired")
-  sounds.playSound(explosionSound)
-}
+
 });
 
 function setupFood() {

@@ -8,12 +8,13 @@ class Popup {
     this.strokeColor = strokeColor;
     this.textContent = content;
     this.textSize = 15;
-  }
+    this.displacementMax = 50;
 
+  }
   update() {
     this.timer += 1;
     this.alpha = map(this.timer, 0, Popup.FRAMES, 0, 255);
-    this.displacement = map(this.timer, 0, Popup.FRAMES, 0, 30);
+    this.displacement = map(this.timer, 0, Popup.FRAMES, 0,this.displacementMax);
     if (this.timer >= Popup.FRAMES) {
       this.isVisible = false;
     }
