@@ -151,7 +151,7 @@ function displayIncreasedShieldMessage(data) {
   if (data < 0) {
     popup = new DecreaseShield(data);
   } else {
-    popup = new Popup(data);
+    popup = new IncreaseShield(data);
   }
   popups.push(popup);
 }

@@ -1,13 +1,12 @@
 class Popup {
-  constructor(increase) {
-    this.increase = increase;
+  constructor(fillColor, strokeColor, content) {
     this.timer = 0;
     this.isVisible = true;
     this.alpha = 0;
     this.displacement = 0;
-    this.fillColor = color(0, 255, 0, 255 - this.alpha);
-    this.strokeColor = color(255, 255, 255, 255 - this.alpha);
-    this.textContent = "+" + increase;
+    this.fillColor = fillColor;
+    this.strokeColor = strokeColor;
+    this.textContent = content;
     this.textSize = 15;
   }
 
