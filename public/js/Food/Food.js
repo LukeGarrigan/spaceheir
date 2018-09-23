@@ -1,4 +1,4 @@
-class Food {
+export default class Food {
   constructor(x, y, r, id) {
     this.x = x;
     this.y = y;

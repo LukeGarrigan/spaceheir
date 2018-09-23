@@ -221,6 +221,7 @@ io.sockets.on('connection', function newConnection(socket) {
   console.log("new connection " + socket.id);
   setupPlayerLastShot(socket);
 
+  console.log('Hye new connection upload the foods', foods.length)
   socket.emit('foods', foods);
 
   socket.on('player', function playerMessage(playerData) {

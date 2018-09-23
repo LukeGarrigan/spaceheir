@@ -1,4 +1,4 @@
-class Popup {
+export default class Popup {
   constructor(increase) {
     this.increase = increase;
     this.timer = 0;

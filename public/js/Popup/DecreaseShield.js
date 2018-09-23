@@ -1,4 +1,6 @@
-class DecreaseShield extends Popup{
+import Popup from './Popup.js';
+
+export default class DecreaseShield extends Popup{
 
   constructor(decrease) {
     super(decrease);

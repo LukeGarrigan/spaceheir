@@ -1,4 +1,4 @@
-class Asteroid{
+export default class Asteroid{
   constructor(pos, minSize, maxSize) {
     this.pos = createVector(pos.x, pos.y);
     this.velocity = p5.Vector.random2D();
