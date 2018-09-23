@@ -121,7 +121,6 @@ export function removeBullet(id, bullets) {
 }
 
 export function processHitmarker(player, hitMarkerImage, hitMarkerSound) {
-  hitMarker = new HitMarker(player, hitMarkerImage);
   hitMarkerSound.play();
-  return hitMarker;
+  return new HitMarker(player, hitMarkerImage);
 }
