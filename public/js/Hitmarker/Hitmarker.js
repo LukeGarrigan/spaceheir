@@ -1,7 +1,6 @@
 export default class HitMarker {
 
   constructor(player, image) {
-    console.log(player);
     if (player){
       this.x = player.x;
       this.y = player.y;

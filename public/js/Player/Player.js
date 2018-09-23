@@ -106,4 +106,11 @@ export default class Player {
     }
   }
 
+  get x() {
+    return this.pos.x;
+  }
+
+  get y() {
+    return this.pos.y;
+  }
 }

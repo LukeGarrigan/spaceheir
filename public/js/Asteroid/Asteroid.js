@@ -87,7 +87,6 @@ updateAndDisplayAsteroid() {
         var newAsteroids = this.getNewAsteroids();
         asteroids.push(...newAsteroids);
       }
-      console.log("splicing");
       asteroids.splice(i, 1);
       return true;
     }

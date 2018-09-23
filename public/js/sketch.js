@@ -1,26 +1,21 @@
 import Asteroid from './Asteroid/Asteroid.js';
-import Bullet from './Bullet/Bullet.js';
-import Food from './Food/Food.js';
-import HitMarker from './HitMarker/HitMarker.js';
 import Player from './Player/Player.js';
-import Popup from './Popup/Popup.js';
-
-import DecreaseShield from './Popup/DecreaseShield.js';
-import IncreaseShield from './Popup/IncreaseShield.js';
-
 import socket from './socket.js';
-
-socket.on('foods', updateFoods);
-
+import HitMarker from './HitMarker/HitMarker.js';
 import {
   processRespawn,
   emitPlayersBullets,
-  playerDisconnected
+  playerDisconnected,
+  displayIncreasedShieldMessage,
+  updateOtherPlayers,
+  updateBullets,
+  updateFoods,
+  removeBullet,
+  processHitmarker
 } from './game-logic.js'
 
 let player;
 let food = [];
-let foodCount = 200;
 let asteroids = [];
 let asteroidCount = 0;
 let shieldImage;
@@ -41,6 +36,8 @@ let hitMarkerSound;
 let boostSound;
 let shotSound;
 let explosionSound;
+
+socket.on('foods', data => updateFoods(data, food));
 
 window.preload = function() {
   boostSound = loadSound('assets/sounds/boost.wav');
@@ -73,17 +70,15 @@ window.setup = function () {
         asteroids.push(new Asteroid(pos, 40, 60));
       }
       socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
-      socket.on('heartbeat', updateOtherPlayers);
-      socket.on('bullets', updateBullets);
-      socket.on('foods', updateFoods);
-      socket.on('bulletHit', removeBullet);
+      socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
+      socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
+      socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
       socket.on('leaderboard', leaderboard => leaders = leaderboard);
-      socket.on('increaseShield', displayIncreasedShieldMessage)
-
+      socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player))
       socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
       socket.on('respawn-end', () => player.respawning = false);
       socket.on('playExplosion', () => explosionSound.play())
-      socket.on('hitMarker', processHitmarker);
+      socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
       gameStarted = true;
       let playerPosition = {
         x: player.pos.x,
@@ -149,34 +144,26 @@ window.draw = function() {
       boostSound.stop();
     }
 
-    if (popups.length > 0) {
-      for (let i = popups.length - 1; i >= 0; i--) {
+    for (let i = popups.length - 1; i >= 0; i--) {
 
-        popups[i].update();
-        popups[i].display();
+      popups[i].update();
+      popups[i].display();
 
-        if (!popups[i].isVisible) {
-          popups.splice(i, 1);
-        }
+      if (!popups[i].isVisible) {
+        popups.splice(i, 1);
       }
-
-
-
     }
 
     for (var i = food.length - 1; i >= 0; i--) {
       food[i].display();
     }
 
-
     socket.emit('angle', player.radians);
     drawOtherPlayers();
     hitMarker.display();
     emitPlayersBullets(bullets);
     drawLeaders();
-
   }
-
 }
 
 window.keyPressed = function() {
@@ -225,17 +212,7 @@ window.onresize = function() {
   }
 }
 
-function displayIncreasedShieldMessage(data) {
-  let popup;
-  if (data < 0) {
-    popup = new DecreaseShield(data);
-  } else {
-    popup = new IncreaseShield(data);
-  }
-}
-
 window.mousePressed = function() {
-
   if (timeSinceLastShot > 20 && !player.respawning) {
     shotSound.play();
     socket.emit('bullet');
@@ -257,33 +234,6 @@ function drawLeaders() {
     }
     pop();
   }
-}
-
-function updateOtherPlayers(data) {
-  for (let i = 0; i < data.length; i++) {
-    let exists = false;
-
-    if (data[i].id == socket.id) {
-      player.pos.x = data[i].x;
-      player.pos.y = data[i].y;
-      player.r = data[i].r;
-      player.name = data[i].name;
-      player.shield = data[i].shield;
-      player.score = data[i].score;
-      continue;
-    }
-    for (let j = 0; j < otherPlayers.length; j++) {
-      if (data[i].id == otherPlayers[j].id) {
-        otherPlayers[j] = data[i];
-        exists = true;
-      }
-    }
-
-    if (!exists) {
-      otherPlayers.push(data[i]);
-    }
-  }
-
 }
 
 function drawOtherPlayers() {
@@ -312,60 +262,4 @@ function drawOtherPlayers() {
     textSize(15);
     text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
-}
-
-function updateBullets(data) {
-  for (let i = 0; i < data.length; i++) {
-    let exists = false;
-    for (let j = 0; j < bulletIds.length; j++) {
-      if (data[i].id == bulletIds[j]) {
-        exists = true;
-        break;
-      }
-    }
-
-    if (!exists) {
-      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id, data[i].bulletSize);
-      bulletIds.push(data[i].id);
-      bullets.push(bullet);
-    }
-  }
-
-}
-
-function updateFoods(data) {
-  for (let i = 0; i < data.length; i++) {
-    let exists = false;
-    for (let j = 0; j < food.length; j++) {
-      if (data[i].id == food[j].id) {
-        exists = true;
-        if (data[i].x !== food[j].x || data[i].y !== food[j].y) {
-          food[j].x = data[i].x;
-          food[j].y = data[i].y;
-        }
-      }
-    }
-    if (!exists) {
-      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id);
-      food.push(aFood);
-    }
-
-
-
-  }
-
-}
-
-function removeBullet(id) {
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    if (bullets[i].id == id) {
-      bullets.splice(i, 1);
-      break;
-    }
-  }
-}
-
-function processHitmarker(player) {
-  hitMarker = new HitMarker(player, hitMarkerImage);
-  hitMarkerSound.play();
 }

@@ -1,5 +1,5 @@
 export default class Popup {
-  constructor(fillColor, strokeColor, content) {
+  constructor(fillColor, strokeColor, content, x, y) {
     this.timer = 0;
     this.isVisible = true;
     this.alpha = 0;
@@ -9,7 +9,8 @@ export default class Popup {
     this.textContent = content;
     this.textSize = 15;
     this.displacementMax = 50;
-
+    this.x = x;
+    this.y = y;
   }
   update() {
     this.timer += 1;
@@ -23,12 +24,10 @@ export default class Popup {
   display() {
     if (this.isVisible) {
       push();
-      console.log("DISPLAYING!!!!");
-
       fill(this.fillColor);
       stroke(this.strokeColor);
       textSize(this.textSize);
-      text(this.textContent, player.pos.x, player.pos.y - player.r - this.displacement);
+      text(this.textContent, this.x, this.y - this.displacement);
       pop();
     }
   }
