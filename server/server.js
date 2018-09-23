@@ -38,7 +38,7 @@ io.sockets.on('connection', function newConnection(socket) {
   socket.on('playerBullets', onPlayerBullets);
   socket.on('playerDestruction', onPlayerDestruction);
 
-  function OnPlayerMessage(playerData) {
+  function onPlayerMessage(playerData) {
     playerData.id = socket.id;
     playerData.shield = config.settings.BASE_SHIELD;
     playerData.isUp = false;
@@ -146,7 +146,7 @@ io.sockets.on('connection', function newConnection(socket) {
     }
   }
 
-  function playerDestruction() {
+  function onPlayerDestruction() {
     console.log("Player Destruction fired")
     sounds.playSound(explosionSound)
   }
