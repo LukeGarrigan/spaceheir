@@ -214,7 +214,7 @@ function updatePlayerPosition(player) {
   if (player.isBoosting && player.shield > 0) {
     player.shield--;
     io.to(player.id).emit('increaseShield', -1);
-    playerSpeed = 3;
+    playerSpeed = 5;
   } else {
     playerSpeed = 0;
   }

@@ -2,7 +2,7 @@ class Bullet{
   constructor(x, y, playerAngle, shooterId, id, bulletSize) {
     this.pos = createVector(x, y);
     this.velocity = p5.Vector.fromAngle(playerAngle);
-    this.velocity.mult(10);
+    this.velocity.mult(15);
     this.r = 10;
     this.shooterId = shooterId;
     this.id = id;
@@ -24,11 +24,6 @@ class Bullet{
   }
 
   checkCollisionsWithPlayer(bullets, player, i) {
-    // console.log(socket.id);
-    // console.log(bullets);
-    // console.log("Bullet clientId: " +bullets.clientId);
-    // console.log(socketId);
-
     if (this.hasHitPlayer(player) && shooterId !== socket.id) {
       player.reduceShield();
       return true;
