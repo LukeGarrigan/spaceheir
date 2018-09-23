@@ -6,6 +6,7 @@ import Player from './Player/Player.js';
 import Popup from './Popup/Popup.js';
 
 import DecreaseShield from './Popup/DecreaseShield.js';
+import IncreaseShield from './Popup/IncreaseShield.js';
 
 import socket from './socket.js';
 
@@ -224,6 +225,15 @@ window.onresize = function() {
   }
 }
 
+function displayIncreasedShieldMessage(data) {
+  let popup;
+  if (data < 0) {
+    popup = new DecreaseShield(data);
+  } else {
+    popup = new IncreaseShield(data);
+  }
+}
+
 window.mousePressed = function() {
 
   if (timeSinceLastShot > 20 && !player.respawning) {
@@ -247,18 +257,6 @@ function drawLeaders() {
     }
     pop();
   }
-}
-
-
-function displayIncreasedShieldMessage(data) {
-  let popup;
-  if (data < 0) {
-    popup = new DecreaseShield(data);
-  } else {
-    popup = new Popup(data);
-  }
-  popup.display = popup.display.bind(popup, player)
-  popups.push(popup);
 }
 
 function updateOtherPlayers(data) {
