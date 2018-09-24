@@ -1,4 +1,4 @@
-class Asteroid{
+export default class Asteroid{
   constructor(pos, minSize, maxSize) {
     this.pos = createVector(pos.x, pos.y);
     this.velocity = p5.Vector.random2D();
@@ -87,7 +87,6 @@ updateAndDisplayAsteroid() {
         var newAsteroids = this.getNewAsteroids();
         asteroids.push(...newAsteroids);
       }
-      console.log("splicing");
       asteroids.splice(i, 1);
       return true;
     }

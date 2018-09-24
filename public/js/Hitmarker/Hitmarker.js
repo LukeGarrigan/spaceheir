@@ -1,7 +1,6 @@
-class HitMarker {
+export default class HitMarker {
 
-  constructor(player) {
-    console.log(player);
+  constructor(player, image) {
     if (player){
       this.x = player.x;
       this.y = player.y;
@@ -13,6 +12,7 @@ class HitMarker {
       this.isInitialised = false;
       this.isVisible = false;
     }
+    this.hitMarkerImage = image;
   }
 
 
@@ -20,7 +20,7 @@ class HitMarker {
     this.time--;
     if (this.isInitialised && this.time > 0) {
       push();
-      image(hitMarkerImage, this.x-this.r, this.y-this.r, 35, 35);
+      image(this.hitMarkerImage, this.x-this.r, this.y-this.r, 35, 35);
       pop();
     }
 

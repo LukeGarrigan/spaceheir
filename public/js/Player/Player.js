@@ -1,4 +1,6 @@
-class Player {
+import socket from '../socket.js';
+
+export default class Player {
   constructor(name) {
     this.name = name;
     this.pos = createVector(random(width*3), random(height*3));
@@ -104,4 +106,11 @@ class Player {
     }
   }
 
+  get x() {
+    return this.pos.x;
+  }
+
+  get y() {
+    return this.pos.y;
+  }
 }

@@ -1,9 +1,12 @@
-class IncreaseShield extends Popup{
+import Popup from './Popup.js';
 
-  constructor(number) {
+export default class IncreaseShield extends Popup{
+
+  constructor(number, x, y) {
     super(color(0, 255, 0, 255),
           color(255, 255, 255, 255),
-          "+" + number);
+          "+" + number,
+          x, y);
   }
 
 
