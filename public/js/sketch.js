@@ -2,6 +2,7 @@ import Asteroid from './Asteroid/Asteroid.js';
 import Player from './Player/Player.js';
 import socket from './socket.js';
 import HitMarker from './HitMarker/HitMarker.js';
+import Killfeed from './Killfeed/Killfeed.js';
 import {
   processRespawn,
   emitPlayersBullets,
@@ -11,8 +12,11 @@ import {
   updateBullets,
   updateFoods,
   removeBullet,
-  processHitmarker
+  processHitmarker,
+  processKillFeedAddition
 } from './game-logic.js'
+
+
 
 let player;
 let food = [];
@@ -36,6 +40,7 @@ let hitMarkerSound;
 let boostSound;
 let shotSound;
 let explosionSound;
+let killfeed;
 
 socket.on('foods', data => updateFoods(data, food));
 
@@ -65,8 +70,9 @@ window.setup = function () {
       input.style("visibility", "hidden");
       player = new Player(inputValue);
       hitMarker = new HitMarker();
-      for (var i = 0; i < asteroidCount; i++) {
-        var pos = createVector(random(1920 * 3), random(1080 * 3));
+      killfeed = new Killfeed();
+      for (let i = 0; i < asteroidCount; i++) {
+        let pos = createVector(random(1920 * 3), random(1080 * 3));
         asteroids.push(new Asteroid(pos, 40, 60));
       }
       socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
@@ -74,11 +80,12 @@ window.setup = function () {
       socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
       socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
       socket.on('leaderboard', leaderboard => leaders = leaderboard);
-      socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player))
+      socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
       socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
       socket.on('respawn-end', () => player.respawning = false);
-      socket.on('playExplosion', () => explosionSound.play())
+      socket.on('playExplosion', () => explosionSound.play());
       socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
+      socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
       gameStarted = true;
       let playerPosition = {
         x: player.pos.x,
@@ -90,7 +97,8 @@ window.setup = function () {
       socket.emit('player', playerPosition);
     }
   });
-}
+};
+
 
 window.mouseWheel = function(event) {
   return false;
@@ -98,18 +106,20 @@ window.mouseWheel = function(event) {
 
 window.draw = function() {
   background(0);
-  image(shieldImage, width - 95, 20, 23, 23);
   fill(255);
   scale(1);
   textSize(15);
   if (gameStarted) {
-    text(floor(player.shield), width - 54, 35);
+
+
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
+    image(shieldImage, player.pos.x - width / 2 + 25, player.pos.y + height /3, 40, 40);
+    text(floor(player.shield), player.pos.x - width / 2 + 80, player.pos.y + height /3 + 25);
     timeSinceLastShot++;
 
-    for (var i = bullets.length - 1; i >= 0; i--) {
+    for (let i = bullets.length - 1; i >= 0; i--) {
       bullets[i].updateAndDisplay();
       if (bullets[i].hasBulletDiminished()) {
         socket.emit('removeBullet', bullets[i].id);
@@ -125,11 +135,11 @@ window.draw = function() {
       }
     }
 
-    for (var i = asteroids.length - 1; i >= 0; i--) {
-      for (var j = bullets.length - 1; j >= 0; j--) {
+    for (let i = asteroids.length - 1; i >= 0; i--) {
+      for (let j = bullets.length - 1; j >= 0; j--) {
         if (bullets[j].hasHit(asteroids[i])) {
           if (asteroids[i].shouldCreateNewAsteroids()) {
-            var newAsteroids = asteroids[i].getNewAsteroids();
+            let newAsteroids = asteroids[i].getNewAsteroids();
             asteroids.push(...newAsteroids);
           }
           asteroids.splice(i, 1);
@@ -154,7 +164,7 @@ window.draw = function() {
       }
     }
 
-    for (var i = food.length - 1; i >= 0; i--) {
+    for (let i = food.length - 1; i >= 0; i--) {
       food[i].display();
     }
 
@@ -163,6 +173,8 @@ window.draw = function() {
     hitMarker.display();
     emitPlayersBullets(bullets);
     drawLeaders();
+
+    killfeed.display(player.pos);
   }
 }
 

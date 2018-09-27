@@ -4,7 +4,6 @@ export default class Player {
   constructor(name) {
     this.name = name;
     this.pos = createVector(random(width*3), random(height*3));
-    this.r;
     this.radians = 0;
 
     this.isLeft = false;
@@ -36,7 +35,6 @@ export default class Player {
 
     this.radians = atan2(mouseY-height/2, mouseX-width/2);
     rotate(this.radians + HALF_PI);
-
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
     pop();
@@ -47,7 +45,7 @@ export default class Player {
       fill(255, 0, 0)
       textSize(32)
     }
-    text(this.respawning ? 'respawning...' : name, this.pos.x, this.pos.y+49);
+    text(this.respawning ? 'respawning...' : this.name, this.pos.x, this.pos.y+49);
     push();
     textSize(30);
     fill(255);

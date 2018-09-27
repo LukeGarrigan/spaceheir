@@ -122,5 +122,9 @@ export function removeBullet(id, bullets) {
 
 export function processHitmarker(player, hitMarkerImage, hitMarkerSound) {
   hitMarkerSound.play();
-  return new HitMarker(player, hitMarkerImage);
+return new HitMarker(player, hitMarkerImage);
+}
+
+export function processKillFeedAddition(kill, killfeed) {
+  killfeed.addKill(kill.killer, kill.deather, kill.killerAngle, kill.deatherAngle);
 }

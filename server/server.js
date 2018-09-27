@@ -51,7 +51,8 @@ io.sockets.on('connection', function newConnection(socket) {
       playerData.score = 0;
 
       let playersName = playerData.name.substring(0, 15);
-      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");;
+      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
+      ;
       players.push(playerData);
       addNewPlayerToLeaderboard(playerData);
       playerExists = true;
@@ -59,97 +60,95 @@ io.sockets.on('connection', function newConnection(socket) {
 
   }
 
-function onBullet() {
-  for (let i = players.length - 1; i >= 0; i--) {
-    if (players[i].id == socket.id && players[i].lastDeath === null) {
-      processPlayerShooting(players[i], socket);
-    }
-  }
-}
-
-function onDisconnect() {
-  console.log("Player disconnected");
-
-  for (let i = players.length - 1; i >= 0; i--) {
-    if (players[i].id == socket.id) {
-      players.splice(i, 1);
-    }
-  }
-
-  for (let i = leaderboard.length - 1; i >= 0; i--) {
-    if (leaderboard[i].id == socket.id) {
-      leaderboard.splice(i, 1);
-    }
-  }
-  socket.broadcast.emit('playerDisconnected', socket.id);
-}
-
-function onKeyPressed(direction) {
-  for (let i = 0; i < players.length; i++) {
-    if (socket.id == players[i].id) {
-      if (direction == "up") {
-        players[i].isUp = true;
-      } else if (direction == "down") {
-        players[i].isDown = true;
-      } else if (direction == "left") {
-        players[i].isLeft = true;
-      } else if (direction == "right") {
-        players[i].isRight = true;
-      } else if (direction == "spacebar") {
-        players[i].isBoosting = true;
+  function onBullet() {
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id && players[i].lastDeath === null) {
+        processPlayerShooting(players[i], socket);
       }
     }
   }
-}
 
-function onKeyReleased(direction) {
-  for (let i = 0; i < players.length; i++) {
-    if (socket.id == players[i].id) {
-      if (direction == "up") {
-        players[i].isUp = false;
-      } else if (direction == "down") {
-        players[i].isDown = false;
-      } else if (direction == "left") {
-        players[i].isLeft = false;
-      } else if (direction == "right") {
-        players[i].isRight = false;
-      } else if (direction == "spacebar") {
+  function onDisconnect() {
+    console.log("Player disconnected");
 
-        players[i].isBoosting = false;
+    for (let i = players.length - 1; i >= 0; i--) {
+      if (players[i].id == socket.id) {
+        players.splice(i, 1);
+      }
+    }
+
+    for (let i = leaderboard.length - 1; i >= 0; i--) {
+      if (leaderboard[i].id == socket.id) {
+        leaderboard.splice(i, 1);
+      }
+    }
+    socket.broadcast.emit('playerDisconnected', socket.id);
+  }
+
+  function onKeyPressed(direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = true;
+        } else if (direction == "down") {
+          players[i].isDown = true;
+        } else if (direction == "left") {
+          players[i].isLeft = true;
+        } else if (direction == "right") {
+          players[i].isRight = true;
+        } else if (direction == "spacebar") {
+          players[i].isBoosting = true;
+        }
       }
     }
   }
-}
 
-function onAngle(angle) {
-  for (let i = 0; i < players.length; i++) {
-    if (socket.id == players[i].id) {
-      players[i].angle = angle;
-    }
-  }
-}
+  function onKeyReleased(direction) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        if (direction == "up") {
+          players[i].isUp = false;
+        } else if (direction == "down") {
+          players[i].isDown = false;
+        } else if (direction == "left") {
+          players[i].isLeft = false;
+        } else if (direction == "right") {
+          players[i].isRight = false;
+        } else if (direction == "spacebar") {
 
-function onReduceShield() {
-  for (let i = 0; i < players.length; i++) {
-    if (socket.id == players[i].id) {
-      players[i].shield -= 75;
-    }
-  }
-}
-
-function onPlayerBullets(myBullets) {
-  for (let i = 0; i < myBullets.length; i++) {
-    for (let j = 0; j < bullets.length; j++) {
-      if (myBullets[i].id == bullets[j].id) {
-        bullets[j].x = myBullets[i].x;
-        bullets[j].y = myBullets[i].y;
-        bullets[j].bulletSize = myBullets[i].bulletSize;
+          players[i].isBoosting = false;
+        }
       }
     }
   }
-}
 
+  function onAngle(angle) {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        players[i].angle = angle;
+      }
+    }
+  }
 
+  function onReduceShield() {
+    for (let i = 0; i < players.length; i++) {
+      if (socket.id == players[i].id) {
+        players[i].shield -= 75;
+      }
+    }
+  }
+
+  function onPlayerBullets(myBullets) {
+    for (let i = 0; i < myBullets.length; i++) {
+      for (let j = 0; j < bullets.length; j++) {
+        if (myBullets[i].id == bullets[j].id) {
+          bullets[j].x = myBullets[i].x;
+          bullets[j].y = myBullets[i].y;
+          bullets[j].bulletSize = myBullets[i].bulletSize;
+        }
+      }
+    }
+  }
 });
 
 function setupFood() {
@@ -279,6 +278,14 @@ function updatePlayerGettingShot(player) {
   }
 }
 
+function getKiller(clientId) {
+  for (let player of players) {
+    if (player.id == clientId) {
+      return player;
+    }
+  }
+}
+
 function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
@@ -294,6 +301,17 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
         player.score = 0;
         io.to(player.id).emit('playExplosion');
         io.to(bullets[i].clientId).emit('playExplosion');
+
+
+        let killer = getKiller(bullets[i].clientId);
+
+        let playerKill = {
+          killer: killer.name,
+          killerAngle : killer.angle,
+          deather: player.name,
+          deatherAngle: player.angle
+        };
+        io.sockets.emit('killfeed', playerKill);
       }
       io.to(bullets[i].clientId).emit('hitMarker', player);
       bullets.splice(i, 1);
@@ -375,7 +393,7 @@ function updateLeaderboard() {
     }
   }
 
-  leaderboard.sort(function(a, b) {
+  leaderboard.sort(function (a, b) {
     return a.score < b.score;
   });
 }
