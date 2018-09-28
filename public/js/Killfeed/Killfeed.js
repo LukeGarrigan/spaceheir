@@ -4,9 +4,6 @@ export default class Killfeed {
     this._killfeed = [];
     this._x = width - 400;
     this._y = 100;
-
-    // this._killfeed.push(new Kill("blar", "blarer", 1.1, 0.1));
-    // this._killfeed.push(new Kill("blar", "blarer", 1.1, 0.1));
   }
 
   display(playerPosition) {
@@ -20,27 +17,26 @@ export default class Killfeed {
       push();
       textAlign(LEFT);
 
-      translate(playerPosition.x + width / 3, playerPosition.y - height / 2.5 + i * 30);
+      translate(playerPosition.x + width / 4, playerPosition.y - height / 2.5 + i * 30);
       let currentX = 0;
       let killerSize = textWidth(currentKill.killer);
       push();
       // don't want it to rotate the text
-      currentX = killerSize + (radiusOfTriangle*2);
+      currentX = killerSize + (radiusOfTriangle * 2);
       translate(currentX, -5);
       rotate(currentKill.killAngle + HALF_PI);
-      triangle(-radiusOfTriangle, radiusOfTriangle,  0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
+      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
       pop();
 
       // killer name
       fill(255);
       text(currentKill.killer, 0, 0);
 
-      currentX += (radiusOfTriangle*2);
+      currentX += (radiusOfTriangle * 2);
       text("eliminated", currentX, 0);
 
 
-
-      currentX += textWidth("eliminated") +(radiusOfTriangle);
+      currentX += textWidth("eliminated") + (radiusOfTriangle);
       text(currentKill.deather, currentX, 0);
 
 
@@ -50,7 +46,7 @@ export default class Killfeed {
       stroke(255);
       translate(currentX, -5);
       rotate(currentKill.deatherAngle + HALF_PI);
-      triangle(-radiusOfTriangle, radiusOfTriangle,  0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
+      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
       pop();
       pop();
 
