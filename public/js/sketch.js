@@ -1,7 +1,7 @@
 import Asteroid from './Asteroid/Asteroid.js';
 import Player from './Player/Player.js';
 import socket from './socket.js';
-import HitMarker from './HitMarker/HitMarker.js';
+import HitMarker from './HitMarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
 import {
   processRespawn,
