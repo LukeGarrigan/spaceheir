@@ -4,7 +4,7 @@ import DecreaseShield from './Popup/DecreaseShield.js';
 import IncreaseShield from './Popup/IncreaseShield.js';
 import Bullet from './Bullet/Bullet.js';
 import Food from './Food/Food.js';
-import HitMarker from './HitMarker/HitMarker.js';
+import HitMarker from './Hitmarker/Hitmarker.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
