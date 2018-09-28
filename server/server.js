@@ -294,7 +294,12 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       player.shield -= 75;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
+
+      // can shift into when the player dies
       let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
+      let isCurrentKillerWinning =  checkIfCurrentPlayerIsWinning(bullets[i].clientId);
+      console.log("Is player winning" + isCurrentPlayerWinning);
+      console.log("Is killer winning" + isCurrentKillerWinning);
 
       if (player.shield <= 0) {
         updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
@@ -305,11 +310,19 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
 
         let killer = getKiller(bullets[i].clientId);
 
+
+
+
+
+
+
         let playerKill = {
           killer: killer.name,
           killerAngle : killer.angle,
+          killerWinner : isCurrentKillerWinning,
           deather: player.name,
-          deatherAngle: player.angle
+          deatherAngle: player.angle,
+          deatherWinner: isCurrentPlayerWinning
         };
         io.sockets.emit('killfeed', playerKill);
       }

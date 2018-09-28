@@ -4,9 +4,6 @@ export default class Killfeed {
     this._killfeed = [];
     this._x = width - 400;
     this._y = 100;
-
-    // this._killfeed.push(new Kill("blar", "blarer", 1.1, 0.1));
-    // this._killfeed.push(new Kill("blar", "blarer", 1.1, 0.1));
   }
 
   display(playerPosition) {
@@ -20,27 +17,32 @@ export default class Killfeed {
       push();
       textAlign(LEFT);
 
-      translate(playerPosition.x + width / 3, playerPosition.y - height / 2.5 + i * 30);
+      translate(playerPosition.x + width / 4, playerPosition.y - height / 2.5 + i * 30);
       let currentX = 0;
       let killerSize = textWidth(currentKill.killer);
       push();
       // don't want it to rotate the text
-      currentX = killerSize + (radiusOfTriangle*2);
+      currentX = killerSize + (radiusOfTriangle * 2);
       translate(currentX, -5);
       rotate(currentKill.killAngle + HALF_PI);
-      triangle(-radiusOfTriangle, radiusOfTriangle,  0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
+      if (currentKill.killerWinner) {
+        stroke(255, 69, 0);
+      } else {
+        stroke(255);
+      }
+      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
       pop();
 
       // killer name
       fill(255);
+
       text(currentKill.killer, 0, 0);
 
-      currentX += (radiusOfTriangle*2);
+      currentX += (radiusOfTriangle * 2);
       text("eliminated", currentX, 0);
 
 
-
-      currentX += textWidth("eliminated") +(radiusOfTriangle);
+      currentX += textWidth("eliminated") + (radiusOfTriangle);
       text(currentKill.deather, currentX, 0);
 
 
@@ -50,7 +52,13 @@ export default class Killfeed {
       stroke(255);
       translate(currentX, -5);
       rotate(currentKill.deatherAngle + HALF_PI);
-      triangle(-radiusOfTriangle, radiusOfTriangle,  0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
+      if (currentKill.deatherWinner) {
+        stroke(255, 69, 0);
+      } else {
+        stroke(255);
+      }
+
+      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
       pop();
       pop();
 
@@ -59,11 +67,11 @@ export default class Killfeed {
   }
 
 
-  addKill(killer, deather, killAngle, deatherAngle) {
+  addKill(killer, deather, killerWinner, deatherWinner, killAngle, deatherAngle) {
     if (this._killfeed.length > 3) {
       this._killfeed.splice(0, 1);
     }
-    this._killfeed.push(new Kill(killer, deather, killAngle, deatherAngle));
+    this._killfeed.push(new Kill(killer, deather, killerWinner, deatherWinner, killAngle, deatherAngle));
   }
 
 
@@ -72,11 +80,13 @@ export default class Killfeed {
 
 class Kill {
 
-  constructor(killer, deather, killAngle, deatherAngle) {
+  constructor(killer, deather, killerWinner, deatherWinner, killAngle, deatherAngle) {
     this._killer = killer;
     this._deather = deather;
     this._killAngle = killAngle;
     this._deatherAngle = deatherAngle;
+    this._killerWinner = killerWinner;
+    this._deatherWinner = deatherWinner;
 
     this.alpha = 0;
     this.timer = 0;
@@ -87,6 +97,22 @@ class Kill {
     this.timer++;
   }
 
+
+  get killerWinner() {
+    return this._killerWinner;
+  }
+
+  set killerWinner(value) {
+    this._killerWinner = value;
+  }
+
+  get deatherWinner() {
+    return this._deatherWinner;
+  }
+
+  set deatherWinner(value) {
+    this._deatherWinner = value;
+  }
 
   get killer() {
     return this._killer;
