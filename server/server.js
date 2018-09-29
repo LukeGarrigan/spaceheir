@@ -381,7 +381,7 @@ function processPlayerShooting(player, socket) {
       let timeSinceLastShot = Date.now() - previousShot;
       if (timeSinceLastShot > 200) {
         playersLastShot[i].date = Date.now();
-
+        io.to(socket.id).emit('processShotSound');
         lastBulletId = lastBulletId + 1;
         let bullet = {
           x: player.x,

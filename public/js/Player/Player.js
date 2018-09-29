@@ -14,6 +14,7 @@ export default class Player {
     this.shield = 0;
     this.score = 0;
     this.respawning = false;
+    this.shieldRadius = 5;
   }
 
   display(leaders) {
@@ -25,18 +26,22 @@ export default class Player {
       leaderBoardWinnersId = leaders[0].id;
     }
 
+    let winner = false;
+
     if (leaderBoardWinnersId == socket.id) {
-      stroke(255, 69, 0);
-    } else {
-      stroke(255);
+      winner = true;
     }
 
+    winner ? stroke(255, 69, 0) : stroke(255);
 
 
     this.radians = atan2(mouseY-height/2, mouseX-width/2);
+    this.shieldRadius = map(this.shield, 0, 1000, 5, 21);
     rotate(this.radians + HALF_PI);
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
+    winner ? fill(255, 69, 0) : fill(255);
+    triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
     pop();
     textAlign(CENTER);
 
