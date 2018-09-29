@@ -52,7 +52,7 @@ window.preload = function() {
   shieldImage = loadImage("assets/images/shield.png");
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
-  shotSound.setVolume(0.1)
+  shotSound.setVolume(0.05)
   explosionSound.setVolume(0.4);
 }
 
@@ -86,6 +86,8 @@ window.setup = function () {
       socket.on('playExplosion', () => explosionSound.play());
       socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
       socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
+      socket.on('processShotSound',() => shotSound.play());
+
       gameStarted = true;
       let playerPosition = {
         x: player.pos.x,
@@ -102,7 +104,7 @@ window.setup = function () {
 
 window.mouseWheel = function(event) {
   return false;
-}
+;}
 
 window.draw = function() {
   background(0);
@@ -225,12 +227,11 @@ window.onresize = function() {
 }
 
 window.mousePressed = function() {
-  if (timeSinceLastShot > 20 && !player.respawning) {
-    shotSound.play();
+  if (timeSinceLastShot > 15 && !player.respawning) {
     socket.emit('bullet');
     timeSinceLastShot = 0;
   }
-}
+};
 
 function drawLeaders() {
   for (let i = 0; i < leaders.length && i < 10; i++) {
@@ -261,13 +262,15 @@ function drawOtherPlayers() {
     push();
     translate(otherPlayers[i].x, otherPlayers[i].y);
     fill(0);
-    if (leaderBoardWinnersId == otherPlayers[i].id) {
-      stroke(255, 69, 0);
-    } else {
-      stroke(255);
-    }
+    let shieldRadius = 0;
+    let isWinning =  leaderBoardWinnersId === otherPlayers[i].id;
+    isWinning ? stroke(255, 69, 0) : stroke(255);
+
+    shieldRadius = map(otherPlayers[i].shield, 0, 1000, 5, 21);
     rotate(otherPlayers[i].angle + HALF_PI);
     triangle(-21, 21, 0, -21, 21, 21);
+    isWinning ? fill(255, 69, 0) : fill(255);
+    triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
     pop();
     textAlign(CENTER);
     let name = otherPlayers[i].name;
