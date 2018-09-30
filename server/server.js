@@ -41,17 +41,8 @@ io.sockets.on('connection', function newConnection(socket) {
 
   socket.emit('foods', foods);
 
-  socket.on('angle', onAngle);
   socket.on('reduceShield', onReduceShield);
   socket.on('playerBullets', onPlayerBullets);
-
-  function onAngle(angle) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].angle = angle;
-      }
-    }
-  }
 
   function onReduceShield() {
     for (let i = 0; i < players.length; i++) {

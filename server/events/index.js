@@ -4,4 +4,5 @@ module.exports = {
   disconnect: require('./disconnect-event'),
   keyPressed: require('./keyPressed-event'),
   keyReleased: require('./keyReleased-event'),
+  angle: require('./angle-event'),
 }
