@@ -259,17 +259,20 @@ function drawOtherPlayers() {
     if (otherPlayers[i].lastDeath !== null) {
       continue;
     }
+
+    let offset = map(otherPlayers[i].shield, 0, 1000, 0, 10);
     push();
     translate(otherPlayers[i].x, otherPlayers[i].y);
-    fill(0);
     let shieldRadius = 0;
     let isWinning =  leaderBoardWinnersId === otherPlayers[i].id;
+    isWinning ? fill(255, 69, 0) : fill(255);
     isWinning ? stroke(255, 69, 0) : stroke(255);
 
-    shieldRadius = map(otherPlayers[i].shield, 0, 1000, 5, 21);
+    shieldRadius = map(otherPlayers[i].shield, 0, 1000, 21, 0);
     rotate(otherPlayers[i].angle + HALF_PI);
     triangle(-21, 21, 0, -21, 21, 21);
-    isWinning ? fill(255, 69, 0) : fill(255);
+    fill(0);
+    translate(0, -offset);
     triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
     pop();
     textAlign(CENTER);
