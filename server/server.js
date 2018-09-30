@@ -41,48 +41,9 @@ io.sockets.on('connection', function newConnection(socket) {
 
   socket.emit('foods', foods);
 
-  socket.on('keyPressed', onKeyPressed);
-  socket.on('keyReleased', onKeyReleased);
   socket.on('angle', onAngle);
   socket.on('reduceShield', onReduceShield);
   socket.on('playerBullets', onPlayerBullets);
-
-  function onKeyPressed(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = true;
-        } else if (direction == "down") {
-          players[i].isDown = true;
-        } else if (direction == "left") {
-          players[i].isLeft = true;
-        } else if (direction == "right") {
-          players[i].isRight = true;
-        } else if (direction == "spacebar") {
-          players[i].isBoosting = true;
-        }
-      }
-    }
-  }
-
-  function onKeyReleased(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = false;
-        } else if (direction == "down") {
-          players[i].isDown = false;
-        } else if (direction == "left") {
-          players[i].isLeft = false;
-        } else if (direction == "right") {
-          players[i].isRight = false;
-        } else if (direction == "spacebar") {
-
-          players[i].isBoosting = false;
-        }
-      }
-    }
-  }
 
   function onAngle(angle) {
     for (let i = 0; i < players.length; i++) {
