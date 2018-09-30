@@ -13,7 +13,7 @@ let io = socket(server);
 let playersLastShot = [];
 let playerShields = [];
 
-let players = [];
+const players = [];
 let bullets = [];
 let foods = [];
 let leaderboard = [];
@@ -22,133 +22,28 @@ let lastBulletId = 0;
 setupFood();
 setInterval(broadcastPlayers, 16);
 
+module.exports = {
+  players,
+  addNewPlayerToLeaderboard,
+  processPlayerShooting,
+  leaderboard,
+  bullets
+}
+
+const events = require('./events');
+const eventsList = Object.entries(events);
+
 io.sockets.on('connection', function newConnection(socket) {
-  let playerExists = false;
   console.log("new connection " + socket.id);
+
+  for (const [event, cb] of eventsList) {
+    socket.on(event, (...args) => {
+      cb({ socket, io }, ...args);
+    });
+  }
+
   setupPlayerLastShot(socket);
-
   socket.emit('foods', foods);
-
-  socket.on('player', onPlayerMessage);
-  socket.on('bullet', onBullet);
-  socket.on('disconnect', onDisconnect);
-  socket.on('keyPressed', onKeyPressed);
-  socket.on('keyReleased', onKeyReleased);
-  socket.on('angle', onAngle);
-  socket.on('reduceShield', onReduceShield);
-  socket.on('playerBullets', onPlayerBullets);
-
-  function onPlayerMessage(playerData) {
-    if (!playerExists) {
-      playerData.id = socket.id;
-      playerData.shield = config.settings.BASE_SHIELD;
-      playerData.isUp = false;
-      playerData.isDown = false;
-      playerData.isLeft = false;
-      playerData.isRight = false;
-      playerData.isBoosting = false;
-      playerData.r = 21;
-      playerData.score = 0;
-
-      let playersName = playerData.name.substring(0, 15);
-      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
-      ;
-      players.push(playerData);
-      addNewPlayerToLeaderboard(playerData);
-      playerExists = true;
-    }
-
-  }
-
-  function onBullet() {
-    for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id && players[i].lastDeath === null) {
-        processPlayerShooting(players[i], socket);
-      }
-    }
-  }
-
-  function onDisconnect() {
-    console.log("Player disconnected");
-
-    for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id) {
-        players.splice(i, 1);
-      }
-    }
-
-    for (let i = leaderboard.length - 1; i >= 0; i--) {
-      if (leaderboard[i].id == socket.id) {
-        leaderboard.splice(i, 1);
-      }
-    }
-    socket.broadcast.emit('playerDisconnected', socket.id);
-  }
-
-  function onKeyPressed(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = true;
-        } else if (direction == "down") {
-          players[i].isDown = true;
-        } else if (direction == "left") {
-          players[i].isLeft = true;
-        } else if (direction == "right") {
-          players[i].isRight = true;
-        } else if (direction == "spacebar") {
-          players[i].isBoosting = true;
-        }
-      }
-    }
-  }
-
-  function onKeyReleased(direction) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        if (direction == "up") {
-          players[i].isUp = false;
-        } else if (direction == "down") {
-          players[i].isDown = false;
-        } else if (direction == "left") {
-          players[i].isLeft = false;
-        } else if (direction == "right") {
-          players[i].isRight = false;
-        } else if (direction == "spacebar") {
-
-          players[i].isBoosting = false;
-        }
-      }
-    }
-  }
-
-  function onAngle(angle) {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].angle = angle;
-      }
-    }
-  }
-
-  function onReduceShield() {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].shield -= 75;
-      }
-    }
-  }
-
-  function onPlayerBullets(myBullets) {
-    for (let i = 0; i < myBullets.length; i++) {
-      for (let j = 0; j < bullets.length; j++) {
-        if (myBullets[i].id == bullets[j].id) {
-          bullets[j].x = myBullets[i].x;
-          bullets[j].y = myBullets[i].y;
-          bullets[j].bulletSize = myBullets[i].bulletSize;
-        }
-      }
-    }
-  }
 });
 
 function setupFood() {

@@ -62,6 +62,33 @@ export default class Player {
     pop();
   }
 
+  static drawOtherPlayer(player, leaderBoardWinnersId) {
+    // Other player is respawning
+    // TODO: If the player is respawning, client should not receive data.
+    if (player.lastDeath !== null) {
+      return;
+    }
+
+    let offset = map(player.shield, 0, 1000, 0, 10);
+    push();
+    translate(player.x, player.y);
+    let shieldRadius = 0;
+    let isWinning =  leaderBoardWinnersId === player.id;
+    isWinning ? fill(255, 69, 0) : fill(255);
+    isWinning ? stroke(255, 69, 0) : stroke(255);
+
+    shieldRadius = map(player.shield, 0, 1000, 21, 0);
+    rotate(player.angle + HALF_PI);
+    triangle(-21, 21, 0, -21, 21, 21);
+    fill(0);
+    translate(0, -offset);
+    triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
+    pop();
+    textAlign(CENTER);
+    let name = player.name;
+    textSize(15);
+    text(name, player.x, player.y + 49);
+  }
 
   increaseShield(sizeOfFood) {
     if (this.shield < config.settings.MAX_SHIELD) {

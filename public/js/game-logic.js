@@ -49,28 +49,20 @@ export function displayIncreasedShieldMessage(data, popups, player) {
 }
 
 export function updateOtherPlayers(data, player, otherPlayers) {
-  for (let i = 0; i < data.length; i++) {
-    let exists = false;
+  const clientData = data.find(p => p.id === socket.id);
+  const otherplayersData = data.filter(p => p.id !== socket.id);
 
-    if (data[i].id == socket.id) {
-      player.pos.x = data[i].x;
-      player.pos.y = data[i].y;
-      player.r = data[i].r;
-      player.name = data[i].name;
-      player.shield = data[i].shield;
-      player.score = data[i].score;
-      continue;
-    }
-    for (let j = 0; j < otherPlayers.length; j++) {
-      if (data[i].id == otherPlayers[j].id) {
-        otherPlayers[j] = data[i];
-        exists = true;
-      }
-    }
+  if (clientData) {
+    player.pos.x = clientData.x;
+    player.pos.y = clientData.y;
+    player.r = clientData.r;
+    player.name = clientData.name;
+    player.shield = clientData.shield;
+    player.score = clientData.score;
+  }
 
-    if (!exists) {
-      otherPlayers.push(data[i]);
-    }
+  for (let i = 0; i < otherplayersData.length; i++) {
+    otherPlayers[i] = otherplayersData[i];
   }
 }
 
