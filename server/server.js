@@ -26,43 +26,24 @@ module.exports = {
   players,
   addNewPlayerToLeaderboard,
   processPlayerShooting,
-  leaderboard
+  leaderboard,
+  bullets
 }
 
 const events = require('./events');
+const eventsList = Object.assign(events);
 
 io.sockets.on('connection', function newConnection(socket) {
-  for (const [event, cb] of Object.entries(events)) {
-    socket.on(event, (...args) => cb({ socket, io }, ...args));
-  }
-
   console.log("new connection " + socket.id);
+
+  for (const [event, cb] of eventsList) {
+    socket.on(event, (...args) => {
+      cb({ socket, io }, ...args);
+    });
+  }
+
   setupPlayerLastShot(socket);
-
   socket.emit('foods', foods);
-
-  socket.on('reduceShield', onReduceShield);
-  socket.on('playerBullets', onPlayerBullets);
-
-  function onReduceShield() {
-    for (let i = 0; i < players.length; i++) {
-      if (socket.id == players[i].id) {
-        players[i].shield -= 75;
-      }
-    }
-  }
-
-  function onPlayerBullets(myBullets) {
-    for (let i = 0; i < myBullets.length; i++) {
-      for (let j = 0; j < bullets.length; j++) {
-        if (myBullets[i].id == bullets[j].id) {
-          bullets[j].x = myBullets[i].x;
-          bullets[j].y = myBullets[i].y;
-          bullets[j].bulletSize = myBullets[i].bulletSize;
-        }
-      }
-    }
-  }
 });
 
 function setupFood() {
