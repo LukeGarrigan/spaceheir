@@ -13,7 +13,8 @@ import {
   updateFoods,
   removeBullet,
   processHitmarker,
-  processKillFeedAddition
+  processKillFeedAddition,
+  isWithinScreen
 } from './game-logic.js'
 
 
@@ -122,7 +123,10 @@ window.draw = function() {
     timeSinceLastShot++;
 
     for (let i = bullets.length - 1; i >= 0; i--) {
-      bullets[i].updateAndDisplay();
+      bullets[i].update();
+      if (isWithinScreen(player, bullets[i].pos)) {
+        bullets[i].display();
+      }
       if (bullets[i].hasBulletDiminished()) {
         socket.emit('removeBullet', bullets[i].id);
         bullets.splice(i, 1);
@@ -167,7 +171,9 @@ window.draw = function() {
     }
 
     for (let i = food.length - 1; i >= 0; i--) {
-      food[i].display();
+      if (isWithinScreen(player, food[i])) {
+        food[i].display(player.pos);
+      }
     }
 
     socket.emit('angle', player.radians);
@@ -177,7 +183,9 @@ window.draw = function() {
       leaderBoardWinnersId = leaders[0].id;
     }
     for (const otherPlayer of otherPlayers) {
-      Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId);
+      if (isWithinScreen(player, otherPlayer)) {
+        Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId);
+      }
     }
 
     hitMarker.display();

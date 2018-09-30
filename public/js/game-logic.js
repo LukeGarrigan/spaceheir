@@ -1,3 +1,7 @@
+/**
+ * @typedef {{ x: number, y: number }} Position
+ */
+
 import socket from './socket.js';
 import BasicTextPopup from './Popup/BasicTextPopup.js';
 import DecreaseShield from './Popup/DecreaseShield.js';
@@ -119,4 +123,27 @@ export function processHitmarker(player, hitMarkerImage, hitMarkerSound) {
 
 export function processKillFeedAddition(kill, killfeed) {
   killfeed.addKill(kill.killer, kill.deather, kill.killerWinner, kill.deatherWinner, kill.killerAngle, kill.deatherAngle);
+}
+
+/**
+ * Calculates if a game object is inside the window relative to the player (center of the screen)
+ *
+ * TODO:  Client should only receive data from objects that are near him.
+ *        Implement this check in backend instead.
+ *
+ * @param {Position} player
+ * @param {Position} to
+ */
+export function isWithinScreen(player, to) {
+  const height = Math.floor(window.outerHeight / 2 );
+  const width = Math.floor(window.outerWidth / 2 );
+
+  const diffX = player.x - to.x;
+  const diffY = player.y - to.y;
+
+  if (diffX > width || diffX < -width || diffY > height || diffY < -height) {
+    return false;
+  }
+
+  return true;
 }

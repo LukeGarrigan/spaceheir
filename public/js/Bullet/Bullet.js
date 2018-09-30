@@ -9,10 +9,13 @@ export default class Bullet{
     this.bulletSize = bulletSize;
   }
 
-  updateAndDisplay() {
+  update() {
     this.r = lerp(this.r, 0, 0.01);
     this.pos.add(this.velocity);
     this.bulletSize--;
+  }
+
+  display() {
     fill(255);
     ellipse(this.pos.x, this.pos.y, this.r, this.r);
   }
