@@ -171,7 +171,15 @@ window.draw = function() {
     }
 
     socket.emit('angle', player.radians);
-    drawOtherPlayers();
+
+    let leaderBoardWinnersId;
+    if (leaders.length > 0) {
+      leaderBoardWinnersId = leaders[0].id;
+    }
+    for (const otherPlayer of otherPlayers) {
+      Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId);
+    }
+
     hitMarker.display();
     emitPlayersBullets(bullets);
     drawLeaders();
@@ -246,38 +254,5 @@ function drawLeaders() {
       text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
     }
     pop();
-  }
-}
-
-function drawOtherPlayers() {
-
-  let leaderBoardWinnersId;
-  if (leaders.length > 0) {
-    leaderBoardWinnersId = leaders[0].id;
-  }
-  for (let i = 0; i < otherPlayers.length; i++) {
-    if (otherPlayers[i].lastDeath !== null) {
-      continue;
-    }
-
-    let offset = map(otherPlayers[i].shield, 0, 1000, 0, 10);
-    push();
-    translate(otherPlayers[i].x, otherPlayers[i].y);
-    let shieldRadius = 0;
-    let isWinning =  leaderBoardWinnersId === otherPlayers[i].id;
-    isWinning ? fill(255, 69, 0) : fill(255);
-    isWinning ? stroke(255, 69, 0) : stroke(255);
-
-    shieldRadius = map(otherPlayers[i].shield, 0, 1000, 21, 0);
-    rotate(otherPlayers[i].angle + HALF_PI);
-    triangle(-21, 21, 0, -21, 21, 21);
-    fill(0);
-    translate(0, -offset);
-    triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
-    pop();
-    textAlign(CENTER);
-    let name = otherPlayers[i].name;
-    textSize(15);
-    text(name, otherPlayers[i].x, otherPlayers[i].y + 49);
   }
 }

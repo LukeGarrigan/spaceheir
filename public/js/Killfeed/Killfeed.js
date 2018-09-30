@@ -7,6 +7,7 @@ export default class Killfeed {
   }
 
   display(playerPosition) {
+    textSize(15);
 
     let radiusOfTriangle = 10;
 
