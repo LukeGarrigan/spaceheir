@@ -31,7 +31,7 @@ module.exports = {
 }
 
 const events = require('./events');
-const eventsList = Object.assign(events);
+const eventsList = Object.entries(events);
 
 io.sockets.on('connection', function newConnection(socket) {
   console.log("new connection " + socket.id);
