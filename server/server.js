@@ -24,7 +24,8 @@ setInterval(broadcastPlayers, 16);
 
 module.exports = {
   players,
-  addNewPlayerToLeaderboard
+  addNewPlayerToLeaderboard,
+  processPlayerShooting
 }
 
 const events = require('./events');
@@ -39,7 +40,6 @@ io.sockets.on('connection', function newConnection(socket) {
 
   socket.emit('foods', foods);
 
-  socket.on('bullet', onBullet);
   socket.on('disconnect', onDisconnect);
   socket.on('keyPressed', onKeyPressed);
   socket.on('keyReleased', onKeyReleased);
@@ -47,13 +47,6 @@ io.sockets.on('connection', function newConnection(socket) {
   socket.on('reduceShield', onReduceShield);
   socket.on('playerBullets', onPlayerBullets);
 
-  function onBullet() {
-    for (let i = players.length - 1; i >= 0; i--) {
-      if (players[i].id == socket.id && players[i].lastDeath === null) {
-        processPlayerShooting(players[i], socket);
-      }
-    }
-  }
 
   function onDisconnect() {
     console.log("Player disconnected");
