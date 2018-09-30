@@ -13,7 +13,7 @@ let io = socket(server);
 let playersLastShot = [];
 let playerShields = [];
 
-let players = [];
+const players = [];
 let bullets = [];
 let foods = [];
 let leaderboard = [];
@@ -22,14 +22,23 @@ let lastBulletId = 0;
 setupFood();
 setInterval(broadcastPlayers, 16);
 
+module.exports = {
+  players,
+  addNewPlayerToLeaderboard
+}
+
+const events = require('./events');
+
 io.sockets.on('connection', function newConnection(socket) {
-  let playerExists = false;
+  for (const [event, cb] of Object.entries(events)) {
+    socket.on(event, (...args) => cb({ socket, io }, ...args));
+  }
+
   console.log("new connection " + socket.id);
   setupPlayerLastShot(socket);
 
   socket.emit('foods', foods);
 
-  socket.on('player', onPlayerMessage);
   socket.on('bullet', onBullet);
   socket.on('disconnect', onDisconnect);
   socket.on('keyPressed', onKeyPressed);
@@ -37,28 +46,6 @@ io.sockets.on('connection', function newConnection(socket) {
   socket.on('angle', onAngle);
   socket.on('reduceShield', onReduceShield);
   socket.on('playerBullets', onPlayerBullets);
-
-  function onPlayerMessage(playerData) {
-    if (!playerExists) {
-      playerData.id = socket.id;
-      playerData.shield = config.settings.BASE_SHIELD;
-      playerData.isUp = false;
-      playerData.isDown = false;
-      playerData.isLeft = false;
-      playerData.isRight = false;
-      playerData.isBoosting = false;
-      playerData.r = 21;
-      playerData.score = 0;
-
-      let playersName = playerData.name.substring(0, 15);
-      playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
-      ;
-      players.push(playerData);
-      addNewPlayerToLeaderboard(playerData);
-      playerExists = true;
-    }
-
-  }
 
   function onBullet() {
     for (let i = players.length - 1; i >= 0; i--) {
