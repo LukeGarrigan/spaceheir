@@ -7,4 +7,4 @@ module.exports = {
   angle: require('./angle-event'),
   playerBullets: require('./playerBullets-event'),
   reduceShield: require('./reduceShield-event'),
-}
+};

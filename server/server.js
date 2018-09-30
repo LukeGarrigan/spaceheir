@@ -38,7 +38,7 @@ io.sockets.on('connection', function newConnection(socket) {
 
   for (const [event, cb] of eventsList) {
     socket.on(event, (...args) => {
-      cb({ socket, io }, ...args);
+      cb({socket, io}, ...args);
     });
   }
 
@@ -47,7 +47,6 @@ io.sockets.on('connection', function newConnection(socket) {
 });
 
 function setupFood() {
-
   for (let i = 0; i < config.settings.NUM_FOOD; i++) {
     let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
     let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
@@ -149,8 +148,10 @@ function updatePlayerPosition(player) {
 function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
-      player.shield += foods[i].r;
-      io.to(player.id).emit('increaseShield', foods[i].r);
+      if (player.shield < config.settings.MAX_SHIELD) {
+        player.shield += foods[i].r;
+        io.to(player.id).emit('increaseShield', foods[i].r);
+      }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
       foods[i].x = foodX;
@@ -192,7 +193,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
 
       // can shift into when the player dies
       let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
-      let isCurrentKillerWinning =  checkIfCurrentPlayerIsWinning(bullets[i].clientId);
+      let isCurrentKillerWinning = checkIfCurrentPlayerIsWinning(bullets[i].clientId);
       console.log("Is player winning" + isCurrentPlayerWinning);
       console.log("Is killer winning" + isCurrentKillerWinning);
 
@@ -206,15 +207,10 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
         let killer = getKiller(bullets[i].clientId);
 
 
-
-
-
-
-
         let playerKill = {
           killer: killer.name,
-          killerAngle : killer.angle,
-          killerWinner : isCurrentKillerWinning,
+          killerAngle: killer.angle,
+          killerWinner: isCurrentKillerWinning,
           deather: player.name,
           deatherAngle: player.angle,
           deatherWinner: isCurrentPlayerWinning

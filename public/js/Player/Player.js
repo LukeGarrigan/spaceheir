@@ -51,10 +51,15 @@ export default class Player {
 
 
     if (this.respawning) {
+      push();
       fill(255, 0, 0);
       textSize(32)
+      text('respawning...' , this.pos.x, this.pos.y+49);
+      pop();
+    } else {
+      text(this.name, this.pos.x, this.pos.y+49);
     }
-    text(this.respawning ? 'respawning...' : this.name, this.pos.x, this.pos.y+49);
+
     push();
     textSize(30);
     fill(255);
