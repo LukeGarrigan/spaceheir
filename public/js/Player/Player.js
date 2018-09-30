@@ -36,18 +36,22 @@ export default class Player {
 
 
     this.radians = atan2(mouseY-height/2, mouseX-width/2);
-    this.shieldRadius = map(this.shield, 0, 1000, 5, 21);
+    this.shieldRadius = map(this.shield, 0, 1000, 21, 0);
+    this.offset = map(this.shield, 0, 1000, 0, 10);
     rotate(this.radians + HALF_PI);
+    winner ? fill(255, 69, 0) : fill(255);
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
     winner ? fill(255, 69, 0) : fill(255);
+    fill(0);
+    translate(0, -this.offset);
     triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
     pop();
     textAlign(CENTER);
 
 
     if (this.respawning) {
-      fill(255, 0, 0)
+      fill(255, 0, 0);
       textSize(32)
     }
     text(this.respawning ? 'respawning...' : this.name, this.pos.x, this.pos.y+49);
