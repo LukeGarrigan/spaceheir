@@ -95,7 +95,7 @@ window.setup = function () {
         y: player.pos.y,
         angle: player.radians,
         name: player.name
-      }
+      };
 
       socket.emit('player', playerPosition);
     }
@@ -130,28 +130,6 @@ window.draw = function() {
       if (bullets[i].hasBulletDiminished()) {
         socket.emit('removeBullet', bullets[i].id);
         bullets.splice(i, 1);
-      }
-    }
-
-    for (let i = asteroids.length - 1; i >= 0; i--) {
-      asteroids[i].updateAndDisplayAsteroid();
-      if (asteroids[i].checkCollisionsWithPlayer(asteroids, player, i)) {
-        socket.emit('reduceShield');
-        displayIncreasedShieldMessage(-75)
-      }
-    }
-
-    for (let i = asteroids.length - 1; i >= 0; i--) {
-      for (let j = bullets.length - 1; j >= 0; j--) {
-        if (bullets[j].hasHit(asteroids[i])) {
-          if (asteroids[i].shouldCreateNewAsteroids()) {
-            let newAsteroids = asteroids[i].getNewAsteroids();
-            asteroids.push(...newAsteroids);
-          }
-          asteroids.splice(i, 1);
-          bullets.splice(j, 1);
-          break;
-        }
       }
     }
 
@@ -210,6 +188,7 @@ window.keyPressed = function() {
       socket.emit('keyPressed', "spacebar");
       if (player.shield > 0) {
         boostSound.play();
+        player.isBoosting = true;
       }
     }
   }
@@ -229,6 +208,7 @@ window.keyReleased = function() {
     } else if (keyCode == 32) {
       socket.emit('keyReleased', "spacebar");
       boostSound.stop();
+      player.isBoosting = false;
     }
   }
 }

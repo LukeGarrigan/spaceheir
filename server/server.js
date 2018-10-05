@@ -11,8 +11,6 @@ let socket = require('socket.io');
 let io = socket(server);
 
 let playersLastShot = [];
-let playerShields = [];
-
 const players = [];
 let bullets = [];
 let foods = [];
@@ -36,9 +34,9 @@ const eventsList = Object.entries(events);
 io.sockets.on('connection', function newConnection(socket) {
   console.log("new connection " + socket.id);
 
-  for (const [event, cb] of eventsList) {
+  for (const [event, callback] of eventsList) {
     socket.on(event, (...args) => {
-      cb({socket, io}, ...args);
+      callback({socket, io}, ...args);
     });
   }
 
