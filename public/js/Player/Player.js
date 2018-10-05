@@ -5,7 +5,6 @@ export default class Player {
     this.name = name;
     this.pos = createVector(random(width*3), random(height*3));
     this.radians = 0;
-
     this.isLeft = false;
     this.isRight = false;
     this.isUp = false;
@@ -13,6 +12,7 @@ export default class Player {
     this.speed = 2;
     this.shield = 0;
     this.score = 0;
+    this.isBoosting = false;
     this.respawning = false;
     this.shieldRadius = 5;
   }
@@ -46,20 +46,36 @@ export default class Player {
     fill(0);
     translate(0, -this.offset);
     triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
+    this.handlePlayerBoosting();
     pop();
     textAlign(CENTER);
 
 
     if (this.respawning) {
+      push();
       fill(255, 0, 0);
       textSize(32)
+      text('respawning...' , this.pos.x, this.pos.y+49);
+      pop();
+    } else {
+      text(this.name, this.pos.x, this.pos.y+49);
     }
-    text(this.respawning ? 'respawning...' : this.name, this.pos.x, this.pos.y+49);
+
     push();
     textSize(30);
     fill(255);
     text(this.score, this.pos.x, this.pos.y - height/2 + 80);
     pop();
+  }
+
+  handlePlayerBoosting() {
+    translate(0, this.r/2+20);
+    if (this.isBoosting) {
+      rotate(PI);
+      fill(0);
+      triangle(-this.r/3, this.r/3, 0, -this.r/3, this.r/3, this.r/3);
+    }
+
   }
 
   static drawOtherPlayer(player, leaderBoardWinnersId) {
@@ -83,6 +99,7 @@ export default class Player {
     fill(0);
     translate(0, -offset);
     triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
+    this.processOtherPlayersBooster(player);
     pop();
     textAlign(CENTER);
     let name = player.name;
@@ -90,53 +107,13 @@ export default class Player {
     text(name, player.x, player.y + 49);
   }
 
-  increaseShield(sizeOfFood) {
-    if (this.shield < config.settings.MAX_SHIELD) {
-      this.shield = this.shield + sizeOfFood;
-      if (this.shield > config.settings.MAX_SHIELD) {
-        this.shield = config.settings.MAX_SHIELD;
-      }
-    }
-  }
 
-  up() {
-    this.isUp = true;
-  }
-
-  down() {
-    this.isDown = true;
-  }
-
-  left() {
-    this.isLeft = true;
-  }
-
-  right() {
-    this.isRight = true;
-  }
-
-  upReleased() {
-    this.isUp = false;
-  }
-
-  downReleased() {
-    this.isDown = false;
-  }
-
-  leftReleased() {
-    this.isLeft = false;
-  }
-
-  rightReleased() {
-    this.isRight = false;
-  }
-
-  reduceShield() {
-    if (this.shield > config.settings.MAX_SHIELD_REDUCTION) {
-      this.shield -= config.settings.MAX_SHIELD_REDUCTION
-    } else {
-      this.shield = 0;
-      //this.pos = createVector(random(width), random(height));
+  static processOtherPlayersBooster(player) {
+    translate(0, player.r / 2 + 20);
+    if (player.isBoosting) {
+      rotate(PI);
+      fill(0);
+      triangle(-player.r / 3, player.r / 3, 0, -player.r / 3, player.r / 3, player.r / 3);
     }
   }
 
