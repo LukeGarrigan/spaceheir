@@ -11,6 +11,7 @@ export default class Popup {
     this.displacementMax = 50;
     this.x = x;
     this.y = y;
+    this.stroke = this.hasStroke();
   }
   update() {
     this.timer += 1;
@@ -25,11 +26,18 @@ export default class Popup {
     if (this.isVisible) {
       push();
       fill(this.fillColor);
-      stroke(this.strokeColor);
+      if (this.stroke) {
+        stroke(this.strokeColor);
+      }
+
       textSize(this.textSize);
       text(this.textContent, this.x, this.y - this.displacement);
       pop();
     }
+  }
+
+  hasStroke() {
+    return true;
   }
 }
 

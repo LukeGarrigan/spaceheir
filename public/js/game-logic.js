@@ -92,11 +92,13 @@ export function updateFoods(data, food) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;
     for (let j = 0; j < food.length; j++) {
-      if (data[i].id == food[j].id) {
+      if (data[i].id === food[j].id) {
         exists = true;
-        if (data[i].x !== food[j].x || data[i].y !== food[j].y) {
+
+        if (food[j].startX !== data[i].x || food[j].startY !== data[i].y ) {
           food[j].x = data[i].x;
           food[j].y = data[i].y;
+          food[j].reset();
         }
       }
     }
@@ -135,8 +137,8 @@ export function processKillFeedAddition(kill, killfeed) {
  * @param {Position} to
  */
 export function isWithinScreen(player, to) {
-  const height = Math.floor(window.outerHeight / 2 );
-  const width = Math.floor(window.outerWidth / 2 );
+  const height = Math.floor(window.outerHeight / 2);
+  const width = Math.floor(window.outerWidth / 2);
 
   const diffX = player.x - to.x;
   const diffY = player.y - to.y;
