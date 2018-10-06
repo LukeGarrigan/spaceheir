@@ -150,7 +150,9 @@ window.draw = function() {
 
     for (let i = food.length - 1; i >= 0; i--) {
       if (isWithinScreen(player, food[i])) {
-        food[i].display(player.pos);
+        food[i].move();
+        food[i].display();
+
       }
     }
 

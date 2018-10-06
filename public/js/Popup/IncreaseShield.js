@@ -9,5 +9,4 @@ export default class IncreaseShield extends Popup{
           x, y);
   }
 
-
 }
