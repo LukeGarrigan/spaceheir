@@ -70,7 +70,7 @@ export default class Player {
 
   handlePlayerBoosting() {
     translate(0, this.r/2+20);
-    if (this.isBoosting) {
+    if (this.isBoosting && this.shield > 0) {
       rotate(PI);
       fill(0);
       triangle(-this.r/3, this.r/3, 0, -this.r/3, this.r/3, this.r/3);
@@ -110,7 +110,7 @@ export default class Player {
 
   static processOtherPlayersBooster(player) {
     translate(0, player.r / 2 + 20);
-    if (player.isBoosting) {
+    if (player.isBoosting && player.shield > 0) {
       rotate(PI);
       fill(0);
       triangle(-player.r / 3, player.r / 3, 0, -player.r / 3, player.r / 3, player.r / 3);
