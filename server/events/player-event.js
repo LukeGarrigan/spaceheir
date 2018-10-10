@@ -1,7 +1,12 @@
 const { players, addNewPlayerToLeaderboard } = require('../server');
 const config = require('../../configs/defaults');
 
+
 module.exports = function({ socket }, playerData) {
+
+  if (playerAlreadyExists(socket)) return;
+
+
   playerData.id = socket.id;
   playerData.shield = config.settings.BASE_SHIELD;
   playerData.isUp = false;
@@ -21,4 +26,13 @@ module.exports = function({ socket }, playerData) {
   }
   players.push(playerData);
   addNewPlayerToLeaderboard(playerData);
+};
+
+function playerAlreadyExists(socket) {
+  for (const player of players) {
+    if (player.id === socket.id) {
+      return true;
+    }
+  }
+  return false;
 }
