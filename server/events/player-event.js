@@ -14,6 +14,11 @@ module.exports = function({ socket }, playerData) {
 
   let playersName = playerData.name.substring(0, 15);
   playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
+
+  if (config.settings.DEBUG_MODE) {
+    playerData.x = 1000;
+    playerData.y = 1000;
+  }
   players.push(playerData);
   addNewPlayerToLeaderboard(playerData);
 }

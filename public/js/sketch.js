@@ -3,6 +3,7 @@ import Player from './Player/Player.js';
 import socket from './socket.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
+import Leaderboard from './Leaderboard/Leaderboard.js';
 import {
   processRespawn,
   emitPlayersBullets,
@@ -42,7 +43,7 @@ let boostSound;
 let shotSound;
 let explosionSound;
 let killfeed;
-
+let leaderboard;
 socket.on('foods', data => updateFoods(data, food));
 
 window.preload = function() {
@@ -72,6 +73,7 @@ window.setup = function () {
       player = new Player(inputValue);
       hitMarker = new HitMarker();
       killfeed = new Killfeed();
+      leaderboard = new Leaderboard(player, leaders);
       for (let i = 0; i < asteroidCount; i++) {
         let pos = createVector(random(1920 * 3), random(1080 * 3));
         asteroids.push(new Asteroid(pos, 40, 60));
@@ -151,8 +153,7 @@ window.draw = function() {
     for (let i = food.length - 1; i >= 0; i--) {
       if (isWithinScreen(player, food[i])) {
         food[i].move();
-        food[i].display();
-
+        food[i].displayFood();
       }
     }
 
@@ -170,9 +171,10 @@ window.draw = function() {
 
     hitMarker.display();
     emitPlayersBullets(bullets);
-    drawLeaders();
 
     killfeed.display(player.pos);
+    leaderboard.updateLeaderboard(player, leaders);
+    leaderboard.displayLeaderboard();
   }
 }
 
@@ -231,18 +233,3 @@ window.mousePressed = function() {
   }
 };
 
-function drawLeaders() {
-  for (let i = 0; i < leaders.length && i < 10; i++) {
-    push();
-    textAlign(LEFT);
-    if (i == 0) {
-      fill(255, 69, 0);
-      stroke(255, 69, 0);
-      textSize(15);
-      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
-    } else {
-      text(leaders[i].name + " : " + leaders[i].score, player.pos.x - width / 2 + 25, player.pos.y - height / 2 + 50 + i * 20);
-    }
-    pop();
-  }
-}

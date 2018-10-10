@@ -11,7 +11,7 @@ export default class Asteroid{
       this.offset[i] = random(-15, 10);
     }
   }
-updateAndDisplayAsteroid() {
+  updateAndDisplayAsteroid() {
     this.update();
     this.display();
     this.constrain();

@@ -21,11 +21,13 @@ export default class Killfeed {
       translate(playerPosition.x + width / 4, playerPosition.y - height / 2.5 + i * 30);
       let currentX = 0;
       let killerSize = textWidth(currentKill.killer);
+
       push();
       // don't want it to rotate the text
       currentX = killerSize + (radiusOfTriangle * 2);
       translate(currentX, -5);
       rotate(currentKill.killAngle + HALF_PI);
+      fill(0);
       if (currentKill.killerWinner) {
         stroke(255, 69, 0);
       } else {
