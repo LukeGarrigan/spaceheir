@@ -82,8 +82,15 @@ function updatePlayerPosition(player) {
   }
 
   if (player.shield < 0) {
-    player.x = Math.floor(Math.random() * 1920) + 1;
-    player.y = Math.floor(Math.random() * 1080) + 1;
+
+    if (config.settings.DEBUG_MODE) {
+      player.x = 1000;
+      player.y = 1000;
+    } else {
+      player.x = Math.floor(Math.random() * 1920) + 1;
+      player.y = Math.floor(Math.random() * 1080) + 1;
+    }
+
     player.shield = 100;
     player.score = 0;
 

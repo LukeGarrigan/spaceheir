@@ -16,7 +16,7 @@ export default class Food {
     this.targetY = this.y;
   }
 
-  display() {
+  displayFood() {
     this.frame++;
     push();
     fill(255);
@@ -42,7 +42,6 @@ export default class Food {
     if (abs(this.x -this.targetX) < 1) {
       this.targetX = this.x + random(-this.speed, this.speed);
     }
-
 
     if (abs(this.y -this.targetY) < 1) {
       this.targetY = this.y + random(-this.speed, this.speed);
