@@ -3,7 +3,7 @@ const settings = {
    PLAYAREA_WIDTH: 5760,
    PLAYAREA_HEIGHT: 3240,
    // FOOD
-   NUM_FOOD: 400,
+   NUM_FOOD: 200,
 
    // SHIELDS
    MAX_SHIELD: 1000,

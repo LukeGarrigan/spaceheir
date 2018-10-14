@@ -1,5 +1,6 @@
 export default class Food {
-  constructor(x, y, r, id) {
+  constructor(x, y, r, id, foodImage) {
+    this.foodImage = foodImage;
     this.startX = x;
     this.startY = y;
     this.x = x;
@@ -14,14 +15,22 @@ export default class Food {
 
     this.targetX = this.x;
     this.targetY = this.y;
+
+
+    this.red = random(255);
+    this.green = random(255);
+    this.blue = random(255);
   }
 
   displayFood() {
     this.frame++;
     push();
-    fill(255);
-    colorMode(HSB, 255);
-    ellipse(this.x, this.y, this.r, this.r);
+    // fill(255);
+    // colorMode(HSB, 255);
+
+    tint(this.red, this.green, this.blue); // Tint blue
+    image(this.foodImage, this.x, this.y, this.r, this.r);
+    // ellipse(this.x, this.y, this.r, this.r);
     pop();
   }
 

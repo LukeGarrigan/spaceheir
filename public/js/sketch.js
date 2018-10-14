@@ -6,6 +6,8 @@ import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
 
+
+
 import {
   displayIncreasedShieldMessage,
   emitPlayersBullets,
@@ -47,7 +49,8 @@ let killfeed;
 let leaderboard;
 let winnerLocation;
 let indicatorImage;
-socket.on('foods', data => updateFoods(data, food));
+let foodImage;
+socket.on('foods', data => updateFoods(data, food, foodImage));
 
 window.preload = function () {
   boostSound = loadSound('assets/sounds/boost.wav');
@@ -58,6 +61,7 @@ window.preload = function () {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
   indicatorImage = loadImage("assets/images/indicator.png");
+  foodImage = loadImage("assets/images/food.png");
   shotSound.setVolume(0.05)
   explosionSound.setVolume(0.4);
 }
@@ -112,7 +116,6 @@ window.setup = function () {
 
 window.mouseWheel = function (event) {
   return false;
-  ;
 }
 
 function displayCurrentWinnerLocation() {
