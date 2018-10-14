@@ -70,6 +70,24 @@ function broadcastPlayers() {
   io.sockets.emit('bullets', bullets);
 }
 
+function movePlayer(player, playerSpeed) {
+  if (player.isUp) {
+    player.y -= config.settings.BASE_SPEED + playerSpeed;
+  }
+
+  if (player.isDown) {
+    player.y += config.settings.BASE_SPEED + playerSpeed;
+  }
+
+  if (player.isLeft) {
+    player.x -= config.settings.BASE_SPEED + playerSpeed;
+  }
+
+  if (player.isRight) {
+    player.x += config.settings.BASE_SPEED + playerSpeed;
+  }
+}
+
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
     const currentDate = new Date()
@@ -116,22 +134,7 @@ function updatePlayerPosition(player) {
   } else {
     playerSpeed = 0;
   }
-
-  if (player.isUp) {
-    player.y -= config.settings.BASE_SPEED + playerSpeed;
-  }
-
-  if (player.isDown) {
-    player.y += config.settings.BASE_SPEED + playerSpeed;
-  }
-
-  if (player.isLeft) {
-    player.x -= config.settings.BASE_SPEED + playerSpeed;
-  }
-
-  if (player.isRight) {
-    player.x += config.settings.BASE_SPEED + playerSpeed;
-  }
+  movePlayer(player, playerSpeed);
 
 
   // constrain - so moving to the edge of the screen
