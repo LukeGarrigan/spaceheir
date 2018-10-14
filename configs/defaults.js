@@ -11,7 +11,7 @@ const settings = {
    BASE_SHIELD: 100,
    //SPEED
    BASE_SPEED: 4,
-   DEBUG_MODE: true
+   DEBUG_MODE: false
 
 }
 
