@@ -157,7 +157,7 @@ function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       if (player.shield < config.settings.MAX_SHIELD) {
-        wplayer.shield += foods[i].r;
+        player.shield += foods[i].r;
         io.to(player.id).emit('increaseShield', foods[i].r);
       }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
