@@ -4,20 +4,21 @@ import socket from './socket.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
+import WinnerLocation from './WinnerLocation/WinnerLocation.js';
+
 import {
-  processRespawn,
-  emitPlayersBullets,
-  playerDisconnected,
   displayIncreasedShieldMessage,
-  updateOtherPlayers,
-  updateBullets,
-  updateFoods,
-  removeBullet,
+  emitPlayersBullets,
+  isWithinScreen,
+  playerDisconnected,
   processHitmarker,
   processKillFeedAddition,
-  isWithinScreen
+  processRespawn,
+  removeBullet,
+  updateBullets,
+  updateFoods,
+  updateOtherPlayers
 } from './game-logic.js'
-
 
 
 let player;
@@ -44,9 +45,11 @@ let shotSound;
 let explosionSound;
 let killfeed;
 let leaderboard;
+let winnerLocation;
+let indicatorImage;
 socket.on('foods', data => updateFoods(data, food));
 
-window.preload = function() {
+window.preload = function () {
   boostSound = loadSound('assets/sounds/boost.wav');
   boostSound.setLoop(true);
   shotSound = loadSound('assets/sounds/shot.wav');
@@ -54,6 +57,7 @@ window.preload = function() {
   shieldImage = loadImage("assets/images/shield.png");
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
+  indicatorImage = loadImage("assets/images/indicator.png");
   shotSound.setVolume(0.05)
   explosionSound.setVolume(0.4);
 }
@@ -74,6 +78,7 @@ window.setup = function () {
       hitMarker = new HitMarker();
       killfeed = new Killfeed();
       leaderboard = new Leaderboard(player, leaders);
+      winnerLocation = new WinnerLocation(indicatorImage);
       for (let i = 0; i < asteroidCount; i++) {
         let pos = createVector(random(1920 * 3), random(1080 * 3));
         asteroids.push(new Asteroid(pos, 40, 60));
@@ -89,7 +94,7 @@ window.setup = function () {
       socket.on('playExplosion', () => explosionSound.play());
       socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
       socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
-      socket.on('processShotSound',() => shotSound.play());
+      socket.on('processShotSound', () => shotSound.play());
 
       gameStarted = true;
       let playerPosition = {
@@ -105,11 +110,21 @@ window.setup = function () {
 };
 
 
-window.mouseWheel = function(event) {
+window.mouseWheel = function (event) {
   return false;
-;}
+  ;
+}
 
-window.draw = function() {
+function displayCurrentWinnerLocation() {
+  if (otherPlayers.length > 0) {
+    let currentWinner = findCurrentWinner();
+    if (currentWinner && currentWinner.id !== player.id) {
+      winnerLocation.drawWinnerLocation(player.x, player.y, currentWinner.x, currentWinner.y);
+    }
+  }
+}
+
+window.draw = function () {
   background(0);
   fill(255);
   scale(1);
@@ -120,8 +135,8 @@ window.draw = function() {
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    image(shieldImage, player.pos.x - width / 2 + 25, player.pos.y + height /3, 40, 40);
-    text(floor(player.shield), player.pos.x - width / 2 + 80, player.pos.y + height /3 + 25);
+    image(shieldImage, player.pos.x - width / 2 + 25, player.pos.y + height / 3, 40, 40);
+    text(floor(player.shield), player.pos.x - width / 2 + 80, player.pos.y + height / 3 + 25);
     timeSinceLastShot++;
 
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -175,10 +190,23 @@ window.draw = function() {
     killfeed.display(player.pos);
     leaderboard.updateLeaderboard(player, leaders);
     leaderboard.displayLeaderboard();
+    displayCurrentWinnerLocation();
   }
 }
 
-window.keyPressed = function() {
+
+function findCurrentWinner() {
+
+  let winnerId = leaderboard.leaders[0].id;
+  for (const player of otherPlayers) {
+    if (player.id === winnerId) {
+      return player;
+    }
+  }
+}
+
+
+window.keyPressed = function () {
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
@@ -199,7 +227,7 @@ window.keyPressed = function() {
 
 }
 
-window.keyReleased = function() {
+window.keyReleased = function () {
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyReleased', "up");
@@ -217,7 +245,7 @@ window.keyReleased = function() {
   }
 }
 
-window.onresize = function() {
+window.onresize = function () {
   background(0);
   canvas.size(window.innerWidth, window.innerHeight);
   if (!gameStarted) {
@@ -226,7 +254,7 @@ window.onresize = function() {
   }
 }
 
-window.mousePressed = function() {
+window.mousePressed = function () {
   if (timeSinceLastShot > 15 && !player.respawning) {
     socket.emit('bullet');
     timeSinceLastShot = 0;
