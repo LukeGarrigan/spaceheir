@@ -88,7 +88,7 @@ export function updateBullets(data, bulletIds, bullets) {
   }
 }
 
-export function updateFoods(data, food) {
+export function updateFoods(data, food, foodImage) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;
     for (let j = 0; j < food.length; j++) {
@@ -103,7 +103,7 @@ export function updateFoods(data, food) {
       }
     }
     if (!exists) {
-      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id);
+      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id, foodImage);
       food.push(aFood);
     }
   }
