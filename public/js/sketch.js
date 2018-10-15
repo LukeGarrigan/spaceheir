@@ -50,6 +50,10 @@ let leaderboard;
 let winnerLocation;
 let indicatorImage;
 let foodImage;
+let lastLoop = new Date();
+let frameRate;
+
+
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 window.preload = function () {
@@ -127,6 +131,7 @@ function displayCurrentWinnerLocation() {
   }
 }
 
+
 window.draw = function () {
   background(0);
   fill(255);
@@ -135,6 +140,7 @@ window.draw = function () {
   if (gameStarted) {
 
 
+    displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
@@ -194,7 +200,24 @@ window.draw = function () {
     leaderboard.updateLeaderboard(player, leaders);
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
+
+
+
+
   }
+}
+
+
+function displayFramesPerSecond() {
+  let thisLoop = new Date();
+  let fps = 1000 / (thisLoop-lastLoop);
+  lastLoop = thisLoop;
+
+  if (frameCount % 60 === 0) {
+    frameRate = fps;
+  }
+  text("FPS: " + floor(frameRate), width - 100, height - 50);
+
 }
 
 
