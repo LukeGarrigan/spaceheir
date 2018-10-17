@@ -200,10 +200,6 @@ window.draw = function () {
     leaderboard.updateLeaderboard(player, leaders);
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
-
-
-
-
   }
 }
 
@@ -213,7 +209,7 @@ function displayFramesPerSecond() {
   let fps = 1000 / (thisLoop-lastLoop);
   lastLoop = thisLoop;
 
-  if (frameCount % 60 === 0) {
+  if (frameCount % 15 === 0) {
     frameRate = fps;
   }
   text("FPS: " + floor(frameRate), width - 100, height - 50);
