@@ -22,7 +22,7 @@ let leaderboard = [];
 let lastBulletId = 0;
 
 setupFood();
-// setInterval(broadcastPlayers, 16);
+setInterval(broadcastPlayers, 16);
 
 module.exports = {
   players,
