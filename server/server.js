@@ -7,7 +7,7 @@ let express = require('express');
 let app = express();
 app.use(compression());
 
-let server = app.listen(4000);
+let server = app.listen(80);
 app.use(express.static('public'));
 console.log("Server is now running");
 
