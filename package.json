@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/LukeGarrigan/stream-royale#readme",
   "dependencies": {
+    "compression": "^1.7.3",
     "express": "^4.16.3",
     "nodemon": "^1.18.4",
     "socket.io": "^2.1.1"

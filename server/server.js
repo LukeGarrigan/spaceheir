@@ -1,7 +1,11 @@
 let config = require('../configs/defaults.js')
 
+
+var compression = require('compression');
 let express = require('express');
+
 let app = express();
+app.use(compression());
 
 let server = app.listen(4000);
 app.use(express.static('public'));
