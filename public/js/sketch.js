@@ -56,12 +56,11 @@ let frameRate;
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
-window.preload = function () {
+function loadImages() {
   shieldImage = loadImage("assets/images/shield.png");
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
   foodImage = loadImage("assets/images/food.png");
-
 }
 
 function loadSounds() {
@@ -120,6 +119,7 @@ window.setup = function () {
     }
   });
   loadSounds();
+  loadImages();
 };
 
 
