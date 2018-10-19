@@ -28,7 +28,7 @@ export default class Food {
     // fill(255);
     // colorMode(HSB, 255);
 
-    tint(this.red, this.green, this.blue); // Tint blue
+    // tint(this.red, this.green, this.blue); // Tint blue
     image(this.foodImage, this.x, this.y, this.r, this.r);
     // ellipse(this.x, this.y, this.r, this.r);
     pop();
