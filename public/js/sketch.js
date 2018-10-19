@@ -52,6 +52,8 @@ let indicatorImage;
 let foodImage;
 let lastLoop = new Date();
 let frameRate;
+let spaceShipImage;
+let winnerSpaceShipImage;
 
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
@@ -61,6 +63,8 @@ function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
   foodImage = loadImage("assets/images/food.png");
+  spaceShipImage = loadImage("assets/images/spaceship.png");
+  winnerSpaceShipImage = loadImage("assets/images/winner.png");
 }
 
 function loadSounds() {
@@ -69,7 +73,7 @@ function loadSounds() {
   shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
-  shotSound.setVolume(0.05)
+  shotSound.setVolume(0.05);
   explosionSound.setVolume(0.4);
 }
 
@@ -86,7 +90,7 @@ window.setup = function () {
     if (inputValue.length >= 2 && inputValue.length < 15) {
       button.style("visibility", "hidden");
       input.style("visibility", "hidden");
-      player = new Player(inputValue);
+      player = new Player(inputValue, spaceShipImage, winnerSpaceShipImage);
       hitMarker = new HitMarker();
       killfeed = new Killfeed();
       leaderboard = new Leaderboard(player, leaders);
@@ -194,7 +198,7 @@ window.draw = function () {
     }
     for (const otherPlayer of otherPlayers) {
       if (isWithinScreen(player, otherPlayer)) {
-        Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId);
+        Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
       }
     }
 

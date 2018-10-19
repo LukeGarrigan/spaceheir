@@ -1,7 +1,7 @@
 import socket from '../socket.js';
 
 export default class Player {
-  constructor(name) {
+  constructor(name, spaceShipImage, winnerSpaceship) {
     this.name = name;
     this.pos = createVector(random(width*3), random(height*3));
     this.radians = 0;
@@ -15,6 +15,8 @@ export default class Player {
     this.isBoosting = false;
     this.respawning = false;
     this.shieldRadius = 5;
+    this.spaceShipImage = spaceShipImage;
+    this.winnerSpaceship = winnerSpaceship;
   }
 
   display(leaders) {
@@ -28,7 +30,7 @@ export default class Player {
 
     let winner = false;
 
-    if (leaderBoardWinnersId == socket.id) {
+    if (leaderBoardWinnersId === socket.id) {
       winner = true;
     }
 
@@ -40,12 +42,19 @@ export default class Player {
     this.offset = map(this.shield, 0, 1000, 0, 10);
     rotate(this.radians + HALF_PI);
     winner ? fill(255, 69, 0) : fill(255);
-    triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
+    imageMode(CENTER);
+    if (winner) {
+      image(this.winnerSpaceship, 0, 0);
+    } else {
+      image(this.spaceShipImage, 0, 0);
+    }
+
+    // triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
     winner ? fill(255, 69, 0) : fill(255);
     fill(0);
     translate(0, -this.offset);
-    triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
+    //triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
     this.handlePlayerBoosting();
     pop();
     textAlign(CENTER);
@@ -73,12 +82,14 @@ export default class Player {
     if (this.isBoosting && this.shield > 0) {
       rotate(PI);
       fill(0);
-      triangle(-this.r/3, this.r/3, 0, -this.r/3, this.r/3, this.r/3);
+
+
+      // triangle(-this.r/3, this.r/3, 0, -this.r/3, this.r/3, this.r/3);
     }
 
   }
 
-  static drawOtherPlayer(player, leaderBoardWinnersId) {
+  static drawOtherPlayer(player, leaderBoardWinnersId, spaceShipImage, winnerSpaceship) {
     // Other player is respawning
     // TODO: If the player is respawning, client should not receive data.
     if (player.lastDeath !== null) {
@@ -90,15 +101,24 @@ export default class Player {
     translate(player.x, player.y);
     let shieldRadius = 0;
     let isWinning =  leaderBoardWinnersId === player.id;
-    isWinning ? fill(255, 69, 0) : fill(255);
-    isWinning ? stroke(255, 69, 0) : stroke(255);
+
 
     shieldRadius = map(player.shield, 0, 1000, 21, 0);
     rotate(player.angle + HALF_PI);
-    triangle(-21, 21, 0, -21, 21, 21);
+    imageMode(CENTER);
+
+    if (isWinning) {
+      image(winnerSpaceship, 0, 0);
+    } else {
+      image(spaceShipImage, 0, 0);
+    }
+
+    // triangle(-21, 21, 0, -21, 21, 21);
     fill(0);
     translate(0, -offset);
-    triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
+
+
+    // triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
     this.processOtherPlayersBooster(player);
     pop();
     textAlign(CENTER);
@@ -113,7 +133,7 @@ export default class Player {
     if (player.isBoosting && player.shield > 0) {
       rotate(PI);
       fill(0);
-      triangle(-player.r / 3, player.r / 3, 0, -player.r / 3, player.r / 3, player.r / 3);
+      // triangle(-player.r / 3, player.r / 3, 0, -player.r / 3, player.r / 3, player.r / 3);
     }
   }
 
