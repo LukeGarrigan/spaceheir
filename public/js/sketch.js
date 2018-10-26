@@ -5,7 +5,7 @@ import HitMarker from './Hitmarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
-
+import DecreaseShield from "./Popup/DecreaseShield.js";
 
 
 import {
@@ -21,6 +21,7 @@ import {
   updateFoods,
   updateOtherPlayers
 } from './game-logic.js'
+
 
 
 let player;
@@ -54,7 +55,6 @@ let lastLoop = new Date();
 let frameRate;
 let spaceShipImage;
 let winnerSpaceShipImage;
-
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
@@ -153,8 +153,12 @@ window.draw = function () {
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
+
     image(shieldImage, player.pos.x - width / 2 + 25, player.pos.y + height / 3, 40, 40);
+
+    push();
     text(floor(player.shield), player.pos.x - width / 2 + 80, player.pos.y + height / 3 + 25);
+    pop();
     timeSinceLastShot++;
 
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -175,9 +179,13 @@ window.draw = function () {
 
     for (let i = popups.length - 1; i >= 0; i--) {
 
+      if (popups[i] instanceof DecreaseShield) {
+        let popup = popups[i];
+        popup.updatePlayerPosition(player.x, player.y);
+      }
+
       popups[i].update();
       popups[i].display();
-
       if (!popups[i].isVisible) {
         popups.splice(i, 1);
       }

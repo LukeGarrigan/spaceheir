@@ -92,6 +92,29 @@ function movePlayer(player, playerSpeed) {
   }
 }
 
+
+function killPlayer(player) {
+  if (config.settings.DEBUG_MODE) {
+    player.x = 1000;
+    player.y = 1000;
+  } else {
+    player.x = Math.floor(Math.random() * 1920) + 1;
+    player.y = Math.floor(Math.random() * 1080) + 1;
+  }
+
+  player.shield = 100;
+  player.score = 0;
+
+  const timeOutInSeconds = 5;
+  player.lastDeath = new Date();
+  player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
+
+  updateLeaderboard();
+  io.sockets.emit('heartbeat', players);
+  io.to(player.id).emit('respawn-start', timeOutInSeconds)
+  io.to(player.id).emit('playExplosion');
+}
+
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
     const currentDate = new Date()
@@ -104,26 +127,7 @@ function updatePlayerPosition(player) {
   }
 
   if (player.shield < 0) {
-
-    if (config.settings.DEBUG_MODE) {
-      player.x = 1000;
-      player.y = 1000;
-    } else {
-      player.x = Math.floor(Math.random() * 1920) + 1;
-      player.y = Math.floor(Math.random() * 1080) + 1;
-    }
-
-    player.shield = 100;
-    player.score = 0;
-
-    const timeOutInSeconds = 5;
-    player.lastDeath = new Date();
-    player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
-
-    updateLeaderboard();
-    io.sockets.emit('heartbeat', players);
-    io.to(player.id).emit('respawn-start', timeOutInSeconds)
-    io.to(player.id).emit('playExplosion');
+    killPlayer(player);
     return
   } else if (player.shield > config.settings.MAX_SHIELD) {
     player.shield = config.settings.MAX_SHIELD;
@@ -155,6 +159,7 @@ function updatePlayerPosition(player) {
   }
   updatePlayerEatingFood(player);
   updatePlayerGettingShot(player);
+  checkPlayerCollision(player);
 }
 
 function updatePlayerEatingFood(player) {
@@ -232,6 +237,19 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       bullets.splice(i, 1);
     }
   }
+}
+
+function checkPlayerCollision(player) {
+
+  for (const otherPlayer of players) {
+    if (otherPlayer !== player && Math.abs(player.x-otherPlayer.x) + Math.abs(player.y-otherPlayer.y) < 42) {
+      killPlayer(player);
+      killPlayer(otherPlayer);
+      break;
+    }
+  }
+
+
 }
 
 function updatePlayerScore(id, isCurrentPlayerWinning, score) {
