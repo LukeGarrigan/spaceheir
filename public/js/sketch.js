@@ -203,6 +203,9 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
+    if(mouseIsPressed) {
+      processPlayerShooting();
+    }
   }
 };
 
@@ -279,10 +282,14 @@ window.onresize = function () {
   }
 }
 
-window.mousePressed = function () {
+function processPlayerShooting() {
   if (timeSinceLastShot > 15 && !player.respawning) {
     socket.emit('bullet');
     timeSinceLastShot = 0;
   }
+}
+
+window.mousePressed = function () {
+  processPlayerShooting();
 };
 
