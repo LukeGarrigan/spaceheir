@@ -4,7 +4,6 @@
 
 import socket from './socket.js';
 import BasicTextPopup from './Popup/BasicTextPopup.js';
-import DecreaseShield from './Popup/DecreaseShield.js';
 import IncreaseShield from './Popup/IncreaseShield.js';
 import Bullet from './Bullet/Bullet.js';
 import Food from './Food/Food.js';
@@ -48,14 +47,7 @@ export function playerDisconnected(socketId, otherPlayers) {
 export function displayIncreasedShieldMessage(data, popups, player) {
   if (data > 0) {
     popups.push(new IncreaseShield(data, player.x, player.y - player.r));
-  } else {
-    popups.push(new DecreaseShield(data, player));
   }
-  /*
-  popups.push(data < 0
-    ?
-    : new IncreaseShield(data, player.x, player.y - player.r)
-  )*/
 }
 
 export function updateOtherPlayers(data, player, otherPlayers) {

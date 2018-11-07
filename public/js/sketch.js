@@ -5,7 +5,7 @@ import HitMarker from './Hitmarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
-import DecreaseShield from "./Popup/DecreaseShield.js";
+import Healthbar from "./Healthbar/Healthbar.js";
 
 
 import {
@@ -28,7 +28,6 @@ let player;
 let food = [];
 let asteroids = [];
 let asteroidCount = 0;
-let shieldImage;
 let bullets = [];
 let bulletIds = [];
 let otherPlayers = [];
@@ -55,11 +54,11 @@ let lastLoop = new Date();
 let frameRate;
 let spaceShipImage;
 let winnerSpaceShipImage;
+let healthbar;
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 function loadImages() {
-  shieldImage = loadImage("assets/images/shield.png");
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
   foodImage = loadImage("assets/images/food.png");
@@ -95,6 +94,7 @@ window.setup = function () {
       killfeed = new Killfeed();
       leaderboard = new Leaderboard(player, leaders);
       winnerLocation = new WinnerLocation(indicatorImage);
+      healthbar = new Healthbar();
       for (let i = 0; i < asteroidCount; i++) {
         let pos = createVector(random(1920 * 3), random(1080 * 3));
         asteroids.push(new Asteroid(pos, 40, 60));
@@ -147,20 +147,11 @@ window.draw = function () {
   scale(1);
   textSize(15);
   if (gameStarted) {
-
-
     displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-
-    image(shieldImage, player.pos.x - width / 2 + 25, player.pos.y + height / 3, 40, 40);
-
-    push();
-    text(floor(player.shield), player.pos.x - width / 2 + 80, player.pos.y + height / 3 + 25);
-    pop();
     timeSinceLastShot++;
-
     for (let i = bullets.length - 1; i >= 0; i--) {
       bullets[i].update();
       if (isWithinScreen(player, bullets[i].pos)) {
@@ -178,12 +169,6 @@ window.draw = function () {
     }
 
     for (let i = popups.length - 1; i >= 0; i--) {
-
-      if (popups[i] instanceof DecreaseShield) {
-        let popup = popups[i];
-        popup.updatePlayerPosition(player.x, player.y);
-      }
-
       popups[i].update();
       popups[i].display();
       if (!popups[i].isVisible) {
@@ -213,12 +198,13 @@ window.draw = function () {
     hitMarker.display();
     emitPlayersBullets(bullets);
 
-    killfeed.display(player.pos);
+    killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.updateLeaderboard(player, leaders);
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
+    healthbar.displayHealthbar(player);
   }
-}
+};
 
 
 function displayFramesPerSecond() {
@@ -268,15 +254,15 @@ window.keyPressed = function () {
 
 window.keyReleased = function () {
   if (gameStarted) {
-    if (keyCode == UP_ARROW || keyCode == 87) {
+    if (keyCode === UP_ARROW || keyCode === 87) {
       socket.emit('keyReleased', "up");
-    } else if (keyCode == DOWN_ARROW || keyCode == 83) {
+    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
       socket.emit('keyReleased', "down");
-    } else if (keyCode == LEFT_ARROW || keyCode == 65) {
+    } else if (keyCode === LEFT_ARROW || keyCode === 65) {
       socket.emit('keyReleased', "left");
-    } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
+    } else if (keyCode === RIGHT_ARROW || keyCode === 68) {
       socket.emit('keyReleased', "right");
-    } else if (keyCode == 32) {
+    } else if (keyCode === 32) {
       socket.emit('keyReleased', "spacebar");
       boostSound.stop();
       player.isBoosting = false;

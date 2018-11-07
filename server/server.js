@@ -239,18 +239,24 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
   }
 }
 
+
 function checkPlayerCollision(player) {
 
   for (const otherPlayer of players) {
     if (otherPlayer !== player && Math.abs(player.x-otherPlayer.x) + Math.abs(player.y-otherPlayer.y) < 42) {
-      killPlayer(player);
-      killPlayer(otherPlayer);
-      break;
+       if (!isPlayerDead(player) && !isPlayerDead(otherPlayer)) {
+        killPlayer(player);
+        killPlayer(otherPlayer);
+        break;
+      }
     }
   }
-
-
 }
+
+function isPlayerDead(player) {
+  return player.lastDeath !== null && player.lastDeath > new Date();
+}
+
 
 function updatePlayerScore(id, isCurrentPlayerWinning, score) {
   for (let i = 0; i < players.length; i++) {

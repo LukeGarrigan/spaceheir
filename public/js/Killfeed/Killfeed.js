@@ -6,67 +6,77 @@ export default class Killfeed {
     this._y = 100;
   }
 
-  display(playerPosition) {
+  displayKillfeed(playerPosition, spaceshipImage, winnerSpaceshipImage) {
     textSize(15);
-
     let radiusOfTriangle = 10;
-
-
     for (let i = 0; i < this._killfeed.length; i++) {
       let currentKill = this._killfeed[i];
-      currentKill.update();
       push();
       textAlign(LEFT);
-
       translate(playerPosition.x + width / 4, playerPosition.y - height / 2.5 + i * 30);
       let currentX = 0;
-      let killerSize = textWidth(currentKill.killer);
-
-      push();
-      // don't want it to rotate the text
-      currentX = killerSize + (radiusOfTriangle * 2);
-      translate(currentX, -5);
-      rotate(currentKill.killAngle + HALF_PI);
-      fill(0);
-      if (currentKill.killerWinner) {
-        stroke(255, 69, 0);
-      } else {
-        stroke(255);
-      }
-      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
-      pop();
-
-      // killer name
-      fill(255);
+      let killerTextSize = textWidth(currentKill.killer);
 
       text(currentKill.killer, 0, 0);
-
+      currentX = this.drawKiller(currentX, killerTextSize, radiusOfTriangle, currentKill, winnerSpaceshipImage, spaceshipImage);
       currentX += (radiusOfTriangle * 2);
-      text("eliminated", currentX, 0);
 
+      currentX = this.drawEliminatedText(currentX, radiusOfTriangle, currentKill);
 
-      currentX += textWidth("eliminated") + (radiusOfTriangle);
-      text(currentKill.deather, currentX, 0);
-
-
-      currentX += textWidth(currentKill.deather) + radiusOfTriangle * 2;
-      push();
-      fill(0);
-      stroke(255);
-      translate(currentX, -5);
-      rotate(currentKill.deatherAngle + HALF_PI);
-      if (currentKill.deatherWinner) {
-        stroke(255, 69, 0);
-      } else {
-        stroke(255);
-      }
-
-      triangle(-radiusOfTriangle, radiusOfTriangle, 0, -radiusOfTriangle, radiusOfTriangle, radiusOfTriangle);
+      currentX = this.drawDeatherText(currentX, currentKill, radiusOfTriangle);
+      this.drawDeather(currentX, currentKill, radiusOfTriangle, winnerSpaceshipImage, spaceshipImage);
       pop();
-      pop();
-
     }
 
+  }
+
+
+
+  drawKiller(currentX, killerTextSize, radiusOfTriangle, currentKill, winnerSpaceshipImage, spaceshipImage) {
+    push();
+    currentX = killerTextSize + (radiusOfTriangle * 2);
+    translate(currentX, -5);
+    rotate(currentKill.killAngle + HALF_PI);
+    if (currentKill.killerWinner) {
+      imageMode(CENTER);
+      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+    } else {
+      imageMode(CENTER);
+      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+    }
+    pop();
+    return currentX;
+  }
+
+
+
+  drawEliminatedText(currentX, radiusOfTriangle, currentKill) {
+    text("eliminated", currentX, 0);
+    currentX += textWidth("eliminated") + (radiusOfTriangle);
+    text(currentKill.deather, currentX, 0);
+    return currentX;
+  }
+
+
+
+  drawDeatherText(currentX, currentKill, radiusOfTriangle) {
+    currentX += textWidth(currentKill.deather) + radiusOfTriangle * 2;
+    return currentX;
+  }
+
+
+  drawDeather(currentX, currentKill, radiusOfTriangle, winnerSpaceshipImage, spaceshipImage) {
+    push();
+    translate(currentX, -5);
+    rotate(currentKill.deatherAngle + HALF_PI);
+    if (currentKill.deatherWinner) {
+      imageMode(CENTER);
+      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+    } else {
+      imageMode(CENTER);
+      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+    }
+    pop();
   }
 
 
