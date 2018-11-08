@@ -77,7 +77,6 @@ function loadSounds() {
 }
 
 window.setup = function () {
-  background(0);
 
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   input = createInput();
@@ -85,6 +84,7 @@ window.setup = function () {
   button = createButton("Play");
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(function () {
+
     let inputValue = input.value().replace(/[^\x00-\x7F]/g, "");
     if (inputValue.length >= 2 && inputValue.length < 15) {
       button.style("visibility", "hidden");
@@ -95,24 +95,7 @@ window.setup = function () {
       leaderboard = new Leaderboard(player, leaders);
       winnerLocation = new WinnerLocation(indicatorImage);
       healthbar = new Healthbar();
-      for (let i = 0; i < asteroidCount; i++) {
-        let pos = createVector(random(1920 * 3), random(1080 * 3));
-        asteroids.push(new Asteroid(pos, 40, 60));
-      }
-      socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
-      socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
-      socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
-      socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
-      socket.on('leaderboard', leaderboard => leaders = leaderboard);
-      socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
-      socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
-      socket.on('respawn-end', () => player.respawning = false);
-      socket.on('playExplosion', () => explosionSound.play());
-      socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
-      socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
-      socket.on('processShotSound', () => shotSound.play());
 
-      gameStarted = true;
       let playerPosition = {
         x: player.pos.x,
         y: player.pos.y,
@@ -122,6 +105,23 @@ window.setup = function () {
       socket.emit('player', playerPosition);
     }
   });
+
+
+    socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
+    socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
+    socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
+    socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
+    socket.on('leaderboard', leaderboard => leaders = leaderboard);
+    socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
+    socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
+    socket.on('respawn-end', () => player.respawning = false);
+    socket.on('playExplosion', () => explosionSound.play());
+    socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
+    socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
+    socket.on('processShotSound', () => shotSound.play());
+
+    gameStarted = true;
+
   loadSounds();
   loadImages();
 };
@@ -146,7 +146,7 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
-  if (gameStarted) {
+  if (gameStarted && player) {
     displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
@@ -176,12 +176,7 @@ window.draw = function () {
       }
     }
 
-    for (let i = food.length - 1; i >= 0; i--) {
-      if (isWithinScreen(player, food[i])) {
-        food[i].move();
-        food[i].displayFood();
-      }
-    }
+    drawFood(player);
 
     socket.emit('angle', player.radians);
 
@@ -189,11 +184,7 @@ window.draw = function () {
     if (leaders.length > 0) {
       leaderBoardWinnersId = leaders[0].id;
     }
-    for (const otherPlayer of otherPlayers) {
-      if (isWithinScreen(player, otherPlayer)) {
-        Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
-      }
-    }
+    drawOtherPlayers(player);
 
     hitMarker.display();
     emitPlayersBullets(bullets);
@@ -206,8 +197,41 @@ window.draw = function () {
     if(mouseIsPressed) {
       processPlayerShooting();
     }
+  } else {
+    drawStartScreen();
   }
 };
+
+
+
+function drawStartScreen() {
+  let position = {
+    x: 1000,
+    y: 500
+  };
+  drawFood(position);
+  drawOtherPlayers(position);
+
+}
+
+
+function drawFood(currentPosition) {
+  for (let i = food.length - 1; i >= 0; i--) {
+    if (isWithinScreen(currentPosition, food[i])) {
+      food[i].move();
+      food[i].displayFood();
+    }
+  }
+}
+
+function drawOtherPlayers(currentPosition) {
+  for (const otherPlayer of otherPlayers) {
+    if (isWithinScreen(position, otherPlayer)) {
+      Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
+    }
+  }
+}
+
 
 
 function displayFramesPerSecond() {
