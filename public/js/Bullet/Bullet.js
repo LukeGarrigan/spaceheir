@@ -2,7 +2,7 @@ export default class Bullet{
   constructor(x, y, playerAngle, shooterId, id, bulletSize) {
     this.pos = createVector(x, y);
     this.velocity = p5.Vector.fromAngle(playerAngle);
-    this.velocity.mult(20);
+    this.velocity.mult(30);
     this.r = 10;
     this.shooterId = shooterId;
     this.id = id;
