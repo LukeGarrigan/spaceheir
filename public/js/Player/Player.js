@@ -91,7 +91,6 @@ export default class Player {
 
   static drawOtherPlayer(player, leaderBoardWinnersId, spaceShipImage, winnerSpaceship) {
     // Other player is respawning
-    // TODO: If the player is respawning, client should not receive data.
     if (player.lastDeath !== null) {
       return;
     }

@@ -55,6 +55,7 @@ let frameRate;
 let spaceShipImage;
 let winnerSpaceShipImage;
 let healthbar;
+let leaderBoardWinnersId;
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
@@ -180,11 +181,11 @@ window.draw = function () {
 
     socket.emit('angle', player.radians);
 
-    let leaderBoardWinnersId;
-    if (leaders.length > 0) {
-      leaderBoardWinnersId = leaders[0].id;
-    }
-    drawOtherPlayers(player);
+
+
+
+
+    drawOtherPlayers(player, leaderBoardWinnersId);
 
     hitMarker.display();
     emitPlayersBullets(bullets);
@@ -226,7 +227,10 @@ function drawFood(currentPosition) {
 
 function drawOtherPlayers(currentPosition) {
   for (const otherPlayer of otherPlayers) {
-    if (isWithinScreen(position, otherPlayer)) {
+    if (isWithinScreen(currentPosition, otherPlayer)) {
+      if (leaders.length > 0) {
+        leaderBoardWinnersId = leaders[0].id;
+      }
       Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
     }
   }
