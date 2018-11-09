@@ -135,8 +135,8 @@ export function processKillFeedAddition(kill, killfeed) {
  * @param {Position} to
  */
 export function isWithinScreen(player, to) {
-  const height = Math.floor(window.outerHeight / 2);
-  const width = Math.floor(window.outerWidth / 2);
+  const height = Math.floor(window.outerHeight/2);
+  const width = Math.floor(window.outerWidth/2);
 
   const diffX = player.x - to.x;
   const diffY = player.y - to.y;

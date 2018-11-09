@@ -4,6 +4,10 @@ const config = require('../../configs/defaults');
 
 module.exports = function({ socket }, playerData) {
 
+
+
+  if(!validName(playerData)) return;
+
   if (playerAlreadyExists(socket)) return;
 
 
@@ -22,9 +26,6 @@ module.exports = function({ socket }, playerData) {
 
   playerData.lastDirection = "down";
 
-  let playersName = playerData.name.substring(0, 15);
-  playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
-
   if (config.settings.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;
@@ -40,4 +41,17 @@ function playerAlreadyExists(socket) {
     }
   }
   return false;
+}
+
+
+
+function validName(playerData) {
+  let playersName = playerData.name.substring(0, 15);
+  playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
+  for (const player of players) {
+    if (player.name === playerData.name) {
+      return false;
+    }
+  }
+  return true;
 }
