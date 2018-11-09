@@ -15,22 +15,12 @@ export default class Food {
 
     this.targetX = this.x;
     this.targetY = this.y;
-
-
-    this.red = random(255);
-    this.green = random(255);
-    this.blue = random(255);
   }
 
   displayFood() {
     this.frame++;
     push();
-    // fill(255);
-    // colorMode(HSB, 255);
-
-    // tint(this.red, this.green, this.blue); // Tint blue
     image(this.foodImage, this.x, this.y, this.r, this.r);
-    // ellipse(this.x, this.y, this.r, this.r);
     pop();
   }
 

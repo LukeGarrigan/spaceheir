@@ -76,19 +76,56 @@ function broadcastPlayers() {
 
 function movePlayer(player, playerSpeed) {
   if (player.isUp) {
-    player.y -= config.settings.BASE_SPEED + playerSpeed;
+    if (player.yVelocity > -config.settings.BASE_SPEED) {
+      player.yVelocity-=0.2;
+    }
+    player.y += player.yVelocity;
+  } else {
+    if (player.yVelocity < 0) {
+      player.yVelocity += 0.1;
+    }
+    player.y += player.yVelocity;
   }
 
+
   if (player.isDown) {
-    player.y += config.settings.BASE_SPEED + playerSpeed;
+    if (player.yVelocity < config.settings.BASE_SPEED) {
+      player.yVelocity+=0.2;
+    }
+    player.y += player.yVelocity;
+  } else {
+    if (player.yVelocity > 0) {
+      player.yVelocity -= 0.1;
+    }
+    player.y += player.yVelocity;
+
+
   }
 
   if (player.isLeft) {
-    player.x -= config.settings.BASE_SPEED + playerSpeed;
+    if (player.xVelocity > -config.settings.BASE_SPEED) {
+      player.xVelocity -= 0.2;
+    }
+    player.x += player.xVelocity;
+
+  } else {
+    if (player.xVelocity < 0) {
+      player.xVelocity += 0.1;
+    }
+    player.x += player.xVelocity;
   }
 
   if (player.isRight) {
-    player.x += config.settings.BASE_SPEED + playerSpeed;
+    if (player.xVelocity < config.settings.BASE_SPEED) {
+      player.xVelocity += 0.2
+    }
+    player.x += player.xVelocity;
+  } else {
+    if (player.xVelocity > 0) {
+      player.xVelocity -= 0.1;
+    }
+    player.x += player.xVelocity;
+
   }
 }
 

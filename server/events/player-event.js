@@ -17,6 +17,11 @@ module.exports = function({ socket }, playerData) {
   playerData.r = 21;
   playerData.score = 0;
 
+  playerData.yVelocity = 0;
+  playerData.xVelocity = 0;
+
+  playerData.lastDirection = "down";
+
   let playersName = playerData.name.substring(0, 15);
   playerData.name = playersName.replace(/[^\x00-\x7F]/g, "");
 
