@@ -1,4 +1,3 @@
-import Asteroid from './Asteroid/Asteroid.js';
 import Player from './Player/Player.js';
 import socket from './socket.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
@@ -21,7 +20,6 @@ import {
   updateFoods,
   updateOtherPlayers
 } from './game-logic.js'
-
 
 
 let player;
@@ -108,20 +106,20 @@ window.setup = function () {
   });
 
 
-    socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
-    socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
-    socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
-    socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
-    socket.on('leaderboard', leaderboard => leaders = leaderboard);
-    socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
-    socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
-    socket.on('respawn-end', () => player.respawning = false);
-    socket.on('playExplosion', () => explosionSound.play());
-    socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
-    socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
-    socket.on('processShotSound', () => shotSound.play());
+  socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
+  socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
+  socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
+  socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
+  socket.on('leaderboard', leaderboard => leaders = leaderboard);
+  socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
+  socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
+  socket.on('respawn-end', () => player.respawning = false);
+  socket.on('playExplosion', () => explosionSound.play());
+  socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
+  socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
+  socket.on('processShotSound', () => shotSound.play());
 
-    gameStarted = true;
+  gameStarted = true;
 
   loadSounds();
   loadImages();
@@ -130,7 +128,7 @@ window.setup = function () {
 
 window.mouseWheel = function (event) {
   return false;
-}
+};
 
 function displayCurrentWinnerLocation() {
   if (otherPlayers.length > 0) {
@@ -182,9 +180,6 @@ window.draw = function () {
     socket.emit('angle', player.radians);
 
 
-
-
-
     drawOtherPlayers(player, leaderBoardWinnersId);
 
     hitMarker.display();
@@ -195,14 +190,13 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
-    if(mouseIsPressed) {
+    if (mouseIsPressed) {
       processPlayerShooting();
     }
   } else {
     drawStartScreen();
   }
 };
-
 
 
 function drawStartScreen() {
@@ -237,10 +231,9 @@ function drawOtherPlayers(currentPosition) {
 }
 
 
-
 function displayFramesPerSecond() {
   let thisLoop = new Date();
-  let fps = 1000 / (thisLoop-lastLoop);
+  let fps = 1000 / (thisLoop - lastLoop);
   lastLoop = thisLoop;
 
   if (frameCount % 15 === 0) {
@@ -273,15 +266,14 @@ window.keyPressed = function () {
     } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
       socket.emit('keyPressed', "right");
     } else if (keyCode == 32) {
-      socket.emit('keyPressed', "spacebar");
-      if (player.shield > 0) {
-        boostSound.play();
-        player.isBoosting = true;
-      }
+      // socket.emit('keyPressed', "spacebar");
+      // if (player.shield > 0) {
+      //   boostSound.play();
+      //   player.isBoosting = true;
+      // }
     }
   }
-
-}
+};
 
 window.keyReleased = function () {
   if (gameStarted) {
@@ -294,9 +286,9 @@ window.keyReleased = function () {
     } else if (keyCode === RIGHT_ARROW || keyCode === 68) {
       socket.emit('keyReleased', "right");
     } else if (keyCode === 32) {
-      socket.emit('keyReleased', "spacebar");
-      boostSound.stop();
-      player.isBoosting = false;
+      // socket.emit('keyReleased', "spacebar");
+      // boostSound.stop();
+      // player.isBoosting = false;
     }
   }
 }
@@ -304,11 +296,9 @@ window.keyReleased = function () {
 window.onresize = function () {
   background(0);
   canvas.size(window.innerWidth, window.innerHeight);
-  if (!gameStarted) {
-    input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
-    button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
-  }
-}
+  input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
+  button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+};
 
 function processPlayerShooting() {
   if (timeSinceLastShot > 15 && !player.respawning) {
