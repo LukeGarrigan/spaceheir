@@ -13,6 +13,15 @@ export default class Healthbar {
 
     rectMode(CENTER);
     rect(player.pos.x, player.pos.y+60, shield , 10);
+
+
+
+    let percentageHealth = player.shield;
+
+
+    percentageHealth = map(percentageHealth , 0, 1000, 0, 100);
+
+    text(floor(percentageHealth) + "%" , player.pos.x,  player.pos.y+80,);
     pop();
   }
 
