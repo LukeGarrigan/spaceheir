@@ -5,6 +5,8 @@ import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
 import Healthbar from "./Healthbar/Healthbar.js";
+import Minimap from "./Minimap/Minimap.js";
+
 
 
 import {
@@ -54,6 +56,7 @@ let spaceShipImage;
 let winnerSpaceShipImage;
 let healthbar;
 let leaderBoardWinnersId;
+let minimap;
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
@@ -76,7 +79,6 @@ function loadSounds() {
 }
 
 window.setup = function () {
-
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   input = createInput();
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
@@ -94,6 +96,7 @@ window.setup = function () {
       leaderboard = new Leaderboard(player, leaders);
       winnerLocation = new WinnerLocation(indicatorImage);
       healthbar = new Healthbar();
+      minimap = new Minimap(player.radians);
 
       let playerPosition = {
         x: player.pos.x,
@@ -190,6 +193,7 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
+    minimap.displayMinimap(player.pos.x, player.pos.y, player.radians);
     if (mouseIsPressed) {
       processPlayerShooting();
     }
