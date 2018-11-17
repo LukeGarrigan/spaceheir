@@ -42,7 +42,6 @@ let popups = [];
 let hitMarker;
 let hitMarkerImage;
 let hitMarkerSound;
-let boostSound;
 let shotSound;
 let explosionSound;
 let killfeed;
@@ -69,13 +68,11 @@ function loadImages() {
 }
 
 function loadSounds() {
-  boostSound = loadSound('assets/sounds/boost.wav');
-  boostSound.setLoop(true);
   shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
   shotSound.setVolume(0.05);
-  explosionSound.setVolume(0.4);
+  explosionSound.setVolume(0.2);
 }
 
 window.setup = function () {
@@ -166,10 +163,6 @@ window.draw = function () {
     }
 
     player.display(leaders);
-    if (player.shield <= 0) { // This should be somewhere more sensible.
-      boostSound.stop();
-    }
-
     for (let i = popups.length - 1; i >= 0; i--) {
       popups[i].update();
       popups[i].display();
@@ -249,7 +242,6 @@ function displayFramesPerSecond() {
 
 
 function findCurrentWinner() {
-
   let winnerId = leaderboard.leaders[0].id;
   for (const player of otherPlayers) {
     if (player.id === winnerId) {
@@ -269,12 +261,6 @@ window.keyPressed = function () {
       socket.emit('keyPressed', "left");
     } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
       socket.emit('keyPressed', "right");
-    } else if (keyCode == 32) {
-      // socket.emit('keyPressed', "spacebar");
-      // if (player.shield > 0) {
-      //   boostSound.play();
-      //   player.isBoosting = true;
-      // }
     }
   }
 };
@@ -289,10 +275,6 @@ window.keyReleased = function () {
       socket.emit('keyReleased', "left");
     } else if (keyCode === RIGHT_ARROW || keyCode === 68) {
       socket.emit('keyReleased', "right");
-    } else if (keyCode === 32) {
-      // socket.emit('keyReleased', "spacebar");
-      // boostSound.stop();
-      // player.isBoosting = false;
     }
   }
 }

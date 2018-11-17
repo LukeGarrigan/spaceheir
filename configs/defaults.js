@@ -11,8 +11,11 @@ const settings = {
    BASE_SHIELD: 100,
    //SPEED
    BASE_SPEED: 3.5,
-   DEBUG_MODE: false
 
+
+   DEBUG_MODE: false,
+   DEBUG_MODE_X : 1000,
+   DEBUG_MODE_Y : 1000
 }
 
 module.exports= {

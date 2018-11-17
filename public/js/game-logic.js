@@ -1,7 +1,3 @@
-/**
- * @typedef {{ x: number, y: number }} Position
- */
-
 import socket from './socket.js';
 import BasicTextPopup from './Popup/BasicTextPopup.js';
 import IncreaseShield from './Popup/IncreaseShield.js';
@@ -22,7 +18,7 @@ export function processRespawn(player, popups, timeOutInSeconds) {
 export function emitPlayersBullets(bullets) {
   let myBullets = [];
   for (let i = 0; i < bullets.length; i++) {
-    if (bullets[i].shooterId == socket.id) {
+    if (bullets[i].shooterId === socket.id) {
       let bullet = {
         id: bullets[i].id,
         x: bullets[i].pos.x,
@@ -38,7 +34,7 @@ export function emitPlayersBullets(bullets) {
 
 export function playerDisconnected(socketId, otherPlayers) {
   for (let i = otherPlayers.length - 1; i >= 0; i--) {
-    if (otherPlayers[i].id == socketId) {
+    if (otherPlayers[i].id === socketId) {
       otherPlayers.splice(i, 1);
     }
   }
@@ -72,7 +68,7 @@ export function updateBullets(data, bulletIds, bullets) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;
     for (let j = 0; j < bulletIds.length; j++) {
-      if (data[i].id == bulletIds[j]) {
+      if (data[i].id === bulletIds[j]) {
         exists = true;
         break;
       }
@@ -109,7 +105,7 @@ export function updateFoods(data, food, foodImage) {
 
 export function removeBullet(id, bullets) {
   for (let i = bullets.length - 1; i >= 0; i--) {
-    if (bullets[i].id == id) {
+    if (bullets[i].id === id) {
       bullets.splice(i, 1);
       break;
     }
@@ -140,10 +136,7 @@ export function isWithinScreen(player, to) {
 
   const diffX = player.x - to.x;
   const diffY = player.y - to.y;
+  return !(diffX > width || diffX < -width || diffY > height || diffY < -height);
 
-  if (diffX > width || diffX < -width || diffY > height || diffY < -height) {
-    return false;
-  }
 
-  return true;
 }

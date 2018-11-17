@@ -50,6 +50,8 @@ io.sockets.on('connection', function newConnection(socket) {
 
 function setupFood() {
   for (let i = 0; i < config.settings.NUM_FOOD; i++) {
+
+
     let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
     let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
     let foodRadius = Math.floor(Math.random() * 22) + 15;
@@ -77,11 +79,11 @@ function broadcastPlayers() {
 
 function killPlayer(player) {
   if (config.settings.DEBUG_MODE) {
-    player.x = 1000;
-    player.y = 1000;
+    player.x = config.settings.DEBUG_MODE_X;
+    player.y = config.settings.DEBUG_MODE_Y;
   } else {
-    player.x = Math.floor(Math.random() * 1920 * 3) + 1;
-    player.y = Math.floor(Math.random() * 1080 * 3) + 1;
+    player.x = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
+    player.y = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
   }
 
   player.shield = 100;
@@ -114,37 +116,17 @@ function updatePlayerPosition(player) {
   } else if (player.shield > config.settings.MAX_SHIELD) {
     player.shield = config.settings.MAX_SHIELD;
   }
-
-  let playerSpeed = player.isBoosting && player.shield > 0 ? 3 : 0;
-
-  if (player.isBoosting && player.shield > 0) {
-    player.shield--;
-    io.to(player.id).emit('increaseShield', -1);
-    playerSpeed = 5;
-  } else {
-    playerSpeed = 0;
-  }
-  movePlayer(player, playerSpeed);
+  movePlayer(player);
 
 
   // constrain - so moving to the edge of the screen
-  if (player.x < 0) {
-    player.x = config.settings.PLAYAREA_WIDTH;
-  } else if (player.x > config.settings.PLAYAREA_WIDTH) {
-    player.x = 0;
-  }
-
-  if (player.y < 0) {
-    player.y = config.settings.PLAYAREA_HEIGHT;
-  } else if (player.y > config.settings.PLAYAREA_HEIGHT) {
-    player.y = 0;
-  }
+  constrain(player);
   updatePlayerEatingFood(player);
   updatePlayerGettingShot(player);
 }
 
 
-function movePlayer(player, playerSpeed) {
+function movePlayer(player) {
   if (player.isUp) {
     if (player.yVelocity > -config.settings.BASE_SPEED) {
       player.yVelocity-=0.2;
@@ -196,7 +178,19 @@ function movePlayer(player, playerSpeed) {
   }
 }
 
+function constrain(player) {
+  if (player.x < 0) {
+    player.x = config.settings.PLAYAREA_WIDTH;
+  } else if (player.x > config.settings.PLAYAREA_WIDTH) {
+    player.x = 0;
+  }
 
+  if (player.y < 0) {
+    player.y = config.settings.PLAYAREA_HEIGHT;
+  } else if (player.y > config.settings.PLAYAREA_HEIGHT) {
+    player.y = 0;
+  }
+}
 
 function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
@@ -209,7 +203,10 @@ function updatePlayerEatingFood(player) {
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
       foods[i].x = foodX;
       foods[i].y = foodY;
-      io.sockets.emit('foods', foods);
+
+      let foodArray = [];
+      foodArray.push(foods[i]);
+      io.sockets.emit('foods', foodArray);
     }
   }
 }
@@ -228,7 +225,7 @@ function updatePlayerGettingShot(player) {
 
 function getKiller(clientId) {
   for (let player of players) {
-    if (player.id == clientId) {
+    if (player.id === clientId) {
       return player;
     }
   }
@@ -303,7 +300,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
 function checkIfCurrentPlayerIsWinning(id) {
 
   if (leaderboard.length > 0) {
-    if (id == leaderboard[0].id) {
+    if (id === leaderboard[0].id) {
       return true;
     }
   }
@@ -320,7 +317,7 @@ function setupPlayerLastShot(socket) {
 
 function processPlayerShooting(player, socket) {
   for (let i = 0; i < playersLastShot.length; i++) {
-    if (playersLastShot[i].id == socket.id) {
+    if (playersLastShot[i].id === socket.id) {
       let previousShot = playersLastShot[i].date;
       let timeSinceLastShot = Date.now() - previousShot;
       if (timeSinceLastShot > 200) {
@@ -344,7 +341,7 @@ function processPlayerShooting(player, socket) {
 function updateLeaderboard() {
   for (let i = 0; i < leaderboard.length; i++) {
     for (let j = 0; j < players.length; j++) {
-      if (leaderboard[i].id == players[j].id) {
+      if (leaderboard[i].id === players[j].id) {
         leaderboard[i].score = players[j].score;
       }
     }
