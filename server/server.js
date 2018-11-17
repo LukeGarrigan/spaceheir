@@ -74,69 +74,14 @@ function broadcastPlayers() {
   io.sockets.emit('bullets', bullets);
 }
 
-function movePlayer(player, playerSpeed) {
-  if (player.isUp) {
-    if (player.yVelocity > -config.settings.BASE_SPEED) {
-      player.yVelocity-=0.2;
-    }
-    player.y += player.yVelocity;
-  } else {
-    if (player.yVelocity < 0) {
-      player.yVelocity += 0.1;
-    }
-    player.y += player.yVelocity;
-  }
-
-
-  if (player.isDown) {
-    if (player.yVelocity < config.settings.BASE_SPEED) {
-      player.yVelocity+=0.2;
-    }
-    player.y += player.yVelocity;
-  } else {
-    if (player.yVelocity > 0) {
-      player.yVelocity -= 0.1;
-    }
-    player.y += player.yVelocity;
-
-
-  }
-
-  if (player.isLeft) {
-    if (player.xVelocity > -config.settings.BASE_SPEED) {
-      player.xVelocity -= 0.2;
-    }
-    player.x += player.xVelocity;
-
-  } else {
-    if (player.xVelocity < 0) {
-      player.xVelocity += 0.1;
-    }
-    player.x += player.xVelocity;
-  }
-
-  if (player.isRight) {
-    if (player.xVelocity < config.settings.BASE_SPEED) {
-      player.xVelocity += 0.2
-    }
-    player.x += player.xVelocity;
-  } else {
-    if (player.xVelocity > 0) {
-      player.xVelocity -= 0.1;
-    }
-    player.x += player.xVelocity;
-
-  }
-}
-
 
 function killPlayer(player) {
   if (config.settings.DEBUG_MODE) {
     player.x = 1000;
     player.y = 1000;
   } else {
-    player.x = Math.floor(Math.random() * 1920) + 1;
-    player.y = Math.floor(Math.random() * 1080) + 1;
+    player.x = Math.floor(Math.random() * 1920 * 3) + 1;
+    player.y = Math.floor(Math.random() * 1080 * 3) + 1;
   }
 
   player.shield = 100;
@@ -196,8 +141,62 @@ function updatePlayerPosition(player) {
   }
   updatePlayerEatingFood(player);
   updatePlayerGettingShot(player);
-  // checkPlayerCollision(player);
 }
+
+
+function movePlayer(player, playerSpeed) {
+  if (player.isUp) {
+    if (player.yVelocity > -config.settings.BASE_SPEED) {
+      player.yVelocity-=0.2;
+    }
+    player.y += player.yVelocity;
+  } else {
+    if (player.yVelocity < 0) {
+      player.yVelocity += 0.1;
+    }
+    player.y += player.yVelocity;
+  }
+
+
+  if (player.isDown) {
+    if (player.yVelocity < config.settings.BASE_SPEED) {
+      player.yVelocity+=0.2;
+    }
+    player.y += player.yVelocity;
+  } else {
+    if (player.yVelocity > 0) {
+      player.yVelocity -= 0.1;
+    }
+    player.y += player.yVelocity;
+  }
+
+  if (player.isLeft) {
+    if (player.xVelocity > -config.settings.BASE_SPEED) {
+      player.xVelocity -= 0.2;
+    }
+    player.x += player.xVelocity;
+
+  } else {
+    if (player.xVelocity < 0) {
+      player.xVelocity += 0.1;
+    }
+    player.x += player.xVelocity;
+  }
+
+  if (player.isRight) {
+    if (player.xVelocity < config.settings.BASE_SPEED) {
+      player.xVelocity += 0.2
+    }
+    player.x += player.xVelocity;
+  } else {
+    if (player.xVelocity > 0) {
+      player.xVelocity -= 0.1;
+    }
+    player.x += player.xVelocity;
+  }
+}
+
+
 
 function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
@@ -274,24 +273,6 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       bullets.splice(i, 1);
     }
   }
-}
-
-
-// function checkPlayerCollision(player) {
-//
-//   for (const otherPlayer of players) {
-//     if (otherPlayer !== player && Math.abs(player.x-otherPlayer.x) + Math.abs(player.y-otherPlayer.y) < 42) {
-//        if (!isPlayerDead(player) && !isPlayerDead(otherPlayer)) {
-//         killPlayer(player);
-//         killPlayer(otherPlayer);
-//         break;
-//       }
-//     }
-//   }
-// }
-
-function isPlayerDead(player) {
-  return player.lastDeath !== null && player.lastDeath > new Date();
 }
 
 

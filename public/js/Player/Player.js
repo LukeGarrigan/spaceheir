@@ -82,9 +82,6 @@ export default class Player {
     if (this.isBoosting && this.shield > 0) {
       rotate(PI);
       fill(0);
-
-
-      // triangle(-this.r/3, this.r/3, 0, -this.r/3, this.r/3, this.r/3);
     }
 
   }

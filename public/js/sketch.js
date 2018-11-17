@@ -96,7 +96,7 @@ window.setup = function () {
       leaderboard = new Leaderboard(player, leaders);
       winnerLocation = new WinnerLocation(indicatorImage);
       healthbar = new Healthbar();
-      minimap = new Minimap(player.radians);
+      minimap = new Minimap();
 
       let playerPosition = {
         x: player.pos.x,
@@ -193,7 +193,7 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
-    minimap.displayMinimap(player.pos.x, player.pos.y, player.radians);
+    minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     if (mouseIsPressed) {
       processPlayerShooting();
     }
