@@ -28,7 +28,6 @@ export function emitPlayersBullets(bullets) {
       myBullets.push(bullet);
     }
   }
-
   socket.emit('playerBullets', myBullets);
 }
 
@@ -121,15 +120,7 @@ export function processKillFeedAddition(kill, killfeed) {
   killfeed.addKill(kill.killer, kill.deather, kill.killerWinner, kill.deatherWinner, kill.killerAngle, kill.deatherAngle);
 }
 
-/**
- * Calculates if a game object is inside the window relative to the player (center of the screen)
- *
- * TODO:  Client should only receive data from objects that are near him.
- *        Implement this check in backend instead.
- *
- * @param {Position} player
- * @param {Position} to
- */
+
 export function isWithinScreen(player, to) {
   const height = Math.floor(window.outerHeight/2);
   const width = Math.floor(window.outerWidth/2);

@@ -133,7 +133,7 @@ function movePlayer(player) {
     }
     player.y += player.yVelocity;
   } else {
-    if (player.yVelocity < 0) {
+    if ((player.yVelocity + 0.1) < 0) {
       player.yVelocity += 0.1;
     }
     player.y += player.yVelocity;
@@ -146,7 +146,7 @@ function movePlayer(player) {
     }
     player.y += player.yVelocity;
   } else {
-    if (player.yVelocity > 0) {
+    if ((player.yVelocity - 0.1) > 0) {
       player.yVelocity -= 0.1;
     }
     player.y += player.yVelocity;
@@ -159,7 +159,7 @@ function movePlayer(player) {
     player.x += player.xVelocity;
 
   } else {
-    if (player.xVelocity < 0) {
+    if ((player.xVelocity + 0.1) < 0) {
       player.xVelocity += 0.1;
     }
     player.x += player.xVelocity;
@@ -171,7 +171,7 @@ function movePlayer(player) {
     }
     player.x += player.xVelocity;
   } else {
-    if (player.xVelocity > 0) {
+    if ((player.xVelocity -0.1) > 0) {
       player.xVelocity -= 0.1;
     }
     player.x += player.xVelocity;

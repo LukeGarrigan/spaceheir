@@ -24,8 +24,6 @@ module.exports = function({ socket }, playerData) {
   playerData.yVelocity = 0;
   playerData.xVelocity = 0;
 
-  playerData.lastDirection = "down";
-
   if (config.settings.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;

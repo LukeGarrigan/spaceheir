@@ -10,7 +10,6 @@ export default class Minimap {
 
     this.xScaler = this.width/ 1920;
     this.yScaler = this.height/ 1080;
-    this.food = [];
   }
 
 
@@ -18,10 +17,7 @@ export default class Minimap {
     this.angle = playerAngle;
     this.width = windowWidth * this.xScaler;
     this.height = windowHeight * this.yScaler;
-    this.food = food;
-
     push();
-    // stroke(255);
     noFill();
     let minimapX = playerX - windowWidth / 2.1;
     let minimapY = playerY + windowHeight / 3.4;
@@ -33,6 +29,8 @@ export default class Minimap {
     pop();
 
   }
+
+
 
   displayPlayerOnMinimap(playerX, playerY) {
     let littleRocketX = map(playerX, 0, this.maxWidth, 0, this.width);
@@ -46,13 +44,10 @@ export default class Minimap {
 
     fill(255);
     for (const food of foods) {
-
       let actualFoodX = food.x;
       let actualFoodY = food.y;
-
       let foodMinimapX = map(actualFoodX, 0, this.maxWidth, 0, this.width);
       let foodMinimapY = map(actualFoodY, 0, this.maxHeight, 0, this.height);
-
       ellipse(foodMinimapX, foodMinimapY, 2, 2);
     }
   }

@@ -71,7 +71,7 @@ function loadSounds() {
   shotSound = loadSound('assets/sounds/shot.wav');
   explosionSound = loadSound('assets/sounds/explode1.wav');
   hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
-  shotSound.setVolume(0.05);
+  shotSound.setVolume(0.01);
   explosionSound.setVolume(0.2);
 }
 
