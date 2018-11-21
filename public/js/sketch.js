@@ -6,6 +6,7 @@ import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
 import Healthbar from "./Healthbar/Healthbar.js";
 import Minimap from "./Minimap/Minimap.js";
+import MuteButton from "./MuteButton/MuteButton.js";
 
 
 
@@ -56,7 +57,9 @@ let winnerSpaceShipImage;
 let healthbar;
 let leaderBoardWinnersId;
 let minimap;
-
+let soundOn;
+let soundOff;
+let muteButton;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 function loadImages() {
@@ -65,6 +68,10 @@ function loadImages() {
   foodImage = loadImage("assets/images/food.png");
   spaceShipImage = loadImage("assets/images/spaceship.png");
   winnerSpaceShipImage = loadImage("assets/images/winner.png");
+  soundOn = loadImage("assets/images/soundOn.png");
+  soundOff = loadImage("assets/images/soundOff.png");
+
+
 }
 
 function loadSounds() {
@@ -94,6 +101,7 @@ window.setup = function () {
       winnerLocation = new WinnerLocation(indicatorImage);
       healthbar = new Healthbar();
       minimap = new Minimap();
+      muteButton = new MuteButton(soundOn, soundOff);
 
       let playerPosition = {
         x: player.pos.x,
@@ -187,6 +195,7 @@ window.draw = function () {
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
+    muteButton.display(minimap.minimapX, minimap.minimapY);
     if (mouseIsPressed) {
       processPlayerShooting();
     }
@@ -286,6 +295,14 @@ window.onresize = function () {
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
 };
 
+
+window.mousePressed = function () {
+  checkMuteToggled();
+  processPlayerShooting();
+};
+
+
+
 function processPlayerShooting() {
   if (timeSinceLastShot > 15 && !player.respawning) {
     socket.emit('bullet');
@@ -293,7 +310,9 @@ function processPlayerShooting() {
   }
 }
 
-window.mousePressed = function () {
-  processPlayerShooting();
-};
+function checkMuteToggled() {
+  if(muteButton) {
+    muteButton.checkIfClicked(mouseX, mouseY);
+  }
 
+}

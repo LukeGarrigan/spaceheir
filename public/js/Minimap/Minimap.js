@@ -10,6 +10,8 @@ export default class Minimap {
 
     this.xScaler = this.width/ 1920;
     this.yScaler = this.height/ 1080;
+    this.minimapX = 0;
+    this.minimapY = 0
   }
 
 
@@ -19,13 +21,13 @@ export default class Minimap {
     this.height = windowHeight * this.yScaler;
     push();
     noFill();
-    let minimapX = playerX - windowWidth / 2.1;
-    let minimapY = playerY + windowHeight / 3.4;
-    rect(minimapX, minimapY, this.width, this.height);
-    translate(minimapX, minimapY);
+    this.minimapX = playerX - windowWidth / 2.1;
+    this.minimapY = playerY + windowHeight / 3.4;
+    rect(this.minimapX, this.minimapY, this.width, this.height);
+    translate(this.minimapX, this.minimapY);
 
     this.displayFoodOnMinimap(food);
-    this.displayPlayerOnMinimap(playerX, playerY, minimapX, minimapY);
+    this.displayPlayerOnMinimap(playerX, playerY, this.minimapX, this.minimapY);
     pop();
 
   }

@@ -103,10 +103,14 @@ export function updateFoods(data, food, foodImage) {
 }
 
 export function removeBullet(id, bullets) {
+  let index = getBullet(id, bullets);
+  bullets.splice(index, 1);
+}
+
+function getBullet(id, bullets) {
   for (let i = bullets.length - 1; i >= 0; i--) {
     if (bullets[i].id === id) {
-      bullets.splice(i, 1);
-      break;
+      return i;
     }
   }
 }
