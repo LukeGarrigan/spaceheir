@@ -195,7 +195,7 @@ window.draw = function () {
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
-    muteButton.display(minimap.minimapX, minimap.minimapY);
+    muteButton.displayMuteButton(player.pos.x - width/2, player.pos.y - height/2);
     if (mouseIsPressed) {
       processPlayerShooting();
     }

@@ -7,25 +7,26 @@ export default class MuteButton {
     this.soundOffImage = soundOffImage;
     this.x = 0;
     this.y = 0;
+    this.viewX = 0;
+    this.viewY = 0;
   }
 
 
-  display(minimapX, minimapY) {
-    this.x = minimapX;
-    this.y = minimapY;
+  displayMuteButton(viewX, viewY) {
+    this.viewX = viewX;
+    this.viewY = viewY;
+
+    this.x = viewX + height * 0.01;
+    this.y = viewY +  height / 1.05;
     if (this.isMuted) {
-      image(this.soundOffImage, this.x, this.y, 30, 30);
+      image(this.soundOffImage, this.x, this.y, 20, 20);
     } else {
-      image(this.soundOnImage, this.x, this.y, 30, 30);
+      image(this.soundOnImage, this.x, this.y, 20, 20);
     }
   }
 
   checkIfClicked(mouseX, mouseY) {
-
-    let topLeftCornerX = this.x -width/2;
-    let topLeftCornerY = this.y - height/2;
-
-    if (dist(topLeftCornerX + mouseX, topLeftCornerY + mouseY, this.x, this.y) < 40) {
+    if (dist(this.viewX + mouseX, this.viewY + mouseY, this.x, this.y) < 40) {
       this.toggleMute();
     }
   }
