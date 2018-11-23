@@ -122,10 +122,18 @@ window.setup = function () {
   socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
   socket.on('respawn-start', timeOut => processRespawn(player, popups, timeOut));
   socket.on('respawn-end', () => player.respawning = false);
-  socket.on('playExplosion', () => explosionSound.play());
-  socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound));
+  socket.on('playExplosion', () => {
+    if (!muteButton.isMuted) {
+      explosionSound.play()
+    }
+  });
+  socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound, muteButton.isMuted));
   socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
-  socket.on('processShotSound', () => shotSound.play());
+  socket.on('processShotSound', () =>  {
+    if (!muteButton.isMuted) {
+      shotSound.play();
+    }
+  });
 
   gameStarted = true;
 

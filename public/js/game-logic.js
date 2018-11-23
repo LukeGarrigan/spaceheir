@@ -115,8 +115,10 @@ function getBullet(id, bullets) {
   }
 }
 
-export function processHitmarker(player, hitMarkerImage, hitMarkerSound) {
-  hitMarkerSound.play();
+export function processHitmarker(player, hitMarkerImage, hitMarkerSound, isMuted) {
+  if (!isMuted) {
+    hitMarkerSound.play();
+  }
   return new HitMarker(player, hitMarkerImage);
 }
 
