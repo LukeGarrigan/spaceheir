@@ -1,5 +1,12 @@
-# asteroids.io
-//todo THINK OF A NAME
+# Codeheir space game
+todo
+1. Begin development again in 2019
+2. Add new flames copied from other repository
+3. Add new ships
+4. Add leveling system
+5. Optimise and potentially shift to phaser
+
+
 
 A battle-royale/.io game that I've been creating on stream at twitch.tv/codeheir
 
