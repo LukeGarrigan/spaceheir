@@ -14,12 +14,21 @@ export default class Player {
     this.score = 0;
     this.isBoosting = false;
     this.respawning = false;
-    this.shieldRadius = 5;
     this.spaceShipImage = spaceShipImage;
     this.winnerSpaceship = winnerSpaceship;
+    this.trail = [];
+
   }
 
   display(leaders) {
+    this.trail.push({x: this.pos.x, y: this.pos.y});
+    if (this.trail.length > 150) {
+      this.trail.splice(0, 1);
+    }
+
+    this.drawTrail();
+
+
     push();
     translate(this.pos.x, this.pos.y);
     fill(0);
@@ -38,7 +47,6 @@ export default class Player {
 
 
     this.radians = atan2(mouseY-height/2, mouseX-width/2);
-    this.shieldRadius = map(this.shield, 0, 1000, 21, 0);
     this.offset = map(this.shield, 0, 1000, 0, 10);
     rotate(this.radians + HALF_PI);
     winner ? fill(255, 69, 0) : fill(255);
@@ -49,13 +57,10 @@ export default class Player {
       image(this.spaceShipImage, 0, 0);
     }
 
-    // triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
 
     winner ? fill(255, 69, 0) : fill(255);
     fill(0);
     translate(0, -this.offset);
-    //triangle(-this.shieldRadius, this.shieldRadius, 0, -this.shieldRadius, this.shieldRadius, this.shieldRadius);
-    this.handlePlayerBoosting();
     pop();
     textAlign(CENTER);
 
@@ -77,14 +82,6 @@ export default class Player {
     pop();
   }
 
-  handlePlayerBoosting() {
-    translate(0, this.r/2+20);
-    if (this.isBoosting && this.shield > 0) {
-      rotate(PI);
-      fill(0);
-    }
-
-  }
 
   static drawOtherPlayer(player, leaderBoardWinnersId, spaceShipImage, winnerSpaceship) {
     // Other player is respawning
@@ -95,11 +92,8 @@ export default class Player {
     let offset = map(player.shield, 0, 1000, 0, 10);
     push();
     translate(player.x, player.y);
-    let shieldRadius = 0;
     let isWinning =  leaderBoardWinnersId === player.id;
 
-
-    shieldRadius = map(player.shield, 0, 1000, 21, 0);
     rotate(player.angle + HALF_PI);
     imageMode(CENTER);
 
@@ -109,12 +103,9 @@ export default class Player {
       image(spaceShipImage, 0, 0);
     }
 
-    // triangle(-21, 21, 0, -21, 21, 21);
     fill(0);
     translate(0, -offset);
 
-
-    // triangle(-shieldRadius, shieldRadius, 0, -shieldRadius, shieldRadius,shieldRadius);
     this.processOtherPlayersBooster(player);
     pop();
     textAlign(CENTER);
@@ -124,12 +115,24 @@ export default class Player {
   }
 
 
+  drawTrail() {
+    push();
+
+    fill(255, 127, 10, 30);
+    blendMode(ADD);
+    for (let i = 75; i < this.trail.length; i++) {
+      let part = this.trail[i];
+      ellipse(part.x += random(-0.3, 0.3), part.y += random(-0.3, 0.3), (i - 75) / 4.5);
+    }
+    pop();
+  }
+
+
   static processOtherPlayersBooster(player) {
     translate(0, player.r / 2 + 20);
     if (player.isBoosting && player.shield > 0) {
       rotate(PI);
       fill(0);
-      // triangle(-player.r / 3, player.r / 3, 0, -player.r / 3, player.r / 3, player.r / 3);
     }
   }
 

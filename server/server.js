@@ -101,7 +101,7 @@ function killPlayer(player) {
 
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
-    const currentDate = new Date()
+    const currentDate = new Date();
     if (player.lastDeath > currentDate) {
       return
     } else {
@@ -127,9 +127,16 @@ function updatePlayerPosition(player) {
 
 
 function movePlayer(player) {
+  movingUp(player);
+  movingDown(player);
+  movingLeft(player);
+  movingRight(player);
+}
+
+function movingUp(player) {
   if (player.isUp) {
     if (player.yVelocity > -config.settings.BASE_SPEED) {
-      player.yVelocity-=0.2;
+      player.yVelocity -= 0.2;
     }
     player.y += player.yVelocity;
   } else {
@@ -138,11 +145,12 @@ function movePlayer(player) {
     }
     player.y += player.yVelocity;
   }
+}
 
-
+function movingDown(player) {
   if (player.isDown) {
     if (player.yVelocity < config.settings.BASE_SPEED) {
-      player.yVelocity+=0.2;
+      player.yVelocity += 0.2;
     }
     player.y += player.yVelocity;
   } else {
@@ -151,7 +159,9 @@ function movePlayer(player) {
     }
     player.y += player.yVelocity;
   }
+}
 
+function movingLeft(player) {
   if (player.isLeft) {
     if (player.xVelocity > -config.settings.BASE_SPEED) {
       player.xVelocity -= 0.2;
@@ -164,19 +174,22 @@ function movePlayer(player) {
     }
     player.x += player.xVelocity;
   }
+}
 
+function movingRight(player) {
   if (player.isRight) {
     if (player.xVelocity < config.settings.BASE_SPEED) {
       player.xVelocity += 0.2
     }
     player.x += player.xVelocity;
   } else {
-    if ((player.xVelocity -0.1) > 0) {
+    if ((player.xVelocity - 0.1) > 0) {
       player.xVelocity -= 0.1;
     }
     player.x += player.xVelocity;
   }
 }
+
 
 function constrain(player) {
   if (player.x < 0) {
@@ -231,11 +244,35 @@ function getKiller(clientId) {
   }
 }
 
+function removeBulletFromGame(i) {
+  io.sockets.emit('bulletHit', bullets[i].id);
+}
+
+function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning) {
+  updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
+  player.score = 0;
+  io.to(player.id).emit('playExplosion');
+  io.to(bullets[i].clientId).emit('playExplosion');
+
+
+  let killer = getKiller(bullets[i].clientId);
+
+
+  let playerKill = {
+    killer: killer.name,
+    killerAngle: killer.angle,
+    killerWinner: isCurrentKillerWinning,
+    deather: player.name,
+    deatherAngle: player.angle,
+    deatherWinner: isCurrentPlayerWinning
+  };
+  io.sockets.emit('killfeed', playerKill);
+}
+
 function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
-    if (Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10) {
-      io.sockets.emit('bulletHit', bullets[i].id);
-
+    if (hasBulletHitPlayer(i, player)) {
+      removeBulletFromGame(i);
       player.shield -= 75;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
@@ -247,29 +284,18 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       console.log("Is killer winning" + isCurrentKillerWinning);
 
       if (player.shield <= 0) {
-        updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
-        player.score = 0;
-        io.to(player.id).emit('playExplosion');
-        io.to(bullets[i].clientId).emit('playExplosion');
-
-
-        let killer = getKiller(bullets[i].clientId);
-
-
-        let playerKill = {
-          killer: killer.name,
-          killerAngle: killer.angle,
-          killerWinner: isCurrentKillerWinning,
-          deather: player.name,
-          deatherAngle: player.angle,
-          deatherWinner: isCurrentPlayerWinning
-        };
-        io.sockets.emit('killfeed', playerKill);
+        processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning);
       }
+
       io.to(bullets[i].clientId).emit('hitMarker', player);
       bullets.splice(i, 1);
     }
   }
+}
+
+
+function hasBulletHitPlayer(i, player) {
+  return Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10;
 }
 
 
