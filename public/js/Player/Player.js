@@ -26,7 +26,7 @@ export default class Player {
       this.trail.splice(0, 1);
     }
 
-    this.drawTrail();
+    // this.drawTrail();
 
 
     push();

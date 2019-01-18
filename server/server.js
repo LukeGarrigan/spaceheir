@@ -30,7 +30,7 @@ module.exports = {
   processPlayerShooting,
   leaderboard,
   bullets
-}
+};
 
 const events = require('./events');
 const eventsList = Object.entries(events);
@@ -50,8 +50,6 @@ io.sockets.on('connection', function newConnection(socket) {
 
 function setupFood() {
   for (let i = 0; i < config.settings.NUM_FOOD; i++) {
-
-
     let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
     let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
     let foodRadius = Math.floor(Math.random() * 22) + 15;

@@ -10,7 +10,7 @@ const settings = {
    MAX_SHIELD_REDUCTION: 75,
    BASE_SHIELD: 100,
    //SPEED
-   BASE_SPEED: 2,
+   BASE_SPEED: 3.5,
 
 
    DEBUG_MODE: false,
