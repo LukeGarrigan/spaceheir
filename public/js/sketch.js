@@ -204,7 +204,7 @@ window.draw = function () {
     healthbar.displayHealthbar(player);
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     muteButton.displayMuteButton(player.pos.x - width/2, player.pos.y - height/2);
-    if (mouseIsPressed) {
+    if (mouseIsPressed && mouseButton === LEFT) {
       processPlayerShooting();
     }
   } else {
@@ -268,16 +268,15 @@ function findCurrentWinner() {
 }
 
 
+window.oncontextmenu = function (e) {
+  e.preventDefault();
+};
+
+
 window.keyPressed = function () {
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
-    } else if (keyCode == DOWN_ARROW || keyCode == 83) {
-      socket.emit('keyPressed', "down");
-    } else if (keyCode == LEFT_ARROW || keyCode == 65) {
-      socket.emit('keyPressed', "left");
-    } else if (keyCode == RIGHT_ARROW || keyCode == 68) {
-      socket.emit('keyPressed', "right");
     }
   }
 };
@@ -286,15 +285,9 @@ window.keyReleased = function () {
   if (gameStarted) {
     if (keyCode === UP_ARROW || keyCode === 87) {
       socket.emit('keyReleased', "up");
-    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
-      socket.emit('keyReleased', "down");
-    } else if (keyCode === LEFT_ARROW || keyCode === 65) {
-      socket.emit('keyReleased', "left");
-    } else if (keyCode === RIGHT_ARROW || keyCode === 68) {
-      socket.emit('keyReleased', "right");
     }
   }
-}
+};
 
 window.onresize = function () {
   background(0);
@@ -305,11 +298,19 @@ window.onresize = function () {
 
 
 window.mousePressed = function () {
-  checkMuteToggled();
-  processPlayerShooting();
+  if (mouseButton === LEFT) {
+    checkMuteToggled();
+    processPlayerShooting();
+  } else {
+    socket.emit('keyPressed', "up");
+  }
 };
 
-
+window.mouseReleased = function() {
+  if (mouseButton === RIGHT) {
+    socket.emit('keyReleased', "up");
+  }
+};
 
 function processPlayerShooting() {
   if (timeSinceLastShot > 15 && !player.respawning) {

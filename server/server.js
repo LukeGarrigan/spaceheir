@@ -126,65 +126,36 @@ function updatePlayerPosition(player) {
 
 function movePlayer(player) {
   movingUp(player);
-  movingDown(player);
-  movingLeft(player);
-  movingRight(player);
 }
 
 function movingUp(player) {
   if (player.isUp) {
-    if (player.yVelocity > -config.settings.BASE_SPEED) {
-      player.yVelocity -= 0.2;
-    }
-    player.y += player.yVelocity;
-  } else {
-    if ((player.yVelocity + 0.1) < 0) {
-      player.yVelocity += 0.1;
-    }
-    player.y += player.yVelocity;
-  }
-}
 
-function movingDown(player) {
-  if (player.isDown) {
-    if (player.yVelocity < config.settings.BASE_SPEED) {
-      player.yVelocity += 0.2;
-    }
-    player.y += player.yVelocity;
-  } else {
-    if ((player.yVelocity - 0.1) > 0) {
-      player.yVelocity -= 0.1;
-    }
-    player.y += player.yVelocity;
-  }
-}
+    // x += speed * sin(angle);
+    // y += speed * cos(angle);
 
-function movingLeft(player) {
-  if (player.isLeft) {
-    if (player.xVelocity > -config.settings.BASE_SPEED) {
-      player.xVelocity -= 0.2;
+
+
+    if (player.velocity < config.settings.BASE_SPEED) {
+      player.velocity += 0.2;
     }
-    player.x += player.xVelocity;
+
+
+    player.x += player.velocity * Math.cos(player.angle);
+    player.y += player.velocity* Math.sin(player.angle);
+
+
 
   } else {
-    if ((player.xVelocity + 0.1) < 0) {
-      player.xVelocity += 0.1;
-    }
-    player.x += player.xVelocity;
-  }
-}
 
-function movingRight(player) {
-  if (player.isRight) {
-    if (player.xVelocity < config.settings.BASE_SPEED) {
-      player.xVelocity += 0.2
+    if (player.velocity > 1.1) {
+      player.velocity -= 0.1;
     }
-    player.x += player.xVelocity;
-  } else {
-    if ((player.xVelocity - 0.1) > 0) {
-      player.xVelocity -= 0.1;
-    }
-    player.x += player.xVelocity;
+
+    player.x += player.velocity * Math.cos(player.angle);
+    player.y += player.velocity* Math.sin(player.angle);
+
+
   }
 }
 

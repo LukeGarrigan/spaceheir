@@ -5,10 +5,7 @@ export default class Player {
     this.name = name;
     this.pos = createVector(random(width*3), random(height*3));
     this.radians = 0;
-    this.isLeft = false;
-    this.isRight = false;
     this.isUp = false;
-    this.isDown = false;
     this.speed = 2;
     this.shield = 0;
     this.score = 0;

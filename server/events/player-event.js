@@ -10,6 +10,7 @@ module.exports = function({ socket }, playerData) {
 
   if (playerAlreadyExists(socket)) return;
 
+  playerData.velocity = 1;
 
   playerData.id = socket.id;
   playerData.shield = config.settings.BASE_SHIELD;
