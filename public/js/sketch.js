@@ -60,6 +60,7 @@ let minimap;
 let soundOn;
 let soundOff;
 let muteButton;
+let space;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 function loadImages() {
@@ -70,7 +71,7 @@ function loadImages() {
   winnerSpaceShipImage = loadImage("assets/images/winner.png");
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
-
+  space = loadImage("assets/images/space.png");
 
 }
 
@@ -156,12 +157,16 @@ function displayCurrentWinnerLocation() {
 }
 
 
+
+
 window.draw = function () {
   background(0);
   fill(255);
   scale(1);
   textSize(15);
   if (gameStarted && player) {
+    addParallaxScrolling();
+
     displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
@@ -324,4 +329,21 @@ function checkMuteToggled() {
     muteButton.checkIfClicked(mouseX, mouseY);
   }
 
+}
+
+function addParallaxScrolling() {
+// first Hlayer
+  image(space, -(player.pos.x / 10), -(player.pos.y / 10));
+  image(space, space.width - (player.pos.x / 10), -(player.pos.y / 10));
+  image(space, space.width * 2 - (player.pos.x / 10), -(player.pos.y / 10));
+
+  // second Hlayer
+  image(space, -(player.pos.x / 10), space.height - (player.pos.y / 10));
+  image(space, space.width - (player.pos.x / 10), space.height - (player.pos.y / 10));
+  image(space, space.width * 2 - (player.pos.x / 10), space.height - (player.pos.y / 10));
+
+  // third HLayer
+  image(space, -(player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
+  image(space, space.width - (player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
+  image(space, space.width * 2 - (player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
 }
