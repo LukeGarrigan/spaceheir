@@ -18,12 +18,20 @@ export default class Player {
   }
 
   display(leaders) {
-    this.trail.push({x: this.pos.x, y: this.pos.y});
-    if (this.trail.length > 150) {
-      this.trail.splice(0, 1);
+
+
+    for (let i = 0;i < 10; i++) {
+      this.trail.push({x: this.pos.x, y: this.pos.y});
+    }
+    if (this.trail.length > 200) {
+
+      for (let i = 0; i < 10; i++) {
+        this.trail.splice(0, 1);
+      }
+
     }
 
-    // this.drawTrail();
+    this.drawTrail();
 
 
     push();
@@ -119,7 +127,7 @@ export default class Player {
     blendMode(ADD);
     for (let i = 75; i < this.trail.length; i++) {
       let part = this.trail[i];
-      ellipse(part.x += random(-0.3, 0.3), part.y += random(-0.3, 0.3), (i - 75) / 4.5);
+      ellipse(part.x += random(-0.3, 0.3), part.y += random(-0.3, 0.3), (i - 75) / 6);
     }
     pop();
   }

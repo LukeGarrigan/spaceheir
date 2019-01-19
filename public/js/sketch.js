@@ -165,7 +165,7 @@ window.draw = function () {
   scale(1);
   textSize(15);
   if (gameStarted && player) {
-    addParallaxScrolling();
+    addParallaxScrolling(player.pos.x, player.pos.y);
 
     displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
@@ -223,6 +223,8 @@ function drawStartScreen() {
     x: 1000,
     y: 500
   };
+
+  addParallaxScrolling(position.x, position.y);
   drawFood(position);
   drawOtherPlayers(position);
 
@@ -331,19 +333,19 @@ function checkMuteToggled() {
 
 }
 
-function addParallaxScrolling() {
+function addParallaxScrolling(x, y) {
 // first Hlayer
-  image(space, -(player.pos.x / 10), -(player.pos.y / 10));
-  image(space, space.width - (player.pos.x / 10), -(player.pos.y / 10));
-  image(space, space.width * 2 - (player.pos.x / 10), -(player.pos.y / 10));
+  image(space, -(x / 10), -(y / 10));
+  image(space, space.width - (x / 10), -(y / 10));
+  image(space, space.width * 2 - (x / 10), -(y / 10));
 
   // second Hlayer
-  image(space, -(player.pos.x / 10), space.height - (player.pos.y / 10));
-  image(space, space.width - (player.pos.x / 10), space.height - (player.pos.y / 10));
-  image(space, space.width * 2 - (player.pos.x / 10), space.height - (player.pos.y / 10));
+  image(space, -(x / 10), space.height - (y / 10));
+  image(space, space.width - (x / 10), space.height - (y / 10));
+  image(space, space.width * 2 - (x / 10), space.height - (y / 10));
 
   // third HLayer
-  image(space, -(player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
-  image(space, space.width - (player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
-  image(space, space.width * 2 - (player.pos.x / 10), space.height * 2 - (player.pos.y / 10));
+  image(space, -(x / 10), space.height * 2 - (y / 10));
+  image(space, space.width - (x / 10), space.height * 2 - (y / 10));
+  image(space, space.width * 2 - (x / 10), space.height * 2 - (y / 10));
 }
