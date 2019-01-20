@@ -20,8 +20,11 @@ let bullets = [];
 let foods = [];
 let leaderboard = [];
 let lastBulletId = 0;
+let asteroids = [];
+
 
 setupFood();
+setupAsteroids();
 setInterval(broadcastPlayers, 16);
 
 module.exports = {
@@ -46,6 +49,7 @@ io.sockets.on('connection', function newConnection(socket) {
 
   setupPlayerLastShot(socket);
   socket.emit('foods', foods);
+  socket.emit('asteroids', asteroids);
 });
 
 function setupFood() {
@@ -61,6 +65,28 @@ function setupFood() {
       id: i
     };
     foods.push(food);
+  }
+}
+
+function setupAsteroids() {
+
+  for (let i = 0; i < config.settings.NUM_ASTEROIDS; i++) {
+    let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
+    let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
+    let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
+    let asteroidRadius = Math.floor(Math.random() * 300) + 50;
+
+    let asteroid = {
+      x: asteroidX,
+      y: asteroidY,
+      id: i,
+      health: asteroidRadius/2,
+      asteroidIndex: asteroidIndex,
+      r: asteroidRadius
+    };
+
+    asteroids.push(asteroid);
+
   }
 }
 
@@ -120,7 +146,21 @@ function updatePlayerPosition(player) {
   // constrain - so moving to the edge of the screen
   constrain(player);
   updatePlayerEatingFood(player);
+
   updatePlayerGettingShot(player);
+
+  updateShootingAsteroid();
+}
+
+
+function updateShootingAsteroid() {
+  for (let i = bullets.length-1; i >= 0; i--) {
+    if (hasBulletHitAnAsteroid(i)) {
+      removeBulletFromGame(i);
+      bullets.splice(i , 1);
+    }
+  }
+
 }
 
 
@@ -131,11 +171,6 @@ function movePlayer(player) {
 function movingUp(player) {
   if (player.isUp) {
 
-    // x += speed * sin(angle);
-    // y += speed * cos(angle);
-
-
-
     if (player.velocity < config.settings.BASE_SPEED) {
       player.velocity += 0.2;
     }
@@ -143,9 +178,6 @@ function movingUp(player) {
 
     player.x += player.velocity * Math.cos(player.angle);
     player.y += player.velocity* Math.sin(player.angle);
-
-
-
   } else {
 
     if (player.velocity > 1.1) {
@@ -238,9 +270,10 @@ function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWi
   io.sockets.emit('killfeed', playerKill);
 }
 
+
 function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
-    if (hasBulletHitPlayer(i, player)) {
+    if (hasBulletHit(i, player, 37)) {
       removeBulletFromGame(i);
       player.shield -= 75;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
@@ -259,12 +292,54 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       io.to(bullets[i].clientId).emit('hitMarker', player);
       bullets.splice(i, 1);
     }
+
+
+
+
   }
 }
 
 
-function hasBulletHitPlayer(i, player) {
-  return Math.abs(bullets[i].x - player.x) + Math.abs(bullets[i].y - player.y) < 21 + 10;
+function hasBulletHitAnAsteroid(i) {
+  for(let asteroid of asteroids) {
+    if (hasBulletHit(i, asteroid, asteroid.r/2)) {
+      asteroid.health -= 10;
+
+      if (asteroid.health <= 0) {
+        respawnAsteroid(asteroid);
+      }
+
+      return true;
+    }
+
+  }
+  return false;
+}
+
+
+function respawnAsteroid(asteroid) {
+  let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
+  let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
+  let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
+  let asteroidRadius = Math.floor(Math.random() * 300) + 50;
+
+
+  asteroid.x = asteroidX;
+  asteroid.y = asteroidY;
+  asteroid.asteroidIndex = asteroidIndex;
+  asteroid.r = asteroidRadius;
+  asteroid.health = asteroidRadius/2;
+
+  let tempAsteroids = [];
+
+  tempAsteroids.push(asteroid);
+
+  io.sockets.emit("asteroids", tempAsteroids);
+}
+
+
+function hasBulletHit(i, playerOrAsteroid, radius) {
+  return Math.abs(bullets[i].x - playerOrAsteroid.x) + Math.abs(bullets[i].y - playerOrAsteroid.y) < radius;
 }
 
 

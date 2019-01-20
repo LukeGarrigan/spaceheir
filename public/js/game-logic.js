@@ -3,6 +3,7 @@ import BasicTextPopup from './Popup/BasicTextPopup.js';
 import IncreaseShield from './Popup/IncreaseShield.js';
 import Bullet from './Bullet/Bullet.js';
 import Food from './Food/Food.js';
+import Asteroid from './Asteroid/Asteroid.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
@@ -81,26 +82,7 @@ export function updateBullets(data, bulletIds, bullets) {
   }
 }
 
-export function updateFoods(data, food, foodImage) {
-  for (let i = 0; i < data.length; i++) {
-    let exists = false;
-    for (let j = 0; j < food.length; j++) {
-      if (data[i].id === food[j].id) {
-        exists = true;
 
-        if (food[j].startX !== data[i].x || food[j].startY !== data[i].y ) {
-          food[j].x = data[i].x;
-          food[j].y = data[i].y;
-          food[j].reset();
-        }
-      }
-    }
-    if (!exists) {
-      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id, foodImage);
-      food.push(aFood);
-    }
-  }
-}
 
 export function removeBullet(id, bullets) {
   let index = getBullet(id, bullets);
@@ -131,9 +113,60 @@ export function isWithinScreen(player, to) {
   const height = Math.floor(window.outerHeight/2);
   const width = Math.floor(window.outerWidth/2);
 
+
+  // height of map 3240
+  // width of map 5760
   const diffX = player.x - to.x;
   const diffY = player.y - to.y;
+
+
+
   return !(diffX > width || diffX < -width || diffY > height || diffY < -height);
 
 
 }
+
+export function updateFoods(data, food, foodImage) {
+  for (let i = 0; i < data.length; i++) {
+    let exists = false;
+    for (let j = 0; j < food.length; j++) {
+      if (data[i].id === food[j].id) {
+        exists = true;
+
+        if (food[j].startX !== data[i].x || food[j].startY !== data[i].y ) {
+          food[j].x = data[i].x;
+          food[j].y = data[i].y;
+          food[j].reset();
+        }
+      }
+    }
+    if (!exists) {
+      let aFood = new Food(data[i].x, data[i].y, data[i].r, data[i].id, foodImage);
+      food.push(aFood);
+    }
+  }
+}
+
+export function updateAsteroids(data, asteroids, asteroidImages) {
+  for (let i = 0; i < data.length; i++) {
+    let exists = false;
+
+    for (let currentAsteroid of asteroids) {
+      if (currentAsteroid.id === data[i].id) {
+        exists = true;
+        currentAsteroid.x = data[i].x;
+        currentAsteroid.y = data[i].y;
+        currentAsteroid.health = data[i].health;
+        currentAsteroid.image = asteroidImages[data[i].asteroidIndex];
+        currentAsteroid.r = data[i].r;
+      }
+    }
+
+    if (!exists) {
+      let asteroid = new Asteroid(data[i].x, data[i].y, data[i].id, asteroidImages[data[i].asteroidIndex], data[i].r);
+      asteroids.push(asteroid);
+    }
+
+  }
+}
+

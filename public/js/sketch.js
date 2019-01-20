@@ -21,6 +21,7 @@ import {
   removeBullet,
   updateBullets,
   updateFoods,
+  updateAsteroids,
   updateOtherPlayers
 } from './game-logic.js'
 
@@ -28,7 +29,7 @@ import {
 let player;
 let food = [];
 let asteroids = [];
-let asteroidCount = 0;
+let asteroidImages = [];
 let bullets = [];
 let bulletIds = [];
 let otherPlayers = [];
@@ -63,6 +64,10 @@ let muteButton;
 let space;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
+
+socket.on('asteroids' , data => updateAsteroids(data, asteroids, asteroidImages));
+
+
 function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
@@ -72,7 +77,14 @@ function loadImages() {
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
   space = loadImage("assets/images/space.png");
+  let asteroidGreyImage= loadImage("assets/images/asteroidGrey.png");
+  let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
+  let asteroidGreyImage2= loadImage("assets/images/asteroidGrey2.png");
 
+  let asteroidOrangeImage = loadImage("assets/images/asteroidOrange.png");
+
+
+  asteroidImages.push(asteroidGreyImage, asteroidGreyImage1, asteroidGreyImage2, asteroidOrangeImage);
 }
 
 function loadSounds() {
@@ -158,7 +170,6 @@ function displayCurrentWinnerLocation() {
 
 
 
-
 window.draw = function () {
   background(0);
   fill(255);
@@ -212,6 +223,8 @@ window.draw = function () {
     if (mouseIsPressed && mouseButton === LEFT) {
       processPlayerShooting();
     }
+
+    drawAsteroids();
   } else {
     drawStartScreen();
   }
@@ -233,6 +246,9 @@ function drawStartScreen() {
 
 function drawFood(currentPosition) {
   for (let i = food.length - 1; i >= 0; i--) {
+    // food[i].move();
+    // food[i].displayFood();
+    // //
     if (isWithinScreen(currentPosition, food[i])) {
       food[i].move();
       food[i].displayFood();
@@ -349,3 +365,17 @@ function addParallaxScrolling(x, y) {
   image(space, space.width - (x / 10), space.height * 2 - (y / 10));
   image(space, space.width * 2 - (x / 10), space.height * 2 - (y / 10));
 }
+
+
+function drawAsteroids() {
+  for (let asteroid of asteroids) {
+    push();
+    imageMode(CENTER);
+    translate(asteroid.x, asteroid.y);
+    rotate(radians(frameCount)/4);
+    image(asteroid.asteroidImage, 0, 0, asteroid.r, asteroid.r);
+    pop();
+  }
+
+}
+
