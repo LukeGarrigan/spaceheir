@@ -210,7 +210,7 @@ window.draw = function () {
 
     drawOtherPlayers(player, leaderBoardWinnersId);
 
-    hitMarker.display();
+
     emitPlayersBullets(bullets);
 
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
@@ -225,6 +225,7 @@ window.draw = function () {
     }
 
     drawAsteroids();
+    hitMarker.display();
   } else {
     drawStartScreen();
   }
