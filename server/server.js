@@ -309,7 +309,7 @@ function hasBulletHitAnAsteroid(i) {
         x: asteroid.x,
         y: asteroid.y
       };
-      io.to(bullets[i].clientId).emit('hitMarker', asteroidPositionForHitMarker);
+      // io.to(bullets[i].clientId).emit('hitMarker', asteroidPositionForHitMarker);
       if (asteroid.health <= 0) {
         respawnAsteroid(asteroid);
       }
