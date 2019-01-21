@@ -11,13 +11,13 @@ export default class Food {
   }
 
   initialiseExplosion() {
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < this.r; i++) {
 
       let particle = {
         pos: createVector(this.x, this.y),
-        velocity: p5.Vector.random2D().mult(random(4,12)),
-        width: 8,
-        height: 8
+        velocity: p5.Vector.random2D().mult(random(1,12)),
+        width: this.r/25,
+        height: this.r/25
       };
 
       this.particles.push(particle);
@@ -38,11 +38,12 @@ export default class Food {
       let currentParticle = this.particles[i];
       currentParticle.pos.add(currentParticle.velocity);
       push();
-      fill(250, 250, 250);
-      ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height);
-
-      this.particles[i].width -= 0.1;
-      this.particles[i].height -= 0.1;
+      fill(220, 220, 220);
+      if (currentParticle.width >= 0 && currentParticle.height >= 0) {
+        ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height);
+      }
+      currentParticle.width -= 0.1;
+      currentParticle.height -= 0.1;
       pop();
     }
   }

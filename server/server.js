@@ -304,12 +304,6 @@ function hasBulletHitAnAsteroid(i) {
   for(let asteroid of asteroids) {
     if (hasBulletHit(i, asteroid, asteroid.r/2)) {
       asteroid.health -= 10;
-
-      let asteroidPositionForHitMarker = {
-        x: asteroid.x,
-        y: asteroid.y
-      };
-      // io.to(bullets[i].clientId).emit('hitMarker', asteroidPositionForHitMarker);
       if (asteroid.health <= 0) {
         respawnAsteroid(asteroid);
       }
