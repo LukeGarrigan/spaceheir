@@ -15,7 +15,7 @@ export default class Food {
 
       let particle = {
         pos: createVector(this.x, this.y),
-        velocity: p5.Vector.random2D().mult(random(1,12)),
+        velocity: p5.Vector.random2D().mult(random(1,4)),
         width: this.r/25,
         height: this.r/25
       };

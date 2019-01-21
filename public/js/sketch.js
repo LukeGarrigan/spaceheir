@@ -352,6 +352,7 @@ function checkMuteToggled() {
 
 function addParallaxScrolling(x, y) {
 // first Hlayer
+
   image(space, -(x / 10), -(y / 10));
   image(space, space.width - (x / 10), -(y / 10));
   image(space, space.width * 2 - (x / 10), -(y / 10));
