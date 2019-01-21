@@ -23,12 +23,11 @@ export default class Food {
       this.particles.push(particle);
     }
 
-    this.lifeSpan = 75;
+    this.lifeSpan = this.r / 5;
     this.hasExploded = true;
   }
 
   drawExplosion() {
-    this.lifeSpan--;
     if (this.lifeSpan <= 0) {
       this.particles = [];
       this.hasExploded = false;
@@ -40,7 +39,7 @@ export default class Food {
       push();
       fill(220, 220, 220);
       if (currentParticle.width >= 0 && currentParticle.height >= 0) {
-        ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height);
+        ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height, 50);
       }
       currentParticle.width -= 0.1;
       currentParticle.height -= 0.1;
