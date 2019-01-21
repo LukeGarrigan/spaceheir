@@ -7,11 +7,11 @@ export default class Food {
     this.r = r;
     this.particles = [];
     this.hasExploded = false;
-    this.lifeSpan = 255;
+    this.lifeSpan = 75;
   }
 
   initialiseExplosion() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 300; i++) {
 
       let particle = {
         pos: createVector(this.x, this.y),
@@ -23,7 +23,7 @@ export default class Food {
       this.particles.push(particle);
     }
 
-    this.lifeSpan = 255;
+    this.lifeSpan = 75;
     this.hasExploded = true;
   }
 
@@ -40,6 +40,9 @@ export default class Food {
       push();
       fill(250, 250, 250);
       ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height);
+
+      this.particles[i].width -= 0.1;
+      this.particles[i].height -= 0.1;
       pop();
     }
   }
