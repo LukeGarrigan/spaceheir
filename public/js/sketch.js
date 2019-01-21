@@ -370,6 +370,9 @@ function addParallaxScrolling(x, y) {
 
 function drawAsteroids() {
   for (let asteroid of asteroids) {
+    if (asteroid.hasExploded) {
+      asteroid.drawExplosion();
+    }
     push();
     imageMode(CENTER);
     translate(asteroid.x, asteroid.y);

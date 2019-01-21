@@ -153,6 +153,8 @@ export function updateAsteroids(data, asteroids, asteroidImages) {
 
     for (let currentAsteroid of asteroids) {
       if (currentAsteroid.id === data[i].id) {
+        currentAsteroid.initialiseExplosion();
+
         exists = true;
         currentAsteroid.x = data[i].x;
         currentAsteroid.y = data[i].y;

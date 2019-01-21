@@ -5,7 +5,46 @@ export default class Food {
     this.y = y;
     this.id = id;
     this.r = r;
+    this.particles = [];
+    this.hasExploded = false;
+    this.lifeSpan = 255;
   }
+
+  initialiseExplosion() {
+    for (let i = 0; i < 100; i++) {
+
+      let particle = {
+        pos: createVector(this.x, this.y),
+        velocity: p5.Vector.random2D().mult(random(4,12)),
+        width: 8,
+        height: 8
+      };
+
+      this.particles.push(particle);
+    }
+
+    this.lifeSpan = 255;
+    this.hasExploded = true;
+  }
+
+  drawExplosion() {
+    this.lifeSpan--;
+    if (this.lifeSpan <= 0) {
+      this.particles = [];
+      this.hasExploded = false;
+      return;
+    }
+    for (let i = 0; i < this.particles.length; i++) {
+      let currentParticle = this.particles[i];
+      currentParticle.pos.add(currentParticle.velocity);
+      push();
+      fill(250, 250, 250);
+      ellipse(this.particles[i].pos.x, this.particles[i].pos.y, this.particles[i].width, this.particles[i].height);
+      pop();
+    }
+  }
+
+
 
 
 
