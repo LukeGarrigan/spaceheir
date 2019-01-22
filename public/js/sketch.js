@@ -247,9 +247,6 @@ function drawStartScreen() {
 
 function drawFood(currentPosition) {
   for (let i = food.length - 1; i >= 0; i--) {
-    // food[i].move();
-    // food[i].displayFood();
-    // //
     if (isWithinScreen(currentPosition, food[i])) {
       food[i].move();
       food[i].displayFood();

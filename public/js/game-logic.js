@@ -120,7 +120,6 @@ export function isWithinScreen(player, to) {
   const diffY = player.y - to.y;
 
 
-
   return !(diffX > width || diffX < -width || diffY > height || diffY < -height);
 
 
