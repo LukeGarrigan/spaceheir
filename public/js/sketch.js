@@ -180,7 +180,6 @@ window.draw = function () {
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    timeSinceLastShot++;
     for (let i = bullets.length - 1; i >= 0; i--) {
       bullets[i].update();
       if (isWithinScreen(player, bullets[i].pos)) {
@@ -332,16 +331,13 @@ window.mouseReleased = function() {
 };
 
 function processPlayerShooting() {
-  if (!player.respawning) {
-    socket.emit('bullet');
-  }
+ socket.emit('bullet');
 }
 
 function checkMuteToggled() {
   if(muteButton) {
     muteButton.checkIfClicked(mouseX, mouseY);
   }
-
 }
 
 function addParallaxScrolling(x, y) {
