@@ -33,8 +33,6 @@ let asteroidImages = [];
 let bullets = [];
 let bulletIds = [];
 let otherPlayers = [];
-let timeSinceLastShot = 0;
-
 let button, input;
 let gameStarted = false;
 let leaders = [];
@@ -211,7 +209,7 @@ window.draw = function () {
     drawOtherPlayers(player, leaderBoardWinnersId);
 
 
-    emitPlayersBullets(bullets);
+    // emitPlayersBullets(bullets);
 
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.updateLeaderboard(player, leaders);
@@ -334,9 +332,8 @@ window.mouseReleased = function() {
 };
 
 function processPlayerShooting() {
-  if (timeSinceLastShot > 15 && !player.respawning) {
+  if (!player.respawning) {
     socket.emit('bullet');
-    timeSinceLastShot = 0;
   }
 }
 

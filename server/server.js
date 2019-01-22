@@ -80,7 +80,7 @@ function setupAsteroids() {
       x: asteroidX,
       y: asteroidY,
       id: i,
-      health: asteroidRadius/2,
+      health: asteroidRadius / 2,
       asteroidIndex: asteroidIndex,
       r: asteroidRadius
     };
@@ -90,14 +90,27 @@ function setupAsteroids() {
   }
 }
 
+
 function broadcastPlayers() {
-  for (let i = 0; i < players.length; i++) {
-    updatePlayerPosition(players[i]);
+  for (let player of players) {
+    updatePlayerPosition(player);
+  }
+
+  for (let bullet of bullets) {
+    updateBulletPosition(bullet);
   }
 
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
+}
+
+function updateBulletPosition(bullet) {
+  // bullet.x+=10;
+
+  let speed = 20;
+  bullet.x += speed * Math.cos(bullet.angle)
+  bullet.y += speed * Math.sin(bullet.angle)
 }
 
 
@@ -154,10 +167,10 @@ function updatePlayerPosition(player) {
 
 
 function updateShootingAsteroid() {
-  for (let i = bullets.length-1; i >= 0; i--) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
     if (hasBulletHitAnAsteroid(i)) {
       removeBulletFromGame(i);
-      bullets.splice(i , 1);
+      bullets.splice(i, 1);
     }
   }
 
@@ -177,7 +190,7 @@ function movingUp(player) {
 
 
     player.x += player.velocity * Math.cos(player.angle);
-    player.y += player.velocity* Math.sin(player.angle);
+    player.y += player.velocity * Math.sin(player.angle);
   } else {
 
     if (player.velocity > 1.1) {
@@ -185,7 +198,7 @@ function movingUp(player) {
     }
 
     player.x += player.velocity * Math.cos(player.angle);
-    player.y += player.velocity* Math.sin(player.angle);
+    player.y += player.velocity * Math.sin(player.angle);
 
 
   }
@@ -210,8 +223,8 @@ function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       if (player.shield < config.settings.MAX_SHIELD) {
-        player.shield += foods[i].r/5;
-        io.to(player.id).emit('increaseShield', foods[i].r/5);
+        player.shield += foods[i].r / 5;
+        io.to(player.id).emit('increaseShield', foods[i].r / 5);
       }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
@@ -294,15 +307,13 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
     }
 
 
-
-
   }
 }
 
 
 function hasBulletHitAnAsteroid(i) {
-  for(let asteroid of asteroids) {
-    if (hasBulletHit(i, asteroid, asteroid.r/2)) {
+  for (let asteroid of asteroids) {
+    if (hasBulletHit(i, asteroid, asteroid.r / 2)) {
       asteroid.health -= 10;
       if (asteroid.health <= 0) {
         respawnAsteroid(asteroid);
@@ -327,7 +338,7 @@ function respawnAsteroid(asteroid) {
   asteroid.y = asteroidY;
   asteroid.asteroidIndex = asteroidIndex;
   asteroid.r = asteroidRadius;
-  asteroid.health = asteroidRadius/2;
+  asteroid.health = asteroidRadius / 2;
 
   let tempAsteroids = [];
 
@@ -386,25 +397,31 @@ function setupPlayerLastShot(socket) {
 
 function processPlayerShooting(player, socket) {
   for (let i = 0; i < playersLastShot.length; i++) {
-    if (playersLastShot[i].id === socket.id) {
-      let previousShot = playersLastShot[i].date;
-      let timeSinceLastShot = Date.now() - previousShot;
-      if (timeSinceLastShot > 200) {
-        playersLastShot[i].date = Date.now();
-        io.to(socket.id).emit('processShotSound');
-        lastBulletId = lastBulletId + 1;
-        let bullet = {
-          x: player.x,
-          y: player.y,
-          angle: player.angle,
-          id: lastBulletId,
-          clientId: player.id,
-          bulletSize: 100
-        };
-        bullets.push(bullet);
-      }
+    if (canPlayerShoot(i, socket)) {
+      playersLastShot[i].date = Date.now();
+      io.to(socket.id).emit('processShotSound');
+      lastBulletId = lastBulletId + 1;
+      let bullet = {
+        x: player.x,
+        y: player.y,
+        angle: player.angle,
+        id: lastBulletId,
+        clientId: player.id,
+        bulletSize: 100
+      };
+      bullets.push(bullet);
     }
   }
+}
+
+
+function canPlayerShoot(i, socket) {
+  if (playersLastShot[i].id === socket.id) {
+    let previousShot = playersLastShot[i].date;
+    let timeSinceLastShot = Date.now() - previousShot;
+    return timeSinceLastShot > 200;
+  }
+  return false;
 }
 
 function updateLeaderboard() {

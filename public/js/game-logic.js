@@ -74,7 +74,20 @@ export function updateBullets(data, bulletIds, bullets) {
       }
     }
 
-    if (!exists) {
+    if (exists) {
+      for (let j = 0; j < bullets.length; j++) {
+        if (data[i].id === bullets[j].id) {
+          bullets[j].pos.x = data[i].x;
+          bullets[j].pos.y = data[i].y;
+
+        }
+
+      }
+
+
+
+
+    } else {
       let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id, data[i].bulletSize);
       bulletIds.push(data[i].id);
       bullets.push(bullet);
