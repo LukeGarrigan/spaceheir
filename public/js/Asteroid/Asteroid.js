@@ -7,7 +7,6 @@ export default class Food {
     this.r = r;
     this.particles = [];
     this.hasExploded = false;
-    this.lifeSpan = 75;
   }
 
   initialiseExplosion() {
@@ -23,12 +22,11 @@ export default class Food {
       this.particles.push(particle);
     }
 
-    this.lifeSpan = this.r / 5;
     this.hasExploded = true;
   }
 
   drawExplosion() {
-    if (this.lifeSpan <= 0) {
+    if (this.particles[0].width <= 1) {
       this.particles = [];
       this.hasExploded = false;
       return;

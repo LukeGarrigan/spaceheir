@@ -223,6 +223,16 @@ window.draw = function () {
 
     drawAsteroids();
     hitMarker.display();
+
+
+    let totalAsteroidShell = 0;
+    for (let asteroid of asteroids) {
+      totalAsteroidShell += asteroid.particles.length;
+    }
+    console.log("Num asteroid explosion: " +totalAsteroidShell);
+
+
+
   } else {
     drawStartScreen();
   }
