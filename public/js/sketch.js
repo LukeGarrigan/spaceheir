@@ -37,7 +37,7 @@ let button, input;
 let gameStarted = false;
 let leaders = [];
 let canvas;
-
+let xpGems = [];
 let popups = [];
 let hitMarker;
 let hitMarkerImage;
@@ -60,6 +60,7 @@ let soundOn;
 let soundOff;
 let muteButton;
 let space;
+let gemImage;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 
@@ -74,7 +75,9 @@ function loadImages() {
   winnerSpaceShipImage = loadImage("assets/images/winner.png");
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
+  gemImage = loadImage("assets/images/gem.png");
   space = loadImage("assets/images/space.png");
+
   let asteroidGreyImage= loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
   let asteroidGreyImage2= loadImage("assets/images/asteroidGrey2.png");
@@ -145,6 +148,8 @@ window.setup = function () {
       shotSound.play();
     }
   });
+  socket.on('createXpGem', gem => xpGems.push(gem));
+
 
   gameStarted = true;
 
@@ -200,15 +205,12 @@ window.draw = function () {
       }
     }
 
+
     drawFood(player);
 
     socket.emit('angle', player.radians);
 
-
     drawOtherPlayers(player, leaderBoardWinnersId);
-
-
-    // emitPlayersBullets(bullets);
 
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.updateLeaderboard(player, leaders);
@@ -222,6 +224,7 @@ window.draw = function () {
     }
 
     drawAsteroids();
+    drawXpGems();
     hitMarker.display();
 
 
@@ -381,6 +384,12 @@ function drawAsteroids() {
     image(asteroid.asteroidImage, 0, 0, asteroid.r, asteroid.r);
     pop();
   }
+}
 
+function drawXpGems() {
+
+  for (let gem of xpGems) {
+    image(gemImage, gem.x, gem.y, 30, 30);
+  }
 }
 

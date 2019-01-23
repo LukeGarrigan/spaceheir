@@ -183,4 +183,3 @@ export function updateAsteroids(data, asteroids, asteroidImages) {
 
   }
 }
-

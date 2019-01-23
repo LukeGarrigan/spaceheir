@@ -21,7 +21,7 @@ let foods = [];
 let leaderboard = [];
 let lastBulletId = 0;
 let asteroids = [];
-
+let xpGems = [];
 
 setupFood();
 setupAsteroids();
@@ -107,7 +107,6 @@ function broadcastPlayers() {
 
 function updateBulletPosition(bullet) {
   // bullet.x+=10;
-
   let speed = 20;
   bullet.x += speed * Math.cos(bullet.angle)
   bullet.y += speed * Math.sin(bullet.angle)
@@ -316,14 +315,22 @@ function hasBulletHitAnAsteroid(i) {
     if (hasBulletHit(i, asteroid, asteroid.r / 2)) {
       asteroid.health -= 10;
       if (asteroid.health <= 0) {
+        createXpGem(asteroid);
         respawnAsteroid(asteroid);
       }
-
       return true;
     }
-
   }
   return false;
+}
+
+function createXpGem(asteroid) {
+  let xpGem = {
+    x: asteroid.x,
+    y: asteroid.y
+  }
+
+  io.sockets.emit("createXpGem", xpGem);
 }
 
 

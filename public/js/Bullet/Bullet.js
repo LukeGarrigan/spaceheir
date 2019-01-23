@@ -11,7 +11,6 @@ export default class Bullet{
 
   update() {
     this.r = lerp(this.r, 0, 0.01);
-    // this.pos.add(this.velocity);
     this.bulletSize--;
   }
 
