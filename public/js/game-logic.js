@@ -5,6 +5,7 @@ import Bullet from './Bullet/Bullet.js';
 import Food from './Food/Food.js';
 import Asteroid from './Asteroid/Asteroid.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
+import Gem from './Gem/Gem.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
@@ -182,4 +183,15 @@ export function updateAsteroids(data, asteroids, asteroidImages) {
     }
 
   }
+}
+
+export function createXpGems(gems, gemImage) {
+
+  let createdGems = [];
+  for (let i = 0; i < gems.length; i++) {
+    let gem = new Gem(gems[i].x, gems[i].y, gemImage);
+    createdGems.push(gem);
+  }
+
+  return createdGems;
 }

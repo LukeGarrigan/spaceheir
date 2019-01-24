@@ -80,7 +80,7 @@ function setupAsteroids() {
       x: asteroidX,
       y: asteroidY,
       id: i,
-      health: asteroidRadius / 2,
+      health: asteroidRadius * 2,
       asteroidIndex: asteroidIndex,
       r: asteroidRadius
     };
@@ -325,12 +325,23 @@ function hasBulletHitAnAsteroid(i) {
 }
 
 function createXpGem(asteroid) {
-  let xpGem = {
-    x: asteroid.x,
-    y: asteroid.y
+  let sizeOfAsteroid = asteroid.r;
+
+  let numberOfGems = Math.floor(sizeOfAsteroid/30);
+
+  let xpGems = [];
+
+  for (let i = 0; i < numberOfGems; i++) {
+    let xpGem = {
+      x: asteroid.x + Math.random() * (sizeOfAsteroid / 2) - (sizeOfAsteroid / 2),
+      y: asteroid.y + Math.random() * (sizeOfAsteroid / 2) - (sizeOfAsteroid / 2)
+    };
+
+    xpGems.push(xpGem);
   }
 
-  io.sockets.emit("createXpGem", xpGem);
+
+  io.sockets.emit("createXpGem", xpGems);
 }
 
 
@@ -345,7 +356,7 @@ function respawnAsteroid(asteroid) {
   asteroid.y = asteroidY;
   asteroid.asteroidIndex = asteroidIndex;
   asteroid.r = asteroidRadius;
-  asteroid.health = asteroidRadius / 2;
+  asteroid.health = asteroidRadius * 2;
 
   let tempAsteroids = [];
 

@@ -22,7 +22,8 @@ import {
   updateBullets,
   updateFoods,
   updateAsteroids,
-  updateOtherPlayers
+  updateOtherPlayers,
+  createXpGems,
 } from './game-logic.js'
 
 
@@ -148,7 +149,7 @@ window.setup = function () {
       shotSound.play();
     }
   });
-  socket.on('createXpGem', gem => xpGems.push(gem));
+  socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
 
 
   gameStarted = true;
@@ -387,9 +388,8 @@ function drawAsteroids() {
 }
 
 function drawXpGems() {
-
   for (let gem of xpGems) {
-    image(gemImage, gem.x, gem.y, 30, 30);
+    gem.display();
   }
 }
 
