@@ -5,7 +5,9 @@ module.exports = function({ socket }, direction) {
     if (socket.id === players[i].id) {
       if (direction === "up") {
         players[i].isUp = true;
-      } else if (direction === "spacebar") {
+      } else if (direction === "down") {
+        players[i].isDown = true;
+      }else if (direction === "spacebar") {
         players[i].isBoosting = true;
       }
     }

@@ -233,9 +233,6 @@ window.draw = function () {
     for (let asteroid of asteroids) {
       totalAsteroidShell += asteroid.particles.length;
     }
-    console.log("Num asteroid explosion: " +totalAsteroidShell);
-
-
 
   } else {
     drawStartScreen();
@@ -309,14 +306,19 @@ window.keyPressed = function () {
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
+    }else if (keyCode === DOWN_ARROW || keyCode === 83) {
+      socket.emit('keyPressed', "down");
     }
   }
 };
 
 window.keyReleased = function () {
   if (gameStarted) {
+    console.log(keyCode);
     if (keyCode === UP_ARROW || keyCode === 87) {
       socket.emit('keyReleased', "up");
+    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
+      socket.emit('keyReleased', "down");
     }
   }
 };

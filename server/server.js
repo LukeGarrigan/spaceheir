@@ -190,6 +190,14 @@ function movingUp(player) {
 
     player.x += player.velocity * Math.cos(player.angle);
     player.y += player.velocity * Math.sin(player.angle);
+  } else if (player.isDown) {
+    if (player.velocity > 0) {
+      player.velocity -= 0.2;
+    } else if (player.velocity < 0) {
+      player.velocity = 0;
+    }
+    player.x += player.velocity * Math.cos(player.angle);
+    player.y += player.velocity * Math.sin(player.angle);
   } else {
 
     if (player.velocity > 1.1) {
@@ -201,6 +209,8 @@ function movingUp(player) {
 
 
   }
+
+
 }
 
 
@@ -327,7 +337,7 @@ function hasBulletHitAnAsteroid(i) {
 function createXpGem(asteroid) {
   let sizeOfAsteroid = asteroid.r;
 
-  let numberOfGems = Math.floor(sizeOfAsteroid/30);
+  let numberOfGems = Math.floor(sizeOfAsteroid / 30);
 
   let xpGems = [];
 
