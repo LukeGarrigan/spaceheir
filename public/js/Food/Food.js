@@ -1,20 +1,13 @@
+import randomMovement from '../randomMovement.js';
 export default class Food {
   constructor(x, y, r, id, foodImage) {
     this.foodImage = foodImage;
-    this.startX = x;
-    this.startY = y;
+    this.frame = 0;
     this.x = x;
     this.y = y;
     this.r = r;
     this.id = id;
-    this.speed = 15;
-
-    this.maxMovement = 15;
-    this.adjustment = this.maxMovement / 2;
-    this.frame = 0;
-
-    this.targetX = this.x;
-    this.targetY = this.y;
+    this.initialiseRandomMovement();
   }
 
   displayFood() {
@@ -31,38 +24,19 @@ export default class Food {
     this.startY = this.y;
   }
 
+  initialiseRandomMovement() {
+    this.maxMovement = 15;
+    this.adjustment = this.maxMovement / 2;
+    this.speed = 15;
+
+
+    this.startX = this.x;
+    this.startY = this.y;
+    this.targetX = this.x;
+    this.targetY = this.y;
+  }
+
   move() {
-
-    if (this.x === this.targetX || this.y === this.targetY) {
-      this.targetX = this.x + random(-this.speed, this.speed);
-      this.targetY = this.y + random(-this.speed, this.speed);
-    }
-
-    if (abs(this.x -this.targetX) < 1) {
-      this.targetX = this.x + random(-this.speed, this.speed);
-    }
-
-    if (abs(this.y -this.targetY) < 1) {
-      this.targetY = this.y + random(-this.speed, this.speed);
-    }
-
-    this.x = lerp(this.x, this.targetX, 0.02);
-    this.y = lerp(this.y, this.targetY, 0.02);
-
-    if (this.x > this.startX + this.maxMovement) {
-      this.targetX -= this.adjustment;
-    }
-    if (this.x < this.startX - this.maxMovement) {
-      this.targetX += this.adjustment;
-    }
-
-    if (this.y > this.startY + this.maxMovement) {
-      this.targetY -= this.adjustment;
-    }
-
-    if (this.y < this.startY - this.maxMovement) {
-      this.targetY += this.adjustment;
-    }
-
+    randomMovement(this);
   };
 }

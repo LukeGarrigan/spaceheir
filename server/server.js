@@ -20,6 +20,7 @@ let bullets = [];
 let foods = [];
 let leaderboard = [];
 let lastBulletId = 0;
+let lastXpGemId = 0;
 let asteroids = [];
 let xpGems = [];
 
@@ -135,6 +136,7 @@ function killPlayer(player) {
   io.to(player.id).emit('playExplosion');
 }
 
+
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
     const currentDate = new Date();
@@ -160,6 +162,7 @@ function updatePlayerPosition(player) {
   updatePlayerEatingFood(player);
 
   updatePlayerGettingShot(player);
+  updatePlayerEatingGem(player);
 
   updateShootingAsteroid();
 }
@@ -244,6 +247,17 @@ function updatePlayerEatingFood(player) {
       foodArray.push(foods[i]);
       io.sockets.emit('foods', foodArray);
     }
+  }
+}
+
+function updatePlayerEatingGem(player) {
+  for (let i = xpGems.length - 1; i >= 0; i--) {
+    if (Math.abs(xpGems[i].x - player.x) + Math.abs(xpGems[i].y - player.y) < 21 + 15) {
+      player.xp += 10;
+      io.sockets.emit("removeXpGem", xpGems[i].id);
+      xpGems.splice(i , 1);
+    }
+
   }
 }
 
@@ -339,19 +353,21 @@ function createXpGem(asteroid) {
 
   let numberOfGems = Math.floor(sizeOfAsteroid / 30);
 
-  let xpGems = [];
+  let asteroidsGems = [];
 
   for (let i = 0; i < numberOfGems; i++) {
     let xpGem = {
+      id: lastXpGemId++,
       x: asteroid.x + Math.random() * (sizeOfAsteroid / 2) - (sizeOfAsteroid / 2),
       y: asteroid.y + Math.random() * (sizeOfAsteroid / 2) - (sizeOfAsteroid / 2)
     };
 
+    asteroidsGems.push(xpGem);
     xpGems.push(xpGem);
   }
 
 
-  io.sockets.emit("createXpGem", xpGems);
+  io.sockets.emit("createXpGem", asteroidsGems);
 }
 
 

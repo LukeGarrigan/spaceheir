@@ -17,22 +17,6 @@ export function processRespawn(player, popups, timeOutInSeconds) {
   }
 }
 
-export function emitPlayersBullets(bullets) {
-  let myBullets = [];
-  for (let i = 0; i < bullets.length; i++) {
-    if (bullets[i].shooterId === socket.id) {
-      let bullet = {
-        id: bullets[i].id,
-        x: bullets[i].pos.x,
-        y: bullets[i].pos.y,
-        bulletSize: bullets[i].bulletSize
-      };
-      myBullets.push(bullet);
-    }
-  }
-  socket.emit('playerBullets', myBullets);
-}
-
 export function playerDisconnected(socketId, otherPlayers) {
   for (let i = otherPlayers.length - 1; i >= 0; i--) {
     if (otherPlayers[i].id === socketId) {
@@ -189,7 +173,7 @@ export function createXpGems(gems, gemImage) {
 
   let createdGems = [];
   for (let i = 0; i < gems.length; i++) {
-    let gem = new Gem(gems[i].x, gems[i].y, gemImage);
+    let gem = new Gem(gems[i].id, gems[i].x, gems[i].y, gemImage);
     createdGems.push(gem);
   }
 

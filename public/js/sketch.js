@@ -12,7 +12,6 @@ import MuteButton from "./MuteButton/MuteButton.js";
 
 import {
   displayIncreasedShieldMessage,
-  emitPlayersBullets,
   isWithinScreen,
   playerDisconnected,
   processHitmarker,
@@ -150,6 +149,7 @@ window.setup = function () {
     }
   });
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
+  socket.on('removeXpGem', gemId => xpGems = xpGems.filter(gem => gem.id !== gemId));
 
 
   gameStarted = true;
