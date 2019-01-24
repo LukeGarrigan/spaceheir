@@ -1,5 +1,5 @@
 # Codeheir space game
-##todo
+## todo
 * Add new ships
 * Add leveling system
 * Refactor to allow for easily adding new features
@@ -16,7 +16,7 @@ Go play the game in its current state at [codeheir.com!](https://www.codeheir.co
 
 Feel free to branch and play around, go to https://trello.com/b/HBwddn26/stream-royale-game to see what needs doing
 ## Recent (I promise it's not *that* laggy)
-![](stream-royale.gif2)
+![](stream-royale2.gif)
 ## A while ago
 ![](stream-royale.gif)
 
