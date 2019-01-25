@@ -24,6 +24,9 @@ let lastXpGemId = 0;
 let asteroids = [];
 let xpGems = [];
 
+let lastLog = 0;
+
+
 setupFood();
 setupAsteroids();
 setInterval(broadcastPlayers, 16);
@@ -92,7 +95,10 @@ function setupAsteroids() {
 }
 
 
+
 function broadcastPlayers() {
+  logServerInfo();
+
   for (let player of players) {
     updatePlayerPosition(player);
   }
@@ -105,6 +111,20 @@ function broadcastPlayers() {
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
 }
+
+function logServerInfo() {
+
+  if (lastLog % 300 === 0) {
+    console.log("*****************************")
+    console.log("players " + players.length);
+    console.log("foods " + foods.length);
+    console.log("xp gems " + xpGems.length);
+    console.log("asteroids  " + asteroids.length);
+  }
+  lastLog++;
+
+}
+
 
 function updateBulletPosition(bullet) {
   // bullet.x+=10;
