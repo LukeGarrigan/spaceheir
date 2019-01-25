@@ -7,10 +7,11 @@ import WinnerLocation from './WinnerLocation/WinnerLocation.js';
 import Healthbar from "./Healthbar/Healthbar.js";
 import Minimap from "./Minimap/Minimap.js";
 import MuteButton from "./MuteButton/MuteButton.js";
-
+import DisplayLevelOptions from "./levelOptions.js";
 
 
 import {
+  createXpGems,
   displayIncreasedShieldMessage,
   isWithinScreen,
   playerDisconnected,
@@ -18,11 +19,11 @@ import {
   processKillFeedAddition,
   processRespawn,
   removeBullet,
+  removeXpGem,
+  updateAsteroids,
   updateBullets,
   updateFoods,
-  updateAsteroids,
   updateOtherPlayers,
-  createXpGems,
 } from './game-logic.js'
 
 
@@ -61,10 +62,12 @@ let soundOff;
 let muteButton;
 let space;
 let gemImage;
+let displayLevelOptions;
+let hasPlayerLeveledUp = false;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 
-socket.on('asteroids' , data => updateAsteroids(data, asteroids, asteroidImages));
+socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
 
 function loadImages() {
@@ -78,9 +81,9 @@ function loadImages() {
   gemImage = loadImage("assets/images/gem.png");
   space = loadImage("assets/images/space.png");
 
-  let asteroidGreyImage= loadImage("assets/images/asteroidGrey.png");
+  let asteroidGreyImage = loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
-  let asteroidGreyImage2= loadImage("assets/images/asteroidGrey2.png");
+  let asteroidGreyImage2 = loadImage("assets/images/asteroidGrey2.png");
 
   let asteroidOrangeImage = loadImage("assets/images/asteroidOrange.png");
 
@@ -116,6 +119,7 @@ window.setup = function () {
       healthbar = new Healthbar();
       minimap = new Minimap();
       muteButton = new MuteButton(soundOn, soundOff);
+      displayLevelOptions = new DisplayLevelOptions(player);
 
       let playerPosition = {
         x: player.pos.x,
@@ -143,19 +147,22 @@ window.setup = function () {
   });
   socket.on('hitMarker', player => hitMarker = processHitmarker(player, hitMarkerImage, hitMarkerSound, muteButton.isMuted));
   socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
-  socket.on('processShotSound', () =>  {
+  socket.on('processShotSound', () => {
     if (!muteButton.isMuted) {
       shotSound.play();
     }
   });
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
-  socket.on('removeXpGem', gemId => xpGems = xpGems.filter(gem => gem.id !== gemId));
+  socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
+  socket.on('leveledUp', () => hasPlayerLeveledUp = true);
 
 
   gameStarted = true;
 
   loadSounds();
   loadImages();
+
+
 };
 
 
@@ -171,7 +178,6 @@ function displayCurrentWinnerLocation() {
     }
   }
 }
-
 
 
 window.draw = function () {
@@ -213,13 +219,12 @@ window.draw = function () {
 
     drawOtherPlayers(player, leaderBoardWinnersId);
 
-    killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
+
     leaderboard.updateLeaderboard(player, leaders);
-    leaderboard.displayLeaderboard();
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
-    muteButton.displayMuteButton(player.pos.x - width/2, player.pos.y - height/2);
+    muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
     if (mouseIsPressed && mouseButton === LEFT) {
       processPlayerShooting();
     }
@@ -227,13 +232,12 @@ window.draw = function () {
     drawAsteroids();
     drawXpGems();
     hitMarker.display();
+    killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
+    leaderboard.displayLeaderboard();
 
-
-    let totalAsteroidShell = 0;
-    for (let asteroid of asteroids) {
-      totalAsteroidShell += asteroid.particles.length;
+    if (hasPlayerLeveledUp) {
+      displayLevelOptions.display(player.pos.x - width / 2, player.pos.y - height / 2);
     }
-
   } else {
     drawStartScreen();
   }
@@ -306,7 +310,7 @@ window.keyPressed = function () {
   if (gameStarted) {
     if (keyCode == UP_ARROW || keyCode == 87) {
       socket.emit('keyPressed', "up");
-    }else if (keyCode === DOWN_ARROW || keyCode === 83) {
+    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
       socket.emit('keyPressed', "down");
     }
   }
@@ -314,7 +318,6 @@ window.keyPressed = function () {
 
 window.keyReleased = function () {
   if (gameStarted) {
-    console.log(keyCode);
     if (keyCode === UP_ARROW || keyCode === 87) {
       socket.emit('keyReleased', "up");
     } else if (keyCode === DOWN_ARROW || keyCode === 83) {
@@ -335,23 +338,24 @@ window.mousePressed = function () {
   if (mouseButton === LEFT) {
     checkMuteToggled();
     processPlayerShooting();
+    checkIfPlayerHasChosenALevelOption();
   } else {
     socket.emit('keyPressed', "up");
   }
 };
 
-window.mouseReleased = function() {
+window.mouseReleased = function () {
   if (mouseButton === RIGHT) {
     socket.emit('keyReleased', "up");
   }
 };
 
 function processPlayerShooting() {
- socket.emit('bullet');
+  socket.emit('bullet');
 }
 
 function checkMuteToggled() {
-  if(muteButton) {
+  if (muteButton) {
     muteButton.checkIfClicked(mouseX, mouseY);
   }
 }
@@ -383,7 +387,7 @@ function drawAsteroids() {
     push();
     imageMode(CENTER);
     translate(asteroid.x, asteroid.y);
-    rotate(radians(frameCount)/4);
+    rotate(radians(frameCount) / 4);
     image(asteroid.asteroidImage, 0, 0, asteroid.r, asteroid.r);
     pop();
   }
@@ -395,3 +399,12 @@ function drawXpGems() {
   }
 }
 
+
+function checkIfPlayerHasChosenALevelOption() {
+  if (hasPlayerLeveledUp) {
+    if (displayLevelOptions.hasPlayerClickedOption(mouseX, mouseY)) {
+      hasPlayerLeveledUp = false;
+      socket.emit('lvlUp', "speed");
+    }
+  }
+}

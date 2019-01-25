@@ -6,6 +6,7 @@ import Food from './Food/Food.js';
 import Asteroid from './Asteroid/Asteroid.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
 import Gem from './Gem/Gem.js';
+import XpPopup from './Popup/IncreaseXp.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
@@ -178,4 +179,15 @@ export function createXpGems(gems, gemImage) {
   }
 
   return createdGems;
+}
+
+export function removeXpGem(gemId, gems, popups) {
+
+  for (let i = gems.length - 1; i >= 0; i--) {
+    if (gems[i].id === gemId) {
+      popups.push(new XpPopup(10, gems[i].x, gems[i].y))
+      gems.splice(i, 1);
+      break;
+    }
+  }
 }

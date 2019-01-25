@@ -148,6 +148,7 @@ function updatePlayerPosition(player) {
     }
   }
 
+
   if (player.shield < 0) {
     killPlayer(player);
     return
@@ -163,7 +164,6 @@ function updatePlayerPosition(player) {
 
   updatePlayerGettingShot(player);
   updatePlayerEatingGem(player);
-
   updateShootingAsteroid();
 }
 
@@ -186,7 +186,7 @@ function movePlayer(player) {
 function movingUp(player) {
   if (player.isUp) {
 
-    if (player.velocity < config.settings.BASE_SPEED) {
+    if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed) {
       player.velocity += 0.2;
     }
 
@@ -253,12 +253,22 @@ function updatePlayerEatingFood(player) {
 function updatePlayerEatingGem(player) {
   for (let i = xpGems.length - 1; i >= 0; i--) {
     if (Math.abs(xpGems[i].x - player.x) + Math.abs(xpGems[i].y - player.y) < 21 + 15) {
-      player.xp += 10;
+      player.xp += 50;
       io.sockets.emit("removeXpGem", xpGems[i].id);
       xpGems.splice(i , 1);
+
+      if (playerHasLeveledUp(player)) {
+        player.lvl++;
+        io.to(player.id).emit('leveledUp');
+      }
     }
 
   }
+}
+
+function playerHasLeveledUp(player) {
+  let currentLevel = Math.ceil(0.04*Math.sqrt(player.xp));
+  return currentLevel > player.lvl;
 }
 
 function updatePlayerGettingShot(player) {
@@ -288,6 +298,10 @@ function removeBulletFromGame(i) {
 function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning) {
   updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
   player.score = 0;
+  player.additionalSpeed = 0;
+  player.xp = 0;
+  player.lvl = 1;
+  player.establishedLevel = 1;
   io.to(player.id).emit('playExplosion');
   io.to(bullets[i].clientId).emit('playExplosion');
 
@@ -435,7 +449,7 @@ function setupPlayerLastShot(socket) {
   let playerLastShot = {
     id: socket.id,
     date: Date.now()
-  }
+  };
   playersLastShot.push(playerLastShot);
 }
 

@@ -5,5 +5,6 @@ module.exports = {
   keyPressed: require('./keyPressed-event'),
   keyReleased: require('./keyReleased-event'),
   angle: require('./angle-event'),
-  playerBullets: require('./playerBullets-event')
+  playerBullets: require('./playerBullets-event'),
+  lvlUp: require('./lvlUp-event')
 };
