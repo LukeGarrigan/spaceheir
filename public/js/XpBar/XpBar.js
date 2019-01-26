@@ -11,7 +11,6 @@ export default class XpBar {
     let startXp = this.xpNeededForLvl(player.lvl);
     let nextLvlXp = this.xpNeededForLvl(player.lvl + 1);
 
-    let height = Math.floor(window.outerHeight/2);
     let width = Math.floor(window.outerWidth/2);
 
     push();

@@ -5,6 +5,9 @@
 * Refactor to allow for easily adding new features
 * Potentially scale map to number of players
 * Sending too much data about other players to players
+* Despawn xp gems
+* Issue where xp gems are unobtainable 
+
 
 
 

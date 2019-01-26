@@ -115,8 +115,6 @@ export function isWithinScreen(player, to) {
   const width = Math.floor(window.outerWidth/2);
 
 
-  // height of map 3240
-  // width of map 5760
   const diffX = player.x - to.x;
   const diffY = player.y - to.y;
 

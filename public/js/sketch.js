@@ -225,8 +225,7 @@ window.draw = function () {
 
     leaderboard.updateLeaderboard(player, leaders);
     displayCurrentWinnerLocation();
-    healthbar.displayHealthbar(player);
-    xpBar.display(player);
+
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
     if (mouseIsPressed && mouseButton === LEFT) {
@@ -238,7 +237,8 @@ window.draw = function () {
     hitMarker.display();
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.displayLeaderboard();
-
+    healthbar.displayHealthbar(player);
+    xpBar.display(player);
     if (hasPlayerLeveledUp) {
       displayLevelOptions.display(player.pos.x - width / 2, player.pos.y - height / 2);
     }
