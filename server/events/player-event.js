@@ -25,8 +25,9 @@ module.exports = function({ socket }, playerData) {
   playerData.yVelocity = 0;
   playerData.xVelocity = 0;
   playerData.additionalSpeed = 0;
-  playerData.xp = 0;
+  playerData.xp = 625;
   playerData.lvl = 1;
+  playerData.establishedLevel = 1;
   if (config.settings.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;

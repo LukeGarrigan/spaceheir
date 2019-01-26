@@ -112,8 +112,8 @@ function broadcastPlayers() {
 
 function logServerInfo() {
 
-  if (lastLog % 300 === 0) {
-    console.log("*****************************")
+  if (config.settings.SERVER_LOGGING && lastLog % 300 === 0) {
+    console.log("*****************************");
     console.log("players " + players.length);
     console.log("foods " + foods.length);
     console.log("xp gems " + xpGems.length);
@@ -281,7 +281,7 @@ function updatePlayerEatingFood(player) {
 function updatePlayerEatingGem(player) {
   for (let i = xpGems.length - 1; i >= 0; i--) {
     if (Math.abs(xpGems[i].x - player.x) + Math.abs(xpGems[i].y - player.y) < 21 + 15) {
-      player.xp += 50;
+      player.xp += 200;
       io.sockets.emit("removeXpGem", xpGems[i].id);
       xpGems.splice(i , 1);
 
@@ -295,7 +295,7 @@ function updatePlayerEatingGem(player) {
 }
 
 function playerHasLeveledUp(player) {
-  let currentLevel = Math.ceil(0.04*Math.sqrt(player.xp));
+  let currentLevel = Math.floor(0.04*Math.sqrt(player.xp));
   return currentLevel > player.lvl;
 }
 
@@ -327,7 +327,7 @@ function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWi
   updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
   player.score = 0;
   player.additionalSpeed = 0;
-  player.xp = 0;
+  player.xp = 625;
   player.lvl = 1;
   player.establishedLevel = 1;
   io.to(player.id).emit('playExplosion');

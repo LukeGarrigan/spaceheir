@@ -5,6 +5,7 @@ import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
 import Healthbar from "./Healthbar/Healthbar.js";
+import XpBar from "./XpBar/XpBar.js";
 import Minimap from "./Minimap/Minimap.js";
 import MuteButton from "./MuteButton/MuteButton.js";
 import DisplayLevelOptions from "./levelOptions.js";
@@ -64,6 +65,7 @@ let space;
 let gemImage;
 let displayLevelOptions;
 let hasPlayerLeveledUp = false;
+let xpBar;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 
 
@@ -120,6 +122,7 @@ window.setup = function () {
       minimap = new Minimap();
       muteButton = new MuteButton(soundOn, soundOff);
       displayLevelOptions = new DisplayLevelOptions(player);
+      xpBar = new XpBar();
 
       let playerPosition = {
         x: player.pos.x,
@@ -223,6 +226,7 @@ window.draw = function () {
     leaderboard.updateLeaderboard(player, leaders);
     displayCurrentWinnerLocation();
     healthbar.displayHealthbar(player);
+    xpBar.display(player);
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
     if (mouseIsPressed && mouseButton === LEFT) {

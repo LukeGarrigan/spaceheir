@@ -15,6 +15,7 @@ const settings = {
 
 
    DEBUG_MODE: false,
+   SERVER_LOGGING: false,
    DEBUG_MODE_X : 1000,
    DEBUG_MODE_Y : 1000
 
