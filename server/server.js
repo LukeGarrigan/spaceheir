@@ -353,7 +353,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (hasBulletHit(i, player, 37)) {
       removeBulletFromGame(i);
-      player.shield -= 50;
+      player.shield -= 75;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
 
