@@ -120,6 +120,9 @@ function logServerInfo() {
     console.log("foods " + foods.length);
     console.log("xp gems " + xpGems.length);
     console.log("asteroids  " + asteroids.length);
+    console.log("bullets  " + bullets.length);
+    console.log("players last shot " + playersLastShot.length);
+    console.log("leaderboard " + leaderboard.length);
   }
   lastLog++;
 
