@@ -103,7 +103,8 @@ function loadSounds() {
 
 window.setup = function () {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  input = createInput();
+  input = createInput().attribute('placeholder', 'username');
+
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button = createButton("Play");
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);

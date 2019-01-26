@@ -444,6 +444,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
     if (players[i].id == id) {
       console.log("Increasing players score!!!");
       players[i].score++;
+      players[i].xp += 2000;
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
         scoreIncrease = scoreIncrease == 0 ? 100 : scoreIncrease;
