@@ -263,8 +263,8 @@ function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       if (player.shield < config.settings.MAX_SHIELD) {
-        player.shield += foods[i].r / 3;
-        io.to(player.id).emit('increaseShield', foods[i].r / 5);
+        player.shield += foods[i].r / 2;
+        io.to(player.id).emit('increaseShield', foods[i].r / 2);
       }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
