@@ -282,17 +282,24 @@ function updatePlayerEatingGem(player) {
   for (let i = xpGems.length - 1; i >= 0; i--) {
     if (Math.abs(xpGems[i].x - player.x) + Math.abs(xpGems[i].y - player.y) < 21 + 15) {
       player.xp += 200;
+
       io.sockets.emit("removeXpGem", xpGems[i].id);
       xpGems.splice(i , 1);
 
-      if (playerHasLeveledUp(player)) {
-        player.lvl++;
-        io.to(player.id).emit('leveledUp');
-      }
+      checkIfPlayerHasLeveledUp(player);
     }
 
   }
 }
+
+function checkIfPlayerHasLeveledUp(player) {
+
+  if (playerHasLeveledUp(player)) {
+    player.lvl++;
+    io.to(player.id).emit('leveledUp');
+  }
+}
+
 
 function playerHasLeveledUp(player) {
   let currentLevel = Math.floor(0.04*Math.sqrt(player.xp));
@@ -445,6 +452,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       console.log("Increasing players score!!!");
       players[i].score++;
       players[i].xp += 2000;
+      checkIfPlayerHasLeveledUp(players[i]);
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
         scoreIncrease = scoreIncrease == 0 ? 100 : scoreIncrease;
