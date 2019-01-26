@@ -6,7 +6,7 @@ module.exports = function({ socket }, direction) {
       if (direction === "speed") {
 
         if (players[i].establishedLevel < players[i].lvl) {
-          players[i].additionalSpeed += 0.2;
+          players[i].additionalSpeed += 1;
           players[i].establishedLevel += 1;
         }
       }
