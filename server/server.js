@@ -103,9 +103,7 @@ function broadcastPlayers() {
     updatePlayerPosition(player);
   }
 
-  for (let bullet of bullets) {
-    updateBulletPosition(bullet);
-  }
+  updateBulletPositions();
 
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
@@ -129,11 +127,18 @@ function logServerInfo() {
 }
 
 
-function updateBulletPosition(bullet) {
-  // bullet.x+=10;
-  let speed = 20;
-  bullet.x += speed * Math.cos(bullet.angle)
-  bullet.y += speed * Math.sin(bullet.angle)
+function updateBulletPositions() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    let speed = 20;
+    bullets[i].x += speed * Math.cos(bullets[i].angle);
+    bullets[i].y += speed * Math.sin(bullets[i].angle);
+    bullets[i].bulletSize--;
+
+    if (bullets[i].bulletSize <= 1) {
+      bullets.splice(i, 1);
+    }
+  }
+
 }
 
 
