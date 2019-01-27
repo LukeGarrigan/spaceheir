@@ -266,9 +266,9 @@ window.draw = function () {
     healthbar.displayHealthbar(player);
     xpBar.display(player);
 
-    speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
-    damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
-    regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
+    speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
+    damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
+    regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
 
   } else {
     drawStartScreen();

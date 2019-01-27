@@ -13,6 +13,7 @@ const settings = {
    //SPEED
    BASE_SPEED: 5,
 
+   BASE_DAMAGE: 75,
 
    DEBUG_MODE: false,
    SERVER_LOGGING: false,

@@ -153,6 +153,9 @@ function killPlayer(player) {
 
   player.shield = 100;
   player.score = 0;
+  player.speed = 0;
+  player.damage = 0;
+  player.regen = 0;
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
@@ -198,7 +201,7 @@ function updatePlayerPosition(player) {
 
 function updateShootingAsteroid() {
   for (let i = bullets.length - 1; i >= 0; i--) {
-    if (hasBulletHitAnAsteroid(i)) {
+    if (hasBulletHitAnAsteroid(i, bullets[i].clientId)) {
       removeBulletFromGame(i);
       bullets.splice(i, 1);
     }
@@ -263,8 +266,8 @@ function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       if (player.shield < config.settings.MAX_SHIELD) {
-        player.shield += foods[i].r;
-        io.to(player.id).emit('increaseShield', foods[i].r);
+        player.shield += foods[i].r + player.regen;
+        io.to(player.id).emit('increaseShield', foods[i].r + player.regen);
       }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
@@ -318,7 +321,7 @@ function updatePlayerGettingShot(player) {
   }
 }
 
-function getKiller(clientId) {
+function getShooter(clientId) {
   for (let player of players) {
     if (player.id === clientId) {
       return player;
@@ -341,7 +344,7 @@ function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWi
   io.to(bullets[i].clientId).emit('playExplosion');
 
 
-  let killer = getKiller(bullets[i].clientId);
+  let killer = getShooter(bullets[i].clientId);
 
 
   let playerKill = {
@@ -360,7 +363,8 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (hasBulletHit(i, player, 37)) {
       removeBulletFromGame(i);
-      player.shield -= 75;
+      let shooter = getShooter(bullets[i].clientId);
+      player.shield -= config.settings.BASE_DAMAGE + shooter.damage;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
 
@@ -383,10 +387,12 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
 }
 
 
-function hasBulletHitAnAsteroid(i) {
+function hasBulletHitAnAsteroid(i, clientId) {
   for (let asteroid of asteroids) {
     if (hasBulletHit(i, asteroid, asteroid.r / 2)) {
-      asteroid.health -= 10;
+
+      let shooter = getShooter(clientId);
+      asteroid.health -= 10 + shooter.damage / 2;
       if (asteroid.health <= 0) {
         createXpGem(asteroid);
         respawnAsteroid(asteroid);

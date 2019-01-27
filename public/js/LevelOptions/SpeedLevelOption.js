@@ -1,6 +1,6 @@
 import LevelOptions from "./LevelOptions.js";
 
-export default class SpeedLevelOption extends LevelOptions{
+export default class SpeedLevelOption extends LevelOptions {
   constructor(speedImage, transparentImage) {
     super(speedImage, transparentImage);
   }

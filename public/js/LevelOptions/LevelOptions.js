@@ -1,5 +1,5 @@
 export default class LevelOptions {
-  constructor(image, imageTransparent) {
+  constructor(image, imageTransparent, currentLvl) {
     this.viewX = 0;
     this.viewY = 0;
     this.x = 0;
@@ -8,16 +8,20 @@ export default class LevelOptions {
     this.image = image;
     this.imageTransparent = imageTransparent;
     this.width = 150;
+    this.currentLvl = 0;
   }
 
-  display(viewX, viewY, isVisible) {
+  display(viewX, viewY, isVisible, currentLvl) {
     this.viewX = viewX;
     this.viewY = viewY;
+    this.currentLvl = currentLvl;
     this.setXAndY();
 
     push();
     textAlign(CENTER);
     fill(255, 255, 255);
+
+    text(this.currentLvl, this.x + this.width / 2, this.y - 10);
     if (isVisible) {
       image(this.image, this.x, this.y);
     } else {
