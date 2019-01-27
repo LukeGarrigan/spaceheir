@@ -22,7 +22,7 @@ const settings = {
 
   // lvling options
   REGEN_MULTIPLIER : 10,
-  DAMAGE_MULTIPLIER : 30,
+  DAMAGE_MULTIPLIER : 15,
   SPEED_MULTIPLIER: 1
 };
 
