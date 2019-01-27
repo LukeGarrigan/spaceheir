@@ -74,6 +74,11 @@ let xpBar;
 let speedImage;
 let damageImage;
 let regenImage;
+let transparentDamageImage;
+let transparentSpeedImage;
+let transparentRegenImage;
+
+
 
 let speedOption;
 let damageOption;
@@ -92,9 +97,13 @@ function loadImages() {
   soundOff = loadImage("assets/images/soundOff.png");
   gemImage = loadImage("assets/images/gem.png");
   space = loadImage("assets/images/space.png");
+
   speedImage = loadImage("assets/images/speed.png");
   damageImage = loadImage("assets/images/damage.png");
   regenImage = loadImage("assets/images/regen.png");
+  transparentDamageImage = loadImage("assets/images/damageTransparent.png");
+  transparentRegenImage = loadImage("assets/images/regenTransparent.png");
+  transparentSpeedImage = loadImage("assets/images/speedTransparent.png");
   let asteroidGreyImage = loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
   let asteroidGreyImage2 = loadImage("assets/images/asteroidGrey2.png");
@@ -135,9 +144,9 @@ window.setup = function () {
       muteButton = new MuteButton(soundOn, soundOff);
 
 
-      speedOption = new SpeedLevelOption(speedImage);
-      damageOption = new DamageLevelOption(damageImage);
-      regenOption = new RegenLevelOption(regenImage);
+      speedOption = new SpeedLevelOption(speedImage, transparentSpeedImage);
+      damageOption = new DamageLevelOption(damageImage, transparentDamageImage);
+      regenOption = new RegenLevelOption(regenImage, transparentRegenImage);
 
       xpBar = new XpBar();
 
@@ -256,12 +265,11 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
     healthbar.displayHealthbar(player);
     xpBar.display(player);
-    if (hasPlayerLeveledUp) {
-      speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
-      damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
-      regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
 
-    }
+    speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
+    damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
+    regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp);
+
   } else {
     drawStartScreen();
   }
@@ -429,6 +437,12 @@ function checkIfPlayerHasChosenALevelOption() {
     if (speedOption.hasPlayerClickedOption(mouseX, mouseY)) {
       hasPlayerLeveledUp = false;
       socket.emit('lvlUp', "speed");
+    } else if (damageOption.hasPlayerClickedOption(mouseX, mouseY)) {
+      hasPlayerLeveledUp = false;
+      socket.emit('lvlUp', "damage");
+    } else if (regenOption.hasPlayerClickedOption(mouseX, mouseY)) {
+      hasPlayerLeveledUp = false;
+      socket.emit('lvlUp', "regen");
     }
   }
 }

@@ -1,26 +1,29 @@
 export default class LevelOptions {
-  constructor(speedImage, playerSpeed) {
+  constructor(image, imageTransparent) {
     this.viewX = 0;
     this.viewY = 0;
     this.x = 0;
     this.y = 0;
-    this.width = 70;
-    this.height = 50;
-    this.speedImage = speedImage;
-    this.playerSpeed = playerSpeed;
-    this.imageWidth = 150;
+    this.height = 37;
+    this.image = image;
+    this.imageTransparent = imageTransparent;
+    this.width = 150;
   }
 
-  display(viewX, viewY) {
+  display(viewX, viewY, isVisible) {
     this.viewX = viewX;
     this.viewY = viewY;
     this.setXAndY();
 
     push();
-    fill(100, 255, 100, 100);
     textAlign(CENTER);
     fill(255, 255, 255);
-    image(this.speedImage, this.x, this.y);
+    if (isVisible) {
+      image(this.image, this.x, this.y);
+    } else {
+      image(this.imageTransparent, this.x, this.y);
+    }
+
     pop();
   }
 
