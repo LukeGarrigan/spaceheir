@@ -371,16 +371,9 @@ window.mousePressed = function () {
     checkMuteToggled();
     processPlayerShooting();
     checkIfPlayerHasChosenALevelOption();
-  } else {
-    socket.emit('keyPressed', "up");
   }
 };
 
-window.mouseReleased = function () {
-  if (mouseButton === RIGHT) {
-    socket.emit('keyReleased', "up");
-  }
-};
 
 function processPlayerShooting() {
   socket.emit('bullet');
