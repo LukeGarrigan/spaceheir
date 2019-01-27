@@ -154,9 +154,9 @@ function killPlayer(player) {
   player.shield = 100;
 
   player.score = 0;
-  player.additionalSpeed = 1;
-  player.damage = 1;
-  player.regen = 1;
+  player.additionalSpeed = 0;
+  player.damage = 0;
+  player.regen = 0;
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
