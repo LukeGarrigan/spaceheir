@@ -7,6 +7,7 @@
 * Sending too much data about other players to players
 * Despawn xp gems
 * Issue where xp gems are unobtainable 
+* Issue with text jittering
 
 
 

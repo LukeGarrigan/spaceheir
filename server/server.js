@@ -152,10 +152,11 @@ function killPlayer(player) {
   }
 
   player.shield = 100;
+
   player.score = 0;
-  player.speed = 0;
-  player.damage = 0;
-  player.regen = 0;
+  player.additionalSpeed = 1;
+  player.damage = 1;
+  player.regen = 1;
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
@@ -217,7 +218,7 @@ function movePlayer(player) {
 function movingUp(player) {
   if (player.isUp) {
 
-    if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed) {
+    if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed * config.settings.SPEED_MULTIPLIER) {
       player.velocity += 0.2;
     }
 
@@ -266,8 +267,8 @@ function updatePlayerEatingFood(player) {
   for (let i = 0; i < foods.length; i++) {
     if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
       if (player.shield < config.settings.MAX_SHIELD) {
-        player.shield += foods[i].r + player.regen;
-        io.to(player.id).emit('increaseShield', foods[i].r + player.regen);
+        player.shield += foods[i].r + player.regen * config.settings.REGEN_MULTIPLIER;
+        io.to(player.id).emit('increaseShield', foods[i].r + player.regen * config.settings.REGEN_MULTIPLIER);
       }
       let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
       let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
@@ -336,7 +337,6 @@ function removeBulletFromGame(i) {
 function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning) {
   updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
   player.score = 0;
-  player.additionalSpeed = 0;
   player.xp = 625;
   player.lvl = 1;
   player.establishedLevel = 1;
@@ -364,7 +364,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
     if (hasBulletHit(i, player, 37)) {
       removeBulletFromGame(i);
       let shooter = getShooter(bullets[i].clientId);
-      player.shield -= config.settings.BASE_DAMAGE + shooter.damage;
+      player.shield -= config.settings.BASE_DAMAGE + shooter.damage * config.settings.DAMAGE_MULTIPLIER;
       io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
 
 
@@ -392,7 +392,7 @@ function hasBulletHitAnAsteroid(i, clientId) {
     if (hasBulletHit(i, asteroid, asteroid.r / 2)) {
 
       let shooter = getShooter(clientId);
-      asteroid.health -= 10 + shooter.damage / 2;
+      asteroid.health -= 10 + shooter.damage * config.settings.DAMAGE_MULTIPLIER / 2;
       if (asteroid.health <= 0) {
         createXpGem(asteroid);
         respawnAsteroid(asteroid);

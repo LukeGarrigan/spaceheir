@@ -8,6 +8,8 @@ export default class XpBar {
 
     let xp = player.xp;
 
+
+
     let startXp = this.xpNeededForLvl(player.lvl);
     let nextLvlXp = this.xpNeededForLvl(player.lvl + 1);
 

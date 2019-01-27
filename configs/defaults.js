@@ -18,8 +18,12 @@ const settings = {
    DEBUG_MODE: false,
    SERVER_LOGGING: false,
    DEBUG_MODE_X : 1000,
-   DEBUG_MODE_Y : 1000
+   DEBUG_MODE_Y : 1000,
 
+  // lvling options
+  REGEN_MULTIPLIER : 10,
+  DAMAGE_MULTIPLIER : 30,
+  SPEED_MULTIPLIER: 1
 };
 
 module.exports= {

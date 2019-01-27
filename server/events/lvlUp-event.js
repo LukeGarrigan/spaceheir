@@ -7,10 +7,10 @@ module.exports = function ({socket}, direction) {
         players[i].additionalSpeed += 1;
         players[i].establishedLevel += 1;
       } else if (direction === "damage") {
-        players[i].damage += 50;
+        players[i].damage += 1;
         players[i].establishedLevel += 1;
       } else if (direction === "regen") {
-        players[i].regen += 10;
+        players[i].regen += 1;
         players[i].establishedLevel += 1;
       }
     }
