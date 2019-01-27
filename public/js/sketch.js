@@ -8,8 +8,11 @@ import Healthbar from "./Healthbar/Healthbar.js";
 import XpBar from "./XpBar/XpBar.js";
 import Minimap from "./Minimap/Minimap.js";
 import MuteButton from "./MuteButton/MuteButton.js";
-import DisplayLevelOptions from "./levelOptions.js";
+import DisplayLevelOptions from "./LevelOptions/LevelOptions.js";
 
+import SpeedLevelOption from "./LevelOptions/SpeedLevelOption.js";
+import DamageLevelOption from "./LevelOptions/DamageLevelOption.js";
+import RegenLevelOption from "./LevelOptions/RegenLevelOption.js";
 
 import {
   createXpGems,
@@ -26,6 +29,7 @@ import {
   updateFoods,
   updateOtherPlayers,
 } from './game-logic.js'
+
 
 
 let player;
@@ -63,12 +67,18 @@ let soundOff;
 let muteButton;
 let space;
 let gemImage;
-let displayLevelOptions;
+
 let hasPlayerLeveledUp = false;
 let xpBar;
+
+let speedImage;
+let damageImage;
+let regenImage;
+
+let speedOption;
+let damageOption;
+let regenOption;
 socket.on('foods', data => updateFoods(data, food, foodImage));
-
-
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
 
@@ -82,11 +92,12 @@ function loadImages() {
   soundOff = loadImage("assets/images/soundOff.png");
   gemImage = loadImage("assets/images/gem.png");
   space = loadImage("assets/images/space.png");
-
+  speedImage = loadImage("assets/images/speed.png");
+  damageImage = loadImage("assets/images/damage.png");
+  regenImage = loadImage("assets/images/regen.png");
   let asteroidGreyImage = loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
   let asteroidGreyImage2 = loadImage("assets/images/asteroidGrey2.png");
-
   let asteroidOrangeImage = loadImage("assets/images/asteroidOrange.png");
 
 
@@ -122,7 +133,12 @@ window.setup = function () {
       healthbar = new Healthbar();
       minimap = new Minimap();
       muteButton = new MuteButton(soundOn, soundOff);
-      displayLevelOptions = new DisplayLevelOptions(player);
+
+
+      speedOption = new SpeedLevelOption(speedImage);
+      damageOption = new DamageLevelOption(damageImage);
+      regenOption = new RegenLevelOption(regenImage);
+
       xpBar = new XpBar();
 
       let playerPosition = {
@@ -241,7 +257,10 @@ window.draw = function () {
     healthbar.displayHealthbar(player);
     xpBar.display(player);
     if (hasPlayerLeveledUp) {
-      displayLevelOptions.display(player.pos.x - width / 2, player.pos.y - height / 2);
+      speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
+      damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
+      regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2);
+
     }
   } else {
     drawStartScreen();
@@ -407,7 +426,7 @@ function drawXpGems() {
 
 function checkIfPlayerHasChosenALevelOption() {
   if (hasPlayerLeveledUp) {
-    if (displayLevelOptions.hasPlayerClickedOption(mouseX, mouseY)) {
+    if (speedOption.hasPlayerClickedOption(mouseX, mouseY)) {
       hasPlayerLeveledUp = false;
       socket.emit('lvlUp', "speed");
     }
