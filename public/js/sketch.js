@@ -8,7 +8,6 @@ import Healthbar from "./Healthbar/Healthbar.js";
 import XpBar from "./XpBar/XpBar.js";
 import Minimap from "./Minimap/Minimap.js";
 import MuteButton from "./MuteButton/MuteButton.js";
-import DisplayLevelOptions from "./LevelOptions/LevelOptions.js";
 
 import SpeedLevelOption from "./LevelOptions/SpeedLevelOption.js";
 import DamageLevelOption from "./LevelOptions/DamageLevelOption.js";
@@ -77,7 +76,6 @@ let regenImage;
 let transparentDamageImage;
 let transparentSpeedImage;
 let transparentRegenImage;
-
 
 
 let speedOption;
@@ -216,7 +214,6 @@ window.draw = function () {
   textSize(15);
   if (gameStarted && player) {
     addParallaxScrolling(player.pos.x, player.pos.y);
-
     displayFramesPerSecond();
     text("X: " + floor(player.pos.x), width - 100, height - 100);
     text("Y: " + floor(player.pos.y), width - 100, height - 75);
@@ -269,7 +266,7 @@ window.draw = function () {
     speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
     damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
     regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
-
+    clientLogging();
   } else {
     drawStartScreen();
   }
@@ -439,3 +436,19 @@ function checkIfPlayerHasChosenALevelOption() {
     }
   }
 }
+
+function clientLogging() {
+  if (frameCount % 300 === 0) {
+    console.log("*******************************");
+    console.log("Asteroids " + asteroids.length);
+    console.log("XpGems " + xpGems.length);
+    console.log("Popups " + popups.length);
+    console.log("players " + otherPlayers.length);
+    console.log("foods " + food.length);
+    console.log("asteroids  " + asteroids.length);
+    console.log("bullets  " + bullets.length);
+  }
+
+}
+
+
