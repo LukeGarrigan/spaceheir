@@ -16,7 +16,7 @@ A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](htt
 
 I've just recently (As of 2019) started developing on this again as It's so fun to do. 
 
-Go play the game in its current state at [codeheir.com!](http://codeheir.com/)
+Go play the game in its current state at [spaceheir.com!](http://spaceheir.com/)
 
 
 Feel free to branch and play around, go to https://trello.com/b/HBwddn26/stream-royale-game to see what needs doing!
