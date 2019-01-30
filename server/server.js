@@ -16,7 +16,6 @@ let io = socket(server);
 
 let playersLastShot = [];
 const players = [];
-let
 let bullets = [];
 let foods = [];
 let leaderboard = [];
