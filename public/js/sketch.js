@@ -227,7 +227,6 @@ window.draw = function () {
         bullets[i].display();
       }
       if (bullets[i].hasBulletDiminished()) {
-        // socket.emit('removeBullet', bullets[i].id);
         bullets.splice(i, 1);
       }
     }
@@ -244,7 +243,7 @@ window.draw = function () {
 
     drawFood(player);
 
-    socket.emit('angle', player.radians);
+
 
     drawOtherPlayers(player, leaderBoardWinnersId);
 
@@ -269,6 +268,7 @@ window.draw = function () {
     speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
     damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
     regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
+    socket.emit('angle', player.radians);
     clientLogging();
   } else {
     drawStartScreen();

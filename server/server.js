@@ -29,7 +29,7 @@ let lastLog = 0;
 
 setupFood();
 setupAsteroids();
-setInterval(broadcastPlayers, 16);
+setInterval(broadcastGameStateToPlayers, 1);
 
 module.exports = {
   players,
@@ -96,7 +96,7 @@ function setupAsteroids() {
 
 
 
-function broadcastPlayers() {
+function broadcastGameStateToPlayers() {
   logServerInfo();
 
   for (let player of players) {
