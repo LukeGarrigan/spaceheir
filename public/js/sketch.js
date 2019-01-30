@@ -227,7 +227,7 @@ window.draw = function () {
         bullets[i].display();
       }
       if (bullets[i].hasBulletDiminished()) {
-        socket.emit('removeBullet', bullets[i].id);
+        // socket.emit('removeBullet', bullets[i].id);
         bullets.splice(i, 1);
       }
     }

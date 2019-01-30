@@ -16,7 +16,7 @@ const settings = {
    BASE_DAMAGE: 75,
 
    DEBUG_MODE: false,
-   SERVER_LOGGING: false,
+   SERVER_LOGGING: true,
    DEBUG_MODE_X : 1000,
    DEBUG_MODE_Y : 1000,
 
