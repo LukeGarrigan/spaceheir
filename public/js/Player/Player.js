@@ -123,8 +123,8 @@ export default class Player {
   drawTrail() {
     push();
 
-    fill(255, 127, 10, 30);
-    blendMode(ADD);
+    fill(255, 127, 10);
+    // blendMode(ADD);
     for (let i = 75; i < this.trail.length; i++) {
       let part = this.trail[i];
       ellipse(part.x += random(-0.3, 0.3), part.y += random(-0.3, 0.3), (i - 75) / 6);
