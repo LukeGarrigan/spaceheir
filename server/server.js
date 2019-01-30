@@ -16,6 +16,7 @@ let io = socket(server);
 
 let playersLastShot = [];
 const players = [];
+let
 let bullets = [];
 let foods = [];
 let leaderboard = [];
@@ -29,7 +30,7 @@ let lastLog = 0;
 
 setupFood();
 setupAsteroids();
-setInterval(broadcastGameStateToPlayers, 1);
+setInterval(broadcastGameStateToPlayers, 16);
 
 module.exports = {
   players,
