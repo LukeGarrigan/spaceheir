@@ -215,6 +215,7 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
+  window.frameRate(140);
   if (gameStarted && player) {
     addParallaxScrolling(player.pos.x, player.pos.y);
     displayFramesPerSecond();

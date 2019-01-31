@@ -94,7 +94,6 @@ export default class Player {
       return;
     }
 
-    let offset = map(player.shield, 0, 1000, 0, 10);
     push();
     translate(player.x, player.y);
     let isWinning =  leaderBoardWinnersId === player.id;
@@ -108,10 +107,6 @@ export default class Player {
       image(spaceShipImage, 0, 0);
     }
 
-    fill(0);
-    translate(0, -offset);
-
-    this.processOtherPlayersBooster(player);
     pop();
     textAlign(CENTER);
     let name = player.name;

@@ -174,13 +174,11 @@ export function updateAsteroids(data, asteroids, asteroidImages) {
 }
 
 export function createXpGems(gems, gemImage) {
-
   let createdGems = [];
   for (let i = 0; i < gems.length; i++) {
     let gem = new Gem(gems[i].id, gems[i].x, gems[i].y, gemImage);
     createdGems.push(gem);
   }
-
   return createdGems;
 }
 
