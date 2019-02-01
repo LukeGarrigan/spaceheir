@@ -4,7 +4,6 @@ import HitMarker from './Hitmarker/Hitmarker.js';
 import Killfeed from './Killfeed/Killfeed.js';
 import Leaderboard from './Leaderboard/Leaderboard.js';
 import WinnerLocation from './WinnerLocation/WinnerLocation.js';
-import Healthbar from "./Healthbar/Healthbar.js";
 import XpBar from "./XpBar/XpBar.js";
 import Minimap from "./Minimap/Minimap.js";
 import MuteButton from "./MuteButton/MuteButton.js";
@@ -58,7 +57,6 @@ let lastLoop = new Date();
 let frameRate;
 let spaceShipImage;
 let winnerSpaceShipImage;
-let healthbar;
 let leaderBoardWinnersId;
 let minimap;
 let soundOn;
@@ -140,7 +138,6 @@ window.setup = function () {
       killfeed = new Killfeed();
       leaderboard = new Leaderboard(player, leaders);
       winnerLocation = new WinnerLocation(indicatorImage);
-      healthbar = new Healthbar();
       minimap = new Minimap();
       muteButton = new MuteButton(soundOn, soundOff);
 
@@ -215,7 +212,7 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
-  window.frameRate(140);
+  window.frameRate(100);
   if (gameStarted && player) {
     addParallaxScrolling(player.pos.x, player.pos.y);
     displayFramesPerSecond();
@@ -263,14 +260,14 @@ window.draw = function () {
     hitMarker.display();
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.displayLeaderboard();
-    healthbar.displayHealthbar(player);
+
     xpBar.display(player);
 
     speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
     damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
     regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
     socket.emit('angle', player.radians);
-    clientLogging();
+    //clientLogging();
   } else {
     drawStartScreen();
   }

@@ -1,9 +1,10 @@
 import socket from '../socket.js';
+import healthbar from "../Healthbar/healthbar.js";
 
 export default class Player {
   constructor(name, spaceShipImage, winnerSpaceship) {
     this.name = name;
-    this.pos = createVector(random(width*3), random(height*3));
+    this.pos = createVector(random(width * 3), random(height * 3));
     this.radians = 0;
     this.isUp = false;
     this.speed = 2;
@@ -20,7 +21,7 @@ export default class Player {
   display(leaders) {
 
 
-    for (let i = 0;i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
       this.trail.push({x: this.pos.x, y: this.pos.y});
     }
     if (this.trail.length > 200) {
@@ -32,7 +33,6 @@ export default class Player {
     }
 
     this.drawTrail();
-
 
     push();
     translate(this.pos.x, this.pos.y);
@@ -51,7 +51,7 @@ export default class Player {
     winner ? stroke(255, 69, 0) : stroke(255);
 
 
-    this.radians = atan2(mouseY-height/2, mouseX-width/2);
+    this.radians = atan2(mouseY - height / 2, mouseX - width / 2);
     this.offset = map(this.shield, 0, 1000, 0, 10);
     rotate(this.radians + HALF_PI);
     winner ? fill(255, 69, 0) : fill(255);
@@ -74,17 +74,18 @@ export default class Player {
       push();
       fill(255, 0, 0);
       textSize(32)
-      text('respawning...' , this.pos.x, this.pos.y+49);
+      text('respawning...', this.pos.x, this.pos.y + 49);
       pop();
     } else {
-      text(this.name, this.pos.x, this.pos.y+49);
+      text(`${this.name}`, this.pos.x, this.pos.y + 49);
     }
 
     push();
     textSize(30);
     fill(255);
-    text(this.score, this.pos.x, this.pos.y - height/2 + 80);
+    text(this.score, this.pos.x, this.pos.y - height / 2 + 80);
     pop();
+    healthbar(this);
   }
 
 
@@ -96,7 +97,7 @@ export default class Player {
 
     push();
     translate(player.x, player.y);
-    let isWinning =  leaderBoardWinnersId === player.id;
+    let isWinning = leaderBoardWinnersId === player.id;
 
     rotate(player.angle + HALF_PI);
     imageMode(CENTER);
@@ -109,9 +110,15 @@ export default class Player {
 
     pop();
     textAlign(CENTER);
-    let name = player.name;
     textSize(15);
-    text(name, player.x, player.y + 49);
+    text(`${player.name} (${player.lvl})`, player.x, player.y + 49);
+
+    player.pos = {
+      x: player.x,
+      y: player.y
+    }
+    healthbar(player);
+
   }
 
 
@@ -127,14 +134,6 @@ export default class Player {
     pop();
   }
 
-
-  static processOtherPlayersBooster(player) {
-    translate(0, player.r / 2 + 20);
-    if (player.isBoosting && player.shield > 0) {
-      rotate(PI);
-      fill(0);
-    }
-  }
 
   get x() {
     return this.pos.x;
