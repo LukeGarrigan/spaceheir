@@ -121,6 +121,7 @@ function loadSounds() {
 }
 
 window.setup = function () {
+
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   input = createInput().attribute('placeholder', 'username');
 
@@ -210,6 +211,7 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
+  window.frameRate(144);
 
   if (gameStarted && player) {
     addParallaxScrolling(player.pos.x, player.pos.y);

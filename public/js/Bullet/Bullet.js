@@ -4,7 +4,6 @@ export default class Bullet{
     this.velocity = p5.Vector.fromAngle(playerAngle);
     this.velocity.mult(30);
     this.r = 10;
-    this.shooterId = shooterId;
     this.id = id;
     this.bulletSize = bulletSize;
   }
@@ -26,9 +25,6 @@ export default class Bullet{
   }
 
   hasDiminished() {
-    if (this.r <= 1) {
-      return true;
-    }
-    return false;
+    return this.r <= 1;
   }
 }
