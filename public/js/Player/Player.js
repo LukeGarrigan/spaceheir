@@ -10,7 +10,6 @@ export default class Player {
     this.speed = 2;
     this.shield = 0;
     this.score = 0;
-    this.isBoosting = false;
     this.respawning = false;
     this.spaceShipImage = spaceShipImage;
     this.winnerSpaceship = winnerSpaceship;
@@ -29,7 +28,6 @@ export default class Player {
       for (let i = 0; i < 10; i++) {
         this.trail.splice(0, 1);
       }
-
     }
 
     this.drawTrail();

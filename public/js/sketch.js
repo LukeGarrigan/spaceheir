@@ -189,7 +189,6 @@ window.setup = function () {
   loadSounds();
   loadImages();
 
-
 };
 
 
@@ -206,46 +205,23 @@ function displayCurrentWinnerLocation() {
   }
 }
 
-
 window.draw = function () {
   background(0);
   fill(255);
   scale(1);
   textSize(15);
-  window.frameRate(100);
+
   if (gameStarted && player) {
     addParallaxScrolling(player.pos.x, player.pos.y);
     displayFramesPerSecond();
-    text("X: " + floor(player.pos.x), width - 100, height - 100);
-    text("Y: " + floor(player.pos.y), width - 100, height - 75);
+    drawXAndY();
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    for (let i = bullets.length - 1; i >= 0; i--) {
-      bullets[i].update();
-      if (isWithinScreen(player, bullets[i].pos)) {
-        bullets[i].display();
-      }
-      if (bullets[i].hasBulletDiminished()) {
-        bullets.splice(i, 1);
-      }
-    }
+    drawBullets();
 
     player.display(leaders);
-    for (let i = popups.length - 1; i >= 0; i--) {
-      popups[i].update();
-      popups[i].display();
-      if (!popups[i].isVisible) {
-        popups.splice(i, 1);
-      }
-    }
-
-
+    drawPopups();
     drawFood(player);
-
-
-
     drawOtherPlayers(player, leaderBoardWinnersId);
-
-
     leaderboard.updateLeaderboard(player, leaders);
     displayCurrentWinnerLocation();
 
@@ -263,23 +239,52 @@ window.draw = function () {
 
     xpBar.display(player);
 
-    speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
-    damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
-    regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
+
+    drawLevelUpButtons();
     socket.emit('angle', player.radians);
-    //clientLogging();
+    clientLogging();
   } else {
     drawStartScreen();
   }
 };
 
+function drawXAndY() {
+  text("X: " + floor(player.pos.x), width - 100, height - 100);
+  text("Y: " + floor(player.pos.y), width - 100, height - 75);
+}
+
+function drawPopups() {
+  for (let i = popups.length - 1; i >= 0; i--) {
+    popups[i].update();
+    popups[i].display();
+    if (!popups[i].isVisible) {
+      popups.splice(i, 1);
+    }
+  }
+}
+function drawBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].update();
+    if (isWithinScreen(player, bullets[i].pos)) {
+      bullets[i].display();
+    }
+    if (bullets[i].hasBulletDiminished()) {
+      bullets.splice(i, 1);
+    }
+  }
+}
+
+function drawLevelUpButtons() {
+  speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
+  damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
+  regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
+}
 
 function drawStartScreen() {
   let position = {
     x: 1000,
     y: 500
   };
-
   addParallaxScrolling(position.x, position.y);
   drawFood(position);
   drawOtherPlayers(position);
