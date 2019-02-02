@@ -29,7 +29,7 @@ let lastLog = 0;
 
 setupFood();
 setupAsteroids();
-setInterval(broadcastGameStateToPlayers, 16);
+setInterval(broadcastGameStateToPlayers, 14);
 
 module.exports = {
   players,

@@ -11,6 +11,16 @@ import MuteButton from "./MuteButton/MuteButton.js";
 import SpeedLevelOption from "./LevelOptions/SpeedLevelOption.js";
 import DamageLevelOption from "./LevelOptions/DamageLevelOption.js";
 import RegenLevelOption from "./LevelOptions/RegenLevelOption.js";
+import parallaxScrolling from "./Display/parallaxScrolling.js";
+import drawAsteroids from "./Display/drawAsteroids.js";
+import displayCurrentWinnerLocation from "./Display/displayCurrentWinnerLocation.js";
+import displayFramesPerSecond from "./Display/displayFramesPerSecond.js";
+import drawXAndY from "./Display/drawXAndY.js";
+import drawXpGems from "./Display/drawXpGems.js";
+import drawFood from "./Display/drawFood.js";
+import drawBullets from "./Display/drawBullets.js";
+import drawPopups from "./Display/drawPopups.js";
+
 
 import {
   createXpGems,
@@ -27,7 +37,6 @@ import {
   updateFoods,
   updateOtherPlayers,
 } from './game-logic.js'
-
 
 
 let player;
@@ -53,8 +62,7 @@ let leaderboard;
 let winnerLocation;
 let indicatorImage;
 let foodImage;
-let lastLoop = new Date();
-let frameRate;
+
 let spaceShipImage;
 let winnerSpaceShipImage;
 let leaderBoardWinnersId;
@@ -80,8 +88,6 @@ let speedOption;
 let damageOption;
 let regenOption;
 
-let totalFrames = 0;
-let sumOfFrameRates = 1;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
@@ -197,35 +203,25 @@ window.mouseWheel = function (event) {
   return false;
 };
 
-function displayCurrentWinnerLocation() {
-  if (otherPlayers.length > 0) {
-    let currentWinner = findCurrentWinner();
-    if (currentWinner && currentWinner.id !== player.id) {
-      winnerLocation.drawWinnerLocation(player.x, player.y, currentWinner.x, currentWinner.y);
-    }
-  }
-}
 
 window.draw = function () {
   background(0);
   fill(255);
   scale(1);
   textSize(15);
-  window.frameRate(144);
 
   if (gameStarted && player) {
-    addParallaxScrolling(player.pos.x, player.pos.y);
+    parallaxScrolling(player.x, player.y, space);
     displayFramesPerSecond();
-    drawXAndY();
+    drawXAndY(player);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    drawBullets();
-
+    drawBullets(bullets, player);
     player.display(leaders);
-    drawPopups();
-    drawFood(player);
+    drawPopups(popups);
+    drawFood(player, food);
     drawOtherPlayers(player, leaderBoardWinnersId);
     leaderboard.updateLeaderboard(player, leaders);
-    displayCurrentWinnerLocation();
+    displayCurrentWinnerLocation(otherPlayers, player, winnerLocation, leaderboard);
 
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
@@ -233,15 +229,13 @@ window.draw = function () {
       processPlayerShooting();
     }
 
-    drawAsteroids();
-    drawXpGems();
+    drawAsteroids(asteroids);
+    drawXpGems(player, xpGems);
     hitMarker.display();
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.displayLeaderboard();
 
     xpBar.display(player);
-
-
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
@@ -250,31 +244,6 @@ window.draw = function () {
   }
 };
 
-function drawXAndY() {
-  text("X: " + floor(player.pos.x), width - 100, height - 100);
-  text("Y: " + floor(player.pos.y), width - 100, height - 75);
-}
-
-function drawPopups() {
-  for (let i = popups.length - 1; i >= 0; i--) {
-    popups[i].update();
-    popups[i].display();
-    if (!popups[i].isVisible) {
-      popups.splice(i, 1);
-    }
-  }
-}
-function drawBullets() {
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    bullets[i].update();
-    if (isWithinScreen(player, bullets[i].pos)) {
-      bullets[i].display();
-    }
-    if (bullets[i].hasBulletDiminished()) {
-      bullets.splice(i, 1);
-    }
-  }
-}
 
 function drawLevelUpButtons() {
   speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
@@ -287,21 +256,12 @@ function drawStartScreen() {
     x: 1000,
     y: 500
   };
-  addParallaxScrolling(position.x, position.y);
+  parallaxScrolling(position.x, position.y, space);
   drawFood(position);
   drawOtherPlayers(position);
 
 }
 
-
-function drawFood(currentPosition) {
-  for (let i = food.length - 1; i >= 0; i--) {
-    if (isWithinScreen(currentPosition, food[i])) {
-      food[i].move();
-      food[i].displayFood();
-    }
-  }
-}
 
 function drawOtherPlayers(currentPosition) {
   for (const otherPlayer of otherPlayers) {
@@ -313,33 +273,6 @@ function drawOtherPlayers(currentPosition) {
     }
   }
 }
-
-
-function displayFramesPerSecond() {
-  totalFrames++;
-  let thisLoop = new Date();
-  let fps = 1000 / (thisLoop - lastLoop);
-  lastLoop = thisLoop;
-  sumOfFrameRates += fps;
-  if (frameCount % 15 === 0) {
-    frameRate = fps;
-  }
-
-
-  text("FPS: " + floor(frameRate), width - 100, height - 50);
-  text("AVG FPS: " + floor(sumOfFrameRates /totalFrames), width - 100, height - 25);
-}
-
-
-function findCurrentWinner() {
-  let winnerId = leaderboard.leaders[0].id;
-  for (const player of otherPlayers) {
-    if (player.id === winnerId) {
-      return player;
-    }
-  }
-}
-
 
 window.oncontextmenu = function (e) {
   e.preventDefault();
@@ -392,46 +325,6 @@ function checkMuteToggled() {
     muteButton.checkIfClicked(mouseX, mouseY);
   }
 }
-
-function addParallaxScrolling(x, y) {
-// first Hlayer
-
-  image(space, -(x / 10), -(y / 10));
-  image(space, space.width - (x / 10), -(y / 10));
-  image(space, space.width * 2 - (x / 10), -(y / 10));
-
-  // second Hlayer
-  image(space, -(x / 10), space.height - (y / 10));
-  image(space, space.width - (x / 10), space.height - (y / 10));
-  image(space, space.width * 2 - (x / 10), space.height - (y / 10));
-
-  // third HLayer
-  image(space, -(x / 10), space.height * 2 - (y / 10));
-  image(space, space.width - (x / 10), space.height * 2 - (y / 10));
-  image(space, space.width * 2 - (x / 10), space.height * 2 - (y / 10));
-}
-
-
-function drawAsteroids() {
-  for (let asteroid of asteroids) {
-    if (asteroid.hasExploded) {
-      asteroid.drawExplosion();
-    }
-    push();
-    imageMode(CENTER);
-    translate(asteroid.x, asteroid.y);
-    rotate(radians(frameCount) / 4);
-    image(asteroid.asteroidImage, 0, 0, asteroid.r, asteroid.r);
-    pop();
-  }
-}
-
-function drawXpGems() {
-  for (let gem of xpGems) {
-    gem.display();
-  }
-}
-
 
 function checkIfPlayerHasChosenALevelOption() {
   if (hasPlayerLeveledUp) {
