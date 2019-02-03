@@ -212,8 +212,6 @@ window.draw = function () {
 
   if (gameStarted && player) {
     parallaxScrolling(player.x, player.y, space);
-    displayFramesPerSecond();
-    drawXAndY(player);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
     drawBullets(bullets, player);
     player.display(leaders);
@@ -230,6 +228,7 @@ window.draw = function () {
     }
 
     drawAsteroids(asteroids);
+
     drawXpGems(player, xpGems);
     hitMarker.display();
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
@@ -239,6 +238,8 @@ window.draw = function () {
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
+    drawXAndY(player.pos.x, player.pos.y);
+    displayFramesPerSecond(player.pos.x, player.pos.y);
   } else {
     drawStartScreen();
   }
@@ -281,10 +282,8 @@ window.oncontextmenu = function (e) {
 
 window.keyPressed = function () {
   if (gameStarted) {
-    if (keyCode == UP_ARROW || keyCode == 87) {
-      socket.emit('keyPressed', "up");
-    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
-      socket.emit('keyPressed', "down");
+    if (keyCode === UP_ARROW || keyCode === 87) {
+      socket.emit('keyPressed', "isMoving");
     }
   }
 };
@@ -292,9 +291,7 @@ window.keyPressed = function () {
 window.keyReleased = function () {
   if (gameStarted) {
     if (keyCode === UP_ARROW || keyCode === 87) {
-      socket.emit('keyReleased', "up");
-    } else if (keyCode === DOWN_ARROW || keyCode === 83) {
-      socket.emit('keyReleased', "down");
+      socket.emit('keyReleased', "isMoving");
     }
   }
 };

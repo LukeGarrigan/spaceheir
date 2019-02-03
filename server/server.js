@@ -95,7 +95,6 @@ function setupAsteroids() {
 }
 
 
-
 function broadcastGameStateToPlayers() {
   logServerInfo();
 
@@ -134,11 +133,14 @@ function updateBulletPositions() {
     bullets[i].y += speed * Math.sin(bullets[i].angle);
     bullets[i].bulletSize--;
 
-    if (bullets[i].bulletSize <= 1) {
+
+    if (hasBulletHitAnAsteroid(i, bullets[i].clientId)) {
+      removeBulletFromGame(i);
+      bullets.splice(i, 1);
+    } else if (bullets[i].bulletSize <= 1) {
       bullets.splice(i, 1);
     }
   }
-
 }
 
 
@@ -180,7 +182,6 @@ function updatePlayerPosition(player) {
     }
   }
 
-
   if (player.shield < 0) {
     killPlayer(player);
     return
@@ -189,65 +190,31 @@ function updatePlayerPosition(player) {
   }
   movePlayer(player);
 
-
   // constrain - so moving to the edge of the screen
   constrain(player);
   updatePlayerEatingFood(player);
-
   updatePlayerGettingShot(player);
   updatePlayerEatingGem(player);
-  updateShootingAsteroid();
-}
-
-
-function updateShootingAsteroid() {
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    if (hasBulletHitAnAsteroid(i, bullets[i].clientId)) {
-      removeBulletFromGame(i);
-      bullets.splice(i, 1);
-    }
-  }
-
 }
 
 
 function movePlayer(player) {
-  movingUp(player);
-}
-
-function movingUp(player) {
-  if (player.isUp) {
-
+  if (player.isMoving) {
     if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed * config.settings.SPEED_MULTIPLIER) {
       player.velocity += 0.2;
-    }
-
-
-    player.x += player.velocity * Math.cos(player.angle);
-    player.y += player.velocity * Math.sin(player.angle);
-  } else if (player.isDown) {
-    if (player.velocity > 0) {
-      player.velocity -= 0.2;
-    } else if (player.velocity < 0) {
-      player.velocity = 0;
     }
     player.x += player.velocity * Math.cos(player.angle);
     player.y += player.velocity * Math.sin(player.angle);
   } else {
-
-    if (player.velocity > 1.1) {
+    if (player.velocity > 0.1) {
       player.velocity -= 0.1;
+    } else if (player.velocity <= 0) {
+      player.velocity = 0;
     }
-
     player.x += player.velocity * Math.cos(player.angle);
     player.y += player.velocity * Math.sin(player.angle);
-
-
   }
-
-
 }
-
 
 function constrain(player) {
   if (player.x < 0) {
@@ -288,7 +255,7 @@ function updatePlayerEatingGem(player) {
       player.xp += 200;
 
       io.sockets.emit("removeXpGem", xpGems[i].id);
-      xpGems.splice(i , 1);
+      xpGems.splice(i, 1);
 
       checkIfPlayerHasLeveledUp(player);
     }
@@ -297,7 +264,6 @@ function updatePlayerEatingGem(player) {
 }
 
 function checkIfPlayerHasLeveledUp(player) {
-
   if (playerHasLeveledUp(player)) {
     player.lvl++;
     io.to(player.id).emit('leveledUp');
@@ -306,21 +272,17 @@ function checkIfPlayerHasLeveledUp(player) {
 
 
 function playerHasLeveledUp(player) {
-  let currentLevel = Math.floor(0.04*Math.sqrt(player.xp));
+  let currentLevel = Math.floor(0.04 * Math.sqrt(player.xp));
   return currentLevel > player.lvl;
 }
 
+
 function updatePlayerGettingShot(player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
-    if (bullets[i].bulletSize < 0) {
-      io.sockets.emit('bulletHit', bullets[i].id);
-      bullets.splice(i, 1);
-    } else {
-      processPlayerGettingShotByAnotherPlayer(player, i);
-    }
-
+    processPlayerGettingShotByAnotherPlayer(player, i);
   }
 }
+
 
 function getShooter(clientId) {
   for (let player of players) {
@@ -405,9 +367,7 @@ function hasBulletHitAnAsteroid(i, clientId) {
 
 function createXpGem(asteroid) {
   let sizeOfAsteroid = asteroid.r;
-
   let numberOfGems = Math.floor(sizeOfAsteroid / 30);
-
   let asteroidsGems = [];
 
   for (let i = 0; i < numberOfGems; i++) {

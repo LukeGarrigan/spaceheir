@@ -72,12 +72,7 @@ export function updateBullets(data, bulletIds, bullets) {
           bullets[j].pos.y = data[i].y;
 
         }
-
       }
-
-
-
-
     } else {
       let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id, data[i].bulletSize);
       bulletIds.push(data[i].id);

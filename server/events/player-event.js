@@ -14,10 +14,7 @@ module.exports = function({ socket }, playerData) {
 
   playerData.id = socket.id;
   playerData.shield = config.settings.BASE_SHIELD;
-  playerData.isUp = false;
-  playerData.isDown = false;
-  playerData.isLeft = false;
-  playerData.isRight = false;
+  playerData.isMoving = false;
   playerData.isBoosting = false;
   playerData.r = 21;
   playerData.score = 0;

@@ -4,7 +4,7 @@ let sumOfFrameRates = 1;
 let frameRate = 0;
 
 
-export default function displayFramesPerSecond() {
+export default function displayFramesPerSecond(x, y) {
   totalFrames++;
   let thisLoop = new Date();
   let fps = 1000 / (thisLoop - lastLoop);
@@ -14,6 +14,6 @@ export default function displayFramesPerSecond() {
     frameRate = fps;
   }
 
-  text("FPS: " + floor(frameRate), width - 100, height - 50);
-  text("AVG FPS: " + floor(sumOfFrameRates /totalFrames), width - 100, height - 25);
+  text("FPS: " + floor(frameRate), x+ width/2 - 100, y + height /2- 50);
+  text("AVG FPS: " + floor(sumOfFrameRates /totalFrames), x + width/2  - 100, y + height/2 - 25);
 }
