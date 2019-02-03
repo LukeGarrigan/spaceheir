@@ -504,6 +504,7 @@ function addNewPlayerToLeaderboard(playerData) {
     id: playerData.id,
     name: playerData.name,
     score: playerData.score,
+    lvl: playerData.lvl,
     lastDeath: null
   };
 

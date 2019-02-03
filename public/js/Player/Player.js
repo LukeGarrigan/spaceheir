@@ -6,7 +6,6 @@ export default class Player {
     this.name = name;
     this.pos = createVector(random(width * 3), random(height * 3));
     this.radians = 0;
-    this.isUp = false;
     this.speed = 2;
     this.shield = 0;
     this.score = 0;
@@ -14,6 +13,7 @@ export default class Player {
     this.spaceShipImage = spaceShipImage;
     this.winnerSpaceship = winnerSpaceship;
     this.trail = [];
+    this.lvl = 1;
 
   }
 
@@ -75,7 +75,7 @@ export default class Player {
       text('respawning...', this.pos.x, this.pos.y + 49);
       pop();
     } else {
-      text(`${this.name}`, this.pos.x, this.pos.y + 49);
+      text(`${this.name} (${this.lvl})`, this.pos.x, this.pos.y + 49);
     }
 
     push();

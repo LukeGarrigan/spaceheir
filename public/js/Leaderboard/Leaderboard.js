@@ -18,7 +18,7 @@ export default class Leaderboard {
         fill(255, 69, 0);
         stroke(255, 69, 0);
         textSize(15);
-        text(this._leaders[i].name + " : " + this._leaders[i].score, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
+        text(`${this._leaders[i].name} (${this._leaders[i].lvl}) : ${this._leaders[i].score}`, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
       } else {
         text(this._leaders[i].name + " : " + this._leaders[i].score, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
       }
