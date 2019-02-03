@@ -20,7 +20,7 @@ export default class Leaderboard {
         textSize(15);
         text(`${this._leaders[i].name} (${this._leaders[i].lvl}) : ${this._leaders[i].score}`, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
       } else {
-        text(this._leaders[i].name + " : " + this._leaders[i].score, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
+        text(`${this._leaders[i].name} (${this._leaders[i].lvl}) : ${this._leaders[i].score}`, this.player.pos.x - width / 2 + 25, this.player.pos.y - height / 2 + 50 + i * 20);
       }
       pop();
     }
