@@ -266,7 +266,17 @@ function updatePlayerEatingGem(player) {
 function checkIfPlayerHasLeveledUp(player) {
   if (playerHasLeveledUp(player)) {
     player.lvl++;
+    updatePlayerOnLeaderboard(player);
     io.to(player.id).emit('leveledUp');
+  }
+}
+
+function updatePlayerOnLeaderboard(player) {
+  for (let leader of leaderboard) {
+    if (leader.id === player.id) {
+      leader.lvl = player.lvl;
+      break;
+    }
   }
 }
 
@@ -490,6 +500,7 @@ function updateLeaderboard() {
     for (let j = 0; j < players.length; j++) {
       if (leaderboard[i].id === players[j].id) {
         leaderboard[i].score = players[j].score;
+        leaderboard[i].lvl  = players[j].lvl;
       }
     }
   }
