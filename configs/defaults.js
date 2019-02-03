@@ -1,7 +1,7 @@
 const settings = {
    // Game Size
-   PLAYAREA_WIDTH: 10000,
-   PLAYAREA_HEIGHT: 6000,
+   PLAYAREA_WIDTH: 5000,
+   PLAYAREA_HEIGHT: 3000,
    // FOOD
    NUM_FOOD: 200,
    NUM_ASTEROIDS: 20,

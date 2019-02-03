@@ -3,8 +3,8 @@ export default class Minimap {
   constructor() {
     this.width = 300;
     this.height = 150;
-    this.maxWidth = 10000;
-    this.maxHeight = 6000;
+    this.maxWidth = 5000;
+    this.maxHeight = 3000;
     this.r = 5;
     this.angle = 0;
 
