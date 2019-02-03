@@ -73,7 +73,7 @@ let muteButton;
 let space;
 let gemImage;
 
-let hasPlayerLeveledUp = 0;
+let playerLevelUpPoints = 0;
 let xpBar;
 
 let speedImage;
@@ -188,7 +188,7 @@ window.setup = function () {
   });
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
-  socket.on('leveledUp', () => hasPlayerLeveledUp += 1);
+  socket.on('leveledUp', () => playerLevelUpPoints += 1);
 
 
   gameStarted = true;
@@ -247,9 +247,24 @@ window.draw = function () {
 
 
 function drawLevelUpButtons() {
-  speedOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.additionalSpeed);
-  damageOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.damage);
-  regenOption.display(player.pos.x - width / 2, player.pos.y - height / 2, hasPlayerLeveledUp, player.regen);
+
+  let middleX = player.pos.x - width / 2;
+  let middleY = player.pos.y - height / 2;
+  speedOption.display(middleX, middleY , playerLevelUpPoints, player.additionalSpeed);
+  damageOption.display(middleX, middleY, playerLevelUpPoints, player.damage);
+  regenOption.display(middleX, middleY, playerLevelUpPoints, player.regen);
+
+  if (playerLevelUpPoints > 0 ) {
+    middleY  = middleY + windowHeight / 3.4 + height / 2;
+    middleX = middleX + windowWidth / 2;
+
+    push();
+    fill(0, 255, 0);
+    text(`Points available ${playerLevelUpPoints}`, middleX, middleY + 80);
+    pop();
+  }
+
+
 }
 
 function drawStartScreen() {
@@ -324,15 +339,15 @@ function checkMuteToggled() {
 }
 
 function checkIfPlayerHasChosenALevelOption() {
-  if (hasPlayerLeveledUp > 0) {
+  if (playerLevelUpPoints > 0) {
     if (speedOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp -= 1;
+      playerLevelUpPoints -= 1;
       socket.emit('lvlUp', "speed");
     } else if (damageOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp -= 1;
+      playerLevelUpPoints -= 1;
       socket.emit('lvlUp', "damage");
     } else if (regenOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp -= 1;
+      playerLevelUpPoints -= 1;
       socket.emit('lvlUp', "regen");
     }
   }
@@ -348,7 +363,7 @@ function clientLogging() {
     console.log("foods " + food.length);
     console.log("asteroids  " + asteroids.length);
     console.log("bullets  " + bullets.length);
-    console.log("Power Up Points" + hasPlayerLeveledUp);
+    console.log("Power Up Points" + playerLevelUpPoints);
   }
 
 }

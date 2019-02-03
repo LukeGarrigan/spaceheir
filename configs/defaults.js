@@ -21,7 +21,7 @@ const settings = {
    DEBUG_MODE_Y : 1000,
 
   // lvling options
-  REGEN_MULTIPLIER : 10,
+  REGEN_MULTIPLIER : 4,
   DAMAGE_MULTIPLIER : 7,
   SPEED_MULTIPLIER: 1
 };

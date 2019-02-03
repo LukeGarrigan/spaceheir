@@ -280,19 +280,16 @@ function updatePlayerOnLeaderboard(player) {
   }
 }
 
-
 function playerHasLeveledUp(player) {
   let currentLevel = Math.floor(0.04 * Math.sqrt(player.xp));
   return currentLevel > player.lvl;
 }
-
 
 function updatePlayerGettingShot(player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
     processPlayerGettingShotByAnotherPlayer(player, i);
   }
 }
-
 
 function getShooter(clientId) {
   for (let player of players) {
