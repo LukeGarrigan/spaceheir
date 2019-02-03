@@ -73,7 +73,7 @@ let muteButton;
 let space;
 let gemImage;
 
-let hasPlayerLeveledUp = false;
+let hasPlayerLeveledUp = 0;
 let xpBar;
 
 let speedImage;
@@ -188,7 +188,7 @@ window.setup = function () {
   });
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
-  socket.on('leveledUp', () => hasPlayerLeveledUp = true);
+  socket.on('leveledUp', () => hasPlayerLeveledUp += 1);
 
 
   gameStarted = true;
@@ -324,15 +324,15 @@ function checkMuteToggled() {
 }
 
 function checkIfPlayerHasChosenALevelOption() {
-  if (hasPlayerLeveledUp) {
+  if (hasPlayerLeveledUp > 0) {
     if (speedOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp = false;
+      hasPlayerLeveledUp -= 1;
       socket.emit('lvlUp', "speed");
     } else if (damageOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp = false;
+      hasPlayerLeveledUp -= 1;
       socket.emit('lvlUp', "damage");
     } else if (regenOption.hasPlayerClickedOption(mouseX, mouseY)) {
-      hasPlayerLeveledUp = false;
+      hasPlayerLeveledUp -= 1;
       socket.emit('lvlUp', "regen");
     }
   }
@@ -348,6 +348,7 @@ function clientLogging() {
     console.log("foods " + food.length);
     console.log("asteroids  " + asteroids.length);
     console.log("bullets  " + bullets.length);
+    console.log("Power Up Points" + hasPlayerLeveledUp);
   }
 
 }
