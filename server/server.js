@@ -104,6 +104,7 @@ function broadcastGameStateToPlayers() {
 
   updateBulletPositions();
 
+
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
   io.sockets.emit('bullets', bullets);
@@ -171,6 +172,14 @@ function killPlayer(player) {
 }
 
 
+function processPlayerHittingAsteroid(player) {
+  for (let asteroid of asteroids) {
+    if (Math.abs(asteroid.x - player.x) + Math.abs(asteroid.y - player.y) < asteroid.r / 2) {
+      player.shield -= 1;
+    }
+  }
+}
+
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
     const currentDate = new Date();
@@ -195,6 +204,7 @@ function updatePlayerPosition(player) {
   updatePlayerEatingFood(player);
   updatePlayerGettingShot(player);
   updatePlayerEatingGem(player);
+  processPlayerHittingAsteroid(player);
 }
 
 
@@ -368,6 +378,8 @@ function hasBulletHitAnAsteroid(i, clientId) {
       }
       return true;
     }
+
+
   }
   return false;
 }
