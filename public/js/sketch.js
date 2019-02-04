@@ -221,8 +221,6 @@ window.draw = function () {
     leaderboard.updateLeaderboard(player, leaders);
     displayCurrentWinnerLocation(otherPlayers, player, winnerLocation, leaderboard);
 
-    minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
-    muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
     if (mouseIsPressed && mouseButton === LEFT) {
       processPlayerShooting();
     }
@@ -230,6 +228,12 @@ window.draw = function () {
     drawAsteroids(asteroids);
 
     drawXpGems(player, xpGems);
+
+
+    minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
+    muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
+
+
     hitMarker.display();
     killfeed.displayKillfeed(player.pos, spaceShipImage, winnerSpaceShipImage);
     leaderboard.displayLeaderboard();
