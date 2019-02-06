@@ -44,7 +44,6 @@ let food = [];
 let asteroids = [];
 let asteroidImages = [];
 let bullets = [];
-let bulletIds = [];
 let otherPlayers = [];
 let button, input;
 let gameStarted = false;
@@ -168,7 +167,7 @@ window.setup = function () {
 
   socket.on('playerDisconnected', id => playerDisconnected(id, otherPlayers));
   socket.on('heartbeat', data => updateOtherPlayers(data, player, otherPlayers));
-  socket.on('bullets', data => updateBullets(data, bulletIds, bullets));
+  socket.on('bullets', data => updateBullets(data, bullets));
   socket.on('bulletHit', bullet => removeBullet(bullet, bullets));
   socket.on('leaderboard', leaderboard => leaders = leaderboard);
   socket.on('increaseShield', data => displayIncreasedShieldMessage(data, popups, player));
@@ -183,7 +182,7 @@ window.setup = function () {
   socket.on('killfeed', data => processKillFeedAddition(data, killfeed));
   socket.on('processShotSound', () => {
     if (!muteButton.isMuted) {
-      shotSound.play();
+      // shotSound.play();
     }
   });
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
@@ -367,7 +366,15 @@ function clientLogging() {
     console.log("foods " + food.length);
     console.log("asteroids  " + asteroids.length);
     console.log("bullets  " + bullets.length);
-    console.log("Power Up Points" + playerLevelUpPoints);
+    console.log("Power Up Points " + playerLevelUpPoints);
+
+    let totalParticles = 0;
+    for (let asteroid of asteroids) {
+      totalParticles += asteroid.particles.length;
+    }
+
+    console.log("Number of particles " + totalParticles);
+
   }
 
 }

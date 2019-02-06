@@ -23,7 +23,6 @@ let lastBulletId = 0;
 let lastXpGemId = 0;
 let asteroids = [];
 let xpGems = [];
-
 let lastLog = 0;
 
 
@@ -107,7 +106,11 @@ function broadcastGameStateToPlayers() {
 
   io.sockets.emit('leaderboard', leaderboard);
   io.sockets.emit('heartbeat', players);
-  io.sockets.emit('bullets', bullets);
+
+  if (bullets.length > 0) {
+    io.sockets.emit('bullets', bullets);
+  }
+
 }
 
 function logServerInfo() {
@@ -139,6 +142,7 @@ function updateBulletPositions() {
       removeBulletFromGame(i);
       bullets.splice(i, 1);
     } else if (bullets[i].bulletSize <= 1) {
+      removeBulletFromGame(i);
       bullets.splice(i, 1);
     }
   }

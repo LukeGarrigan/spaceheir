@@ -1,30 +1,16 @@
 export default class Bullet{
-  constructor(x, y, playerAngle, shooterId, id, bulletSize) {
+  constructor(x, y, id) {
     this.pos = createVector(x, y);
-    this.velocity = p5.Vector.fromAngle(playerAngle);
-    this.velocity.mult(30);
     this.r = 10;
     this.id = id;
-    this.bulletSize = bulletSize;
   }
 
   update() {
-    this.r = lerp(this.r, 0, 0.01);
-    this.bulletSize--;
+    this.r -= 0.01;
   }
 
   display() {
     fill(255);
     ellipse(this.pos.x, this.pos.y, this.r, this.r);
-  }
-
-  hasBulletDiminished() {
-    if (this.hasDiminished()) {
-      return true;
-    }
-  }
-
-  hasDiminished() {
-    return this.r <= 1;
   }
 }

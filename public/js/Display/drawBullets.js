@@ -6,8 +6,5 @@ export default function(bullets, player) {
     if (isWithinScreen(player, bullets[i].pos)) {
       bullets[i].display();
     }
-    if (bullets[i].hasBulletDiminished()) {
-      bullets.splice(i, 1);
-    }
   }
 }

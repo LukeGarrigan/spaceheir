@@ -55,27 +55,19 @@ export function updateOtherPlayers(data, player, otherPlayers) {
   }
 }
 
-export function updateBullets(data, bulletIds, bullets) {
+export function updateBullets(data, bullets) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;
-    for (let j = 0; j < bulletIds.length; j++) {
-      if (data[i].id === bulletIds[j]) {
+    for (let j = 0; j < bullets.length; j++) {
+      if (data[i].id === bullets[j].id) {
         exists = true;
+        bullets[j].pos.x = data[i].x;
+        bullets[j].pos.y = data[i].y;
         break;
       }
     }
-
-    if (exists) {
-      for (let j = 0; j < bullets.length; j++) {
-        if (data[i].id === bullets[j].id) {
-          bullets[j].pos.x = data[i].x;
-          bullets[j].pos.y = data[i].y;
-
-        }
-      }
-    } else {
-      let bullet = new Bullet(data[i].x, data[i].y, data[i].angle, data[i].clientId, data[i].id, data[i].bulletSize);
-      bulletIds.push(data[i].id);
+    if (!exists) {
+      let bullet = new Bullet(data[i].x, data[i].y, data[i].id);
       bullets.push(bullet);
     }
   }
@@ -85,7 +77,9 @@ export function updateBullets(data, bulletIds, bullets) {
 
 export function removeBullet(id, bullets) {
   let index = getBullet(id, bullets);
-  bullets.splice(index, 1);
+  if (index) {
+    bullets.splice(index, 1);
+  }
 }
 
 function getBullet(id, bullets) {
