@@ -6,7 +6,10 @@ module.exports = function({ socket }, playerData) {
 
 
 
-  if(!validName(playerData)) return;
+  if(!validName(playerData)) {
+    socket.emit("invalidUsername", playerData.name);
+    return;
+  }
 
   if (playerAlreadyExists(socket)) return;
 
