@@ -88,6 +88,9 @@ let speedOption;
 let damageOption;
 let regenOption;
 
+let isInvalidUsername = false;
+let invalidUsername;
+let invalidUsernameLabel;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
@@ -119,36 +122,48 @@ function loadImages() {
 }
 
 function loadSounds() {
-    shotSound = new Howl({
-        src: ['assets/sounds/shot.wav'],
-        volume: 0.05
+  shotSound = new Howl({
+    src: ['assets/sounds/shot.wav'],
+    volume: 0.05
 
-    });
+  });
 
-    explosionSound = new Howl({
-        src: ['assets/sounds/explode1.wav'],
-        volume: 0.2
-    });
-    hitMarkerSound = new Howl({
-        src: ['assets/sounds/hitmarker.mp3'],
-        volume: 0.5
-    });
+  explosionSound = new Howl({
+    src: ['assets/sounds/explode1.wav'],
+    volume: 0.2
+  });
+  hitMarkerSound = new Howl({
+    src: ['assets/sounds/hitmarker.mp3'],
+    volume: 0.5
+  });
 }
 
 window.setup = function () {
-
+  clear();
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  input = createInput().attribute('placeholder', 'username');
 
+  if (isInvalidUsername) {
+    invalidUsernameLabel = createElement('h2', `Username ${invalidUsername} already taken`);
+    invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
+    var colour = color(255, 23, 32);
+
+    invalidUsernameLabel.style('color', colour);
+  }
+
+  input = createInput().attribute('placeholder', 'username');
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
+
   button = createButton("Play");
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(function () {
 
     let inputValue = input.value().replace(/[^\x00-\x7F]/g, "");
     if (inputValue.length >= 2 && inputValue.length < 15) {
-      button.style("visibility", "hidden");
-      input.style("visibility", "hidden");
+      if (invalidUsernameLabel) {
+        invalidUsernameLabel.remove();
+      }
+      button.remove();
+      input.remove();
       player = new Player(inputValue, spaceShipImage, winnerSpaceShipImage);
       hitMarker = new HitMarker();
       killfeed = new Killfeed();
@@ -171,6 +186,7 @@ window.setup = function () {
         name: player.name
       };
       socket.emit('player', playerPosition);
+      gameStarted = true;
     }
   });
 
@@ -198,14 +214,20 @@ window.setup = function () {
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
+  socket.on('invalidUsername', userEnteredInvalidUsername);
 
-
-  gameStarted = true;
 
   loadSounds();
   loadImages();
 
 };
+
+function userEnteredInvalidUsername(data) {
+  gameStarted = false;
+  isInvalidUsername = true;
+  invalidUsername = data;
+  window.setup();
+}
 
 
 window.mouseWheel = function (event) {
@@ -263,12 +285,12 @@ function drawLevelUpButtons() {
 
   let middleX = player.pos.x - width / 2;
   let middleY = player.pos.y - height / 2;
-  speedOption.display(middleX, middleY , playerLevelUpPoints, player.additionalSpeed);
+  speedOption.display(middleX, middleY, playerLevelUpPoints, player.additionalSpeed);
   damageOption.display(middleX, middleY, playerLevelUpPoints, player.damage);
   regenOption.display(middleX, middleY, playerLevelUpPoints, player.regen);
 
-  if (playerLevelUpPoints > 0 ) {
-    middleY  = middleY + windowHeight / 3.4 + height / 2;
+  if (playerLevelUpPoints > 0) {
+    middleY = middleY + windowHeight / 3.4 + height / 2;
     middleX = middleX + windowWidth / 2;
 
     push();
@@ -329,6 +351,9 @@ window.onresize = function () {
   canvas.size(window.innerWidth, window.innerHeight);
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+  if (invalidUsernameLabel) {
+    invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
+  }
 };
 
 
