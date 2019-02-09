@@ -30,7 +30,9 @@ module.exports = function({ socket }, playerData) {
   playerData.speed = 0;
   playerData.damage = 0;
   playerData.regen = 0;
+  playerData.bulletSpeed = 0;
   playerData.establishedLevel = 1;
+
   if (config.settings.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;

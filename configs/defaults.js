@@ -23,7 +23,8 @@ const settings = {
   // lvling options
   REGEN_MULTIPLIER : 4,
   DAMAGE_MULTIPLIER : 7,
-  SPEED_MULTIPLIER: 1
+  SPEED_MULTIPLIER: 1,
+  BULLET_SPEED_MULTIPLIER : 10,
 };
 
 module.exports= {

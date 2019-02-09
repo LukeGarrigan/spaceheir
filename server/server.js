@@ -74,8 +74,8 @@ function setupFood() {
 function setupAsteroids() {
 
   for (let i = 0; i < config.settings.NUM_ASTEROIDS; i++) {
-    let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH -700 )) + 700;
-    let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT -600)) + 600;
+    let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH - 700)) + 700;
+    let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT - 600)) + 600;
     let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
     let asteroidRadius = Math.floor(Math.random() * 300) + 50;
 
@@ -133,8 +133,8 @@ function logServerInfo() {
 function updateBulletPositions() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     let speed = 20;
-    bullets[i].x += speed * Math.cos(bullets[i].angle);
-    bullets[i].y += speed * Math.sin(bullets[i].angle);
+    bullets[i].x += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.cos(bullets[i].angle);
+    bullets[i].y += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.sin(bullets[i].angle);
     bullets[i].bulletSize--;
 
 
@@ -491,7 +491,8 @@ function processPlayerShooting(player, socket) {
         angle: player.angle,
         id: lastBulletId,
         clientId: player.id,
-        bulletSize: 100
+        bulletSize: 100,
+        bulletSpeed: player.bulletSpeed
       };
       bullets.push(bullet);
     }
@@ -513,7 +514,7 @@ function updateLeaderboard() {
     for (let j = 0; j < players.length; j++) {
       if (leaderboard[i].id === players[j].id) {
         leaderboard[i].score = players[j].score;
-        leaderboard[i].lvl  = players[j].lvl;
+        leaderboard[i].lvl = players[j].lvl;
       }
     }
   }
