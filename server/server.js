@@ -164,6 +164,7 @@ function killPlayer(player) {
   player.additionalSpeed = 0;
   player.damage = 0;
   player.regen = 0;
+  player.bulletSpeed = 0;
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
