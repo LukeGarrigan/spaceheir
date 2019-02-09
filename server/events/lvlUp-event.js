@@ -12,6 +12,9 @@ module.exports = function ({socket}, direction) {
       } else if (direction === "regen") {
         players[i].regen += 1;
         players[i].establishedLevel += 1;
+      } else if (direction === "bulletSpeed") {
+        players[i].bulletSpeed += 1;
+        players[i].establishedLevel += 1;
       }
     }
   }
