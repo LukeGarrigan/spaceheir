@@ -247,11 +247,10 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
-
   if (gameStarted && player) {
     parallaxScrolling(player.x, player.y, space);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    drawBullets(bullets, player);
+
     player.display(leaders);
     drawPopups(popups);
     drawFood(player, food);
@@ -264,7 +263,7 @@ window.draw = function () {
     }
 
     drawAsteroids(asteroids);
-
+    drawBullets(bullets, player);
     drawXpGems(player, xpGems);
 
 
