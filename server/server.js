@@ -1,8 +1,11 @@
-let config = require('../configs/defaults.js')
+let config = require('../configs/defaults.js');
 
 
-var compression = require('compression');
+let compression = require('compression');
 let express = require('express');
+let setupFood = require('./setupFood.js');
+let setupAsteroids = require('./setupAsteroids.js');
+let respawnAsteroid = require('./respawnAsteroid.js');
 
 let app = express();
 app.use(compression());
@@ -27,8 +30,8 @@ let xpGems = [];
 let lastLog = 0;
 
 
-setupFood();
-setupAsteroids();
+foods = setupFood();
+asteroids = setupAsteroids();
 setInterval(broadcastGameStateToPlayers, 14);
 
 module.exports = {
@@ -55,44 +58,6 @@ io.sockets.on('connection', function newConnection(socket) {
   socket.emit('foods', foods);
   socket.emit('asteroids', asteroids);
 });
-
-function setupFood() {
-  for (let i = 0; i < config.settings.NUM_FOOD; i++) {
-    let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-    let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-    let foodRadius = Math.floor(Math.random() * 22) + 15;
-
-    let food = {
-      x: foodX,
-      y: foodY,
-      r: foodRadius,
-      id: i
-    };
-    foods.push(food);
-  }
-}
-
-function setupAsteroids() {
-
-  for (let i = 0; i < config.settings.NUM_ASTEROIDS; i++) {
-    let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH - 700)) + 700;
-    let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT - 600)) + 600;
-    let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
-    let asteroidRadius = Math.floor(Math.random() * 300) + 50;
-
-    let asteroid = {
-      x: asteroidX,
-      y: asteroidY,
-      id: i,
-      health: asteroidRadius * 2,
-      asteroidIndex: asteroidIndex,
-      r: asteroidRadius
-    };
-
-    asteroids.push(asteroid);
-
-  }
-}
 
 
 function broadcastGameStateToPlayers() {
@@ -375,12 +340,10 @@ function hasBulletHitAnAsteroid(i, clientId) {
       asteroid.health -= 10 + shooter.damage * config.settings.DAMAGE_MULTIPLIER / 2;
       if (asteroid.health <= 0) {
         createXpGem(asteroid);
-        respawnAsteroid(asteroid);
+        respawnAsteroid(asteroid, io);
       }
       return true;
     }
-
-
   }
   return false;
 }
@@ -406,25 +369,6 @@ function createXpGem(asteroid) {
 }
 
 
-function respawnAsteroid(asteroid) {
-  let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-  let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-  let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
-  let asteroidRadius = Math.floor(Math.random() * 300) + 50;
-
-
-  asteroid.x = asteroidX;
-  asteroid.y = asteroidY;
-  asteroid.asteroidIndex = asteroidIndex;
-  asteroid.r = asteroidRadius;
-  asteroid.health = asteroidRadius * 2;
-
-  let tempAsteroids = [];
-
-  tempAsteroids.push(asteroid);
-
-  io.sockets.emit("asteroids", tempAsteroids);
-}
 
 
 function hasBulletHit(i, playerOrAsteroid, radius) {

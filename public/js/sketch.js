@@ -150,7 +150,7 @@ window.setup = function () {
   if (isInvalidUsername) {
     invalidUsernameLabel = createElement('h2', `Username ${invalidUsername} already taken`);
     invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
-    var colour = color(255, 23, 32);
+    let colour = color(255, 23, 32);
 
     invalidUsernameLabel.style('color', colour);
   }
