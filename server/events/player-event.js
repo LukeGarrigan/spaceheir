@@ -1,6 +1,6 @@
-const { players, addNewPlayerToLeaderboard } = require('../server');
+const { players} = require('../server');
 const config = require('../../configs/defaults');
-
+let leaderboardService = require('../services/leaderboardService')
 
 module.exports = function({ socket }, playerData) {
 
@@ -38,7 +38,7 @@ module.exports = function({ socket }, playerData) {
     playerData.y = 1000;
   }
   players.push(playerData);
-  addNewPlayerToLeaderboard(playerData);
+  leaderboardService.addNewPlayerToLeaderboard(playerData);
 };
 
 function playerAlreadyExists(socket) {

@@ -1,5 +1,5 @@
-const { players, leaderboard } = require('../server');
-
+const { players } = require('../server');
+const leaderboardService  = require('../services/leaderboardService');
 module.exports = function({ socket }) {
   console.log("Player disconnected");
 
@@ -9,10 +9,9 @@ module.exports = function({ socket }) {
     }
   }
 
-  for (let i = leaderboard.length - 1; i >= 0; i--) {
-    if (leaderboard[i].id === socket.id) {
-      leaderboard.splice(i, 1);
-    }
-  }
+
+
+  leaderboardService.removePlayerFromLeaderboard(socket.id);
+
   socket.broadcast.emit('playerDisconnected', socket.id);
 }
