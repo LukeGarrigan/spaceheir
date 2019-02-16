@@ -20,6 +20,7 @@ import drawXpGems from "./Display/drawXpGems.js";
 import drawFood from "./Display/drawFood.js";
 import drawBullets from "./Display/drawBullets.js";
 import drawPopups from "./Display/drawPopups.js";
+import {IS_DEBUG_MODE} from "./Constants.js";
 
 
 import {
@@ -89,7 +90,6 @@ let regenOption;
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
-
 
 function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
@@ -357,7 +357,7 @@ function checkIfPlayerHasChosenALevelOption() {
 }
 
 function clientLogging() {
-  if (frameCount % 300 === 0) {
+  if (IS_DEBUG_MODE && frameCount % 300 === 0) {
     console.log("*******************************");
     console.log("Asteroids " + asteroids.length);
     console.log("XpGems " + xpGems.length);
@@ -372,11 +372,8 @@ function clientLogging() {
     for (let asteroid of asteroids) {
       totalParticles += asteroid.particles.length;
     }
-
     console.log("Number of particles " + totalParticles);
-
   }
-
 }
 
 
