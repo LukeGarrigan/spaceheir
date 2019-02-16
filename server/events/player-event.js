@@ -1,12 +1,15 @@
-const { players, addNewPlayerToLeaderboard } = require('../server');
+const { players} = require('../server');
 const config = require('../../configs/defaults');
-
+let leaderboardService = require('../services/leaderboardService')
 
 module.exports = function({ socket }, playerData) {
 
 
 
-  if(!validName(playerData)) return;
+  if(!validName(playerData)) {
+    socket.emit("invalidUsername", playerData.name);
+    return;
+  }
 
   if (playerAlreadyExists(socket)) return;
 
@@ -27,13 +30,15 @@ module.exports = function({ socket }, playerData) {
   playerData.speed = 0;
   playerData.damage = 0;
   playerData.regen = 0;
+  playerData.bulletSpeed = 0;
   playerData.establishedLevel = 1;
+
   if (config.settings.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;
   }
   players.push(playerData);
-  addNewPlayerToLeaderboard(playerData);
+  leaderboardService.addNewPlayerToLeaderboard(playerData);
 };
 
 function playerAlreadyExists(socket) {

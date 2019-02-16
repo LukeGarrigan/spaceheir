@@ -11,6 +11,7 @@ import MuteButton from "./MuteButton/MuteButton.js";
 import SpeedLevelOption from "./LevelOptions/SpeedLevelOption.js";
 import DamageLevelOption from "./LevelOptions/DamageLevelOption.js";
 import RegenLevelOption from "./LevelOptions/RegenLevelOption.js";
+import BulletSpeedLevelOption from "./LevelOptions/BulletSpeedLevelOption.js";
 import parallaxScrolling from "./Display/parallaxScrolling.js";
 import drawAsteroids from "./Display/drawAsteroids.js";
 import displayCurrentWinnerLocation from "./Display/displayCurrentWinnerLocation.js";
@@ -38,8 +39,6 @@ import {
   updateFoods,
   updateOtherPlayers,
 } from './game-logic.js'
-
-
 let player;
 let food = [];
 let asteroids = [];
@@ -79,15 +78,20 @@ let xpBar;
 let speedImage;
 let damageImage;
 let regenImage;
+let bulletSpeedImage;
 let transparentDamageImage;
 let transparentSpeedImage;
 let transparentRegenImage;
-
+let transparentBulletSpeedImage;
 
 let speedOption;
 let damageOption;
 let regenOption;
+let bulletSpeedOption;
 
+let isInvalidUsername = false;
+let invalidUsername;
+let invalidUsernameLabel;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
@@ -105,9 +109,13 @@ function loadImages() {
   speedImage = loadImage("assets/images/speed.png");
   damageImage = loadImage("assets/images/damage.png");
   regenImage = loadImage("assets/images/regen.png");
+  bulletSpeedImage = loadImage("assets/images/bulletSpeed.png");
+
   transparentDamageImage = loadImage("assets/images/damageTransparent.png");
   transparentRegenImage = loadImage("assets/images/regenTransparent.png");
   transparentSpeedImage = loadImage("assets/images/speedTransparent.png");
+  transparentBulletSpeedImage = loadImage("assets/images/bulletSpeedTransparent.png");
+
   let asteroidGreyImage = loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
   let asteroidGreyImage2 = loadImage("assets/images/asteroidGrey2.png");
@@ -118,27 +126,48 @@ function loadImages() {
 }
 
 function loadSounds() {
-  shotSound = loadSound('assets/sounds/shot.wav');
-  explosionSound = loadSound('assets/sounds/explode1.wav');
-  hitMarkerSound = loadSound("assets/sounds/hitmarker.mp3");
-  shotSound.setVolume(0.001);
-  explosionSound.setVolume(0.2);
+  shotSound = new Howl({
+    src: ['assets/sounds/shot.wav'],
+    volume: 0.05
+
+  });
+
+  explosionSound = new Howl({
+    src: ['assets/sounds/explode1.wav'],
+    volume: 0.2
+  });
+  hitMarkerSound = new Howl({
+    src: ['assets/sounds/hitmarker.mp3'],
+    volume: 0.5
+  });
 }
 
 window.setup = function () {
-
+  clear();
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  input = createInput().attribute('placeholder', 'username');
 
+  if (isInvalidUsername) {
+    invalidUsernameLabel = createElement('h2', `Username ${invalidUsername} already taken`);
+    invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
+    let colour = color(255, 23, 32);
+
+    invalidUsernameLabel.style('color', colour);
+  }
+
+  input = createInput().attribute('placeholder', 'username');
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
+
   button = createButton("Play");
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
   button.mousePressed(function () {
 
     let inputValue = input.value().replace(/[^\x00-\x7F]/g, "");
     if (inputValue.length >= 2 && inputValue.length < 15) {
-      button.style("visibility", "hidden");
-      input.style("visibility", "hidden");
+      if (invalidUsernameLabel) {
+        invalidUsernameLabel.remove();
+      }
+      button.remove();
+      input.remove();
       player = new Player(inputValue, spaceShipImage, winnerSpaceShipImage);
       hitMarker = new HitMarker();
       killfeed = new Killfeed();
@@ -148,9 +177,11 @@ window.setup = function () {
       muteButton = new MuteButton(soundOn, soundOff);
 
 
-      speedOption = new SpeedLevelOption(speedImage, transparentSpeedImage);
+
+      speedOption = new SpeedLevelOption(speedImage, transparentSpeedImage );
       damageOption = new DamageLevelOption(damageImage, transparentDamageImage);
       regenOption = new RegenLevelOption(regenImage, transparentRegenImage);
+      bulletSpeedOption =  new BulletSpeedLevelOption(bulletSpeedImage, transparentBulletSpeedImage);
 
       xpBar = new XpBar();
 
@@ -161,6 +192,7 @@ window.setup = function () {
         name: player.name
       };
       socket.emit('player', playerPosition);
+      gameStarted = true;
     }
   });
 
@@ -188,14 +220,20 @@ window.setup = function () {
   socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
+  socket.on('invalidUsername', userEnteredInvalidUsername);
 
-
-  gameStarted = true;
 
   loadSounds();
   loadImages();
 
 };
+
+function userEnteredInvalidUsername(data) {
+  gameStarted = false;
+  isInvalidUsername = true;
+  invalidUsername = data;
+  window.setup();
+}
 
 
 window.mouseWheel = function (event) {
@@ -208,11 +246,10 @@ window.draw = function () {
   fill(255);
   scale(1);
   textSize(15);
-
   if (gameStarted && player) {
     parallaxScrolling(player.x, player.y, space);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
-    drawBullets(bullets, player);
+
     player.display(leaders);
     drawPopups(popups);
     drawFood(player, food);
@@ -225,7 +262,7 @@ window.draw = function () {
     }
 
     drawAsteroids(asteroids);
-
+    drawBullets(bullets, player);
     drawXpGems(player, xpGems);
 
 
@@ -253,12 +290,14 @@ function drawLevelUpButtons() {
 
   let middleX = player.pos.x - width / 2;
   let middleY = player.pos.y - height / 2;
-  speedOption.display(middleX, middleY , playerLevelUpPoints, player.additionalSpeed);
+  speedOption.display(middleX, middleY, playerLevelUpPoints, player.additionalSpeed);
   damageOption.display(middleX, middleY, playerLevelUpPoints, player.damage);
   regenOption.display(middleX, middleY, playerLevelUpPoints, player.regen);
+  bulletSpeedOption.display(middleX, middleY, playerLevelUpPoints, player.bulletSpeed);
 
-  if (playerLevelUpPoints > 0 ) {
-    middleY  = middleY + windowHeight / 3.4 + height / 2;
+
+  if (playerLevelUpPoints > 0) {
+    middleY = middleY + windowHeight / 3.4 + height / 2;
     middleX = middleX + windowWidth / 2;
 
     push();
@@ -319,6 +358,9 @@ window.onresize = function () {
   canvas.size(window.innerWidth, window.innerHeight);
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+  if (invalidUsernameLabel) {
+    invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
+  }
 };
 
 
@@ -352,6 +394,9 @@ function checkIfPlayerHasChosenALevelOption() {
     } else if (regenOption.hasPlayerClickedOption(mouseX, mouseY)) {
       playerLevelUpPoints -= 1;
       socket.emit('lvlUp', "regen");
+    } else if (bulletSpeedOption.hasPlayerClickedOption(mouseX, mouseY)) {
+      playerLevelUpPoints -= 1;
+      socket.emit('lvlUp', "bulletSpeed");
     }
   }
 }

@@ -9,7 +9,7 @@ const settings = {
    // SHIELDS
    MAX_SHIELD: 1000,
    MAX_SHIELD_REDUCTION: 75,
-   BASE_SHIELD: 100,
+   BASE_SHIELD: 500,
    //SPEED
    BASE_SPEED: 5,
 
@@ -23,7 +23,8 @@ const settings = {
   // lvling options
   REGEN_MULTIPLIER : 4,
   DAMAGE_MULTIPLIER : 7,
-  SPEED_MULTIPLIER: 1
+  SPEED_MULTIPLIER: 1,
+  BULLET_SPEED_MULTIPLIER : 10,
 };
 
 module.exports= {

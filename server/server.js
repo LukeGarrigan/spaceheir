@@ -1,9 +1,13 @@
-let config = require('../configs/defaults.js')
+let config = require('../configs/defaults.js');
 
 
-var compression = require('compression');
+let compression = require('compression');
 let express = require('express');
-
+let setupFood = require('./setupFood.js');
+let setupAsteroids = require('./setupAsteroids.js');
+let asteroidService = require('./services/asteroidService.js');
+let playerService = require('./services/playerService.js');
+let leaderboardService = require('./services/leaderboardService.js');
 let app = express();
 app.use(compression());
 
@@ -18,7 +22,6 @@ let playersLastShot = [];
 const players = [];
 let bullets = [];
 let foods = [];
-let leaderboard = [];
 let lastBulletId = 0;
 let lastXpGemId = 0;
 let asteroids = [];
@@ -26,15 +29,13 @@ let xpGems = [];
 let lastLog = 0;
 
 
-setupFood();
-setupAsteroids();
+foods = setupFood();
+asteroids = setupAsteroids();
 setInterval(broadcastGameStateToPlayers, 14);
 
 module.exports = {
   players,
-  addNewPlayerToLeaderboard,
   processPlayerShooting,
-  leaderboard,
   bullets
 };
 
@@ -50,48 +51,10 @@ io.sockets.on('connection', function newConnection(socket) {
     });
   }
 
-  setupPlayerLastShot(socket);
+  playerService.setupPlayerLastShot(socket);
   socket.emit('foods', foods);
   socket.emit('asteroids', asteroids);
 });
-
-function setupFood() {
-  for (let i = 0; i < config.settings.NUM_FOOD; i++) {
-    let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-    let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-    let foodRadius = Math.floor(Math.random() * 22) + 15;
-
-    let food = {
-      x: foodX,
-      y: foodY,
-      r: foodRadius,
-      id: i
-    };
-    foods.push(food);
-  }
-}
-
-function setupAsteroids() {
-
-  for (let i = 0; i < config.settings.NUM_ASTEROIDS; i++) {
-    let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-    let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-    let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
-    let asteroidRadius = Math.floor(Math.random() * 300) + 50;
-
-    let asteroid = {
-      x: asteroidX,
-      y: asteroidY,
-      id: i,
-      health: asteroidRadius * 2,
-      asteroidIndex: asteroidIndex,
-      r: asteroidRadius
-    };
-
-    asteroids.push(asteroid);
-
-  }
-}
 
 
 function broadcastGameStateToPlayers() {
@@ -104,7 +67,9 @@ function broadcastGameStateToPlayers() {
   updateBulletPositions();
 
 
-  io.sockets.emit('leaderboard', leaderboard);
+
+
+  leaderboardService.emitLeaderboard(io);
   io.sockets.emit('heartbeat', players);
 
   if (bullets.length > 0) {
@@ -123,7 +88,6 @@ function logServerInfo() {
     console.log("asteroids  " + asteroids.length);
     console.log("bullets  " + bullets.length);
     console.log("players last shot " + playersLastShot.length);
-    console.log("leaderboard " + leaderboard.length);
   }
   lastLog++;
 
@@ -133,8 +97,8 @@ function logServerInfo() {
 function updateBulletPositions() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     let speed = 20;
-    bullets[i].x += speed * Math.cos(bullets[i].angle);
-    bullets[i].y += speed * Math.sin(bullets[i].angle);
+    bullets[i].x += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.cos(bullets[i].angle);
+    bullets[i].y += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.sin(bullets[i].angle);
     bullets[i].bulletSize--;
 
 
@@ -164,25 +128,18 @@ function killPlayer(player) {
   player.additionalSpeed = 0;
   player.damage = 0;
   player.regen = 0;
+  player.bulletSpeed = 0;
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
   player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
 
-  updateLeaderboard();
+  leaderboardService.updateLeaderboard(players);
   io.sockets.emit('heartbeat', players);
-  io.to(player.id).emit('respawn-start', timeOutInSeconds)
+  io.to(player.id).emit('respawn-start', timeOutInSeconds);
   io.to(player.id).emit('playExplosion');
 }
 
-
-function processPlayerHittingAsteroid(player) {
-  for (let asteroid of asteroids) {
-    if (Math.abs(asteroid.x - player.x) + Math.abs(asteroid.y - player.y) < asteroid.r / 2) {
-      player.shield -= 1;
-    }
-  }
-}
 
 function updatePlayerPosition(player) {
   if (player.lastDeath !== null) {
@@ -190,7 +147,7 @@ function updatePlayerPosition(player) {
     if (player.lastDeath > currentDate) {
       return
     } else {
-      io.to(player.id).emit('respawn-end')
+      io.to(player.id).emit('respawn-end');
       player.lastDeath = null
     }
   }
@@ -201,67 +158,17 @@ function updatePlayerPosition(player) {
   } else if (player.shield > config.settings.MAX_SHIELD) {
     player.shield = config.settings.MAX_SHIELD;
   }
-  movePlayer(player);
+  playerService.movePlayer(player);
 
   // constrain - so moving to the edge of the screen
-  constrain(player);
-  updatePlayerEatingFood(player);
+  playerService.constrain(player);
+  playerService.updatePlayerEatingFood(player, foods, io);
   updatePlayerGettingShot(player);
   updatePlayerEatingGem(player);
-  processPlayerHittingAsteroid(player);
+
+  asteroidService.processPlayerHittingAsteroid(player, asteroids);
 }
 
-
-function movePlayer(player) {
-  if (player.isMoving) {
-    if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed * config.settings.SPEED_MULTIPLIER) {
-      player.velocity += 0.2;
-    }
-    player.x += player.velocity * Math.cos(player.angle);
-    player.y += player.velocity * Math.sin(player.angle);
-  } else {
-    if (player.velocity > 0.1) {
-      player.velocity -= 0.1;
-    } else if (player.velocity <= 0) {
-      player.velocity = 0;
-    }
-    player.x += player.velocity * Math.cos(player.angle);
-    player.y += player.velocity * Math.sin(player.angle);
-  }
-}
-
-function constrain(player) {
-  if (player.x < 0) {
-    player.x = config.settings.PLAYAREA_WIDTH;
-  } else if (player.x > config.settings.PLAYAREA_WIDTH) {
-    player.x = 0;
-  }
-
-  if (player.y < 0) {
-    player.y = config.settings.PLAYAREA_HEIGHT;
-  } else if (player.y > config.settings.PLAYAREA_HEIGHT) {
-    player.y = 0;
-  }
-}
-
-function updatePlayerEatingFood(player) {
-  for (let i = 0; i < foods.length; i++) {
-    if (Math.abs(foods[i].x - player.x) + Math.abs(foods[i].y - player.y) < 21 + foods[i].r) {
-      if (player.shield < config.settings.MAX_SHIELD) {
-        player.shield += foods[i].r + player.regen * config.settings.REGEN_MULTIPLIER;
-        io.to(player.id).emit('increaseShield', foods[i].r + player.regen * config.settings.REGEN_MULTIPLIER);
-      }
-      let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-      let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-      foods[i].x = foodX;
-      foods[i].y = foodY;
-
-      let foodArray = [];
-      foodArray.push(foods[i]);
-      io.sockets.emit('foods', foodArray);
-    }
-  }
-}
 
 function updatePlayerEatingGem(player) {
   for (let i = xpGems.length - 1; i >= 0; i--) {
@@ -271,33 +178,11 @@ function updatePlayerEatingGem(player) {
       io.sockets.emit("removeXpGem", xpGems[i].id);
       xpGems.splice(i, 1);
 
-      checkIfPlayerHasLeveledUp(player);
-    }
-
-  }
-}
-
-function checkIfPlayerHasLeveledUp(player) {
-  if (playerHasLeveledUp(player)) {
-    player.lvl++;
-    updatePlayerOnLeaderboard(player);
-    io.to(player.id).emit('leveledUp');
-  }
-}
-
-function updatePlayerOnLeaderboard(player) {
-  for (let leader of leaderboard) {
-    if (leader.id === player.id) {
-      leader.lvl = player.lvl;
-      break;
+      playerService.processPlayerLevelingUp(player, io);
     }
   }
 }
 
-function playerHasLeveledUp(player) {
-  let currentLevel = Math.floor(0.04 * Math.sqrt(player.xp));
-  return currentLevel > player.lvl;
-}
 
 function updatePlayerGettingShot(player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
@@ -352,8 +237,8 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
 
 
       // can shift into when the player dies
-      let isCurrentPlayerWinning = checkIfCurrentPlayerIsWinning(player.id);
-      let isCurrentKillerWinning = checkIfCurrentPlayerIsWinning(bullets[i].clientId);
+      let isCurrentPlayerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(player.id);
+      let isCurrentKillerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(bullets[i].clientId);
       console.log("Is player winning" + isCurrentPlayerWinning);
       console.log("Is killer winning" + isCurrentKillerWinning);
 
@@ -378,12 +263,10 @@ function hasBulletHitAnAsteroid(i, clientId) {
       asteroid.health -= 10 + shooter.damage * config.settings.DAMAGE_MULTIPLIER / 2;
       if (asteroid.health <= 0) {
         createXpGem(asteroid);
-        respawnAsteroid(asteroid);
+        asteroidService.respawnAsteroid(asteroid, io);
       }
       return true;
     }
-
-
   }
   return false;
 }
@@ -409,27 +292,6 @@ function createXpGem(asteroid) {
 }
 
 
-function respawnAsteroid(asteroid) {
-  let asteroidX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-  let asteroidY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-  let asteroidIndex = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
-  let asteroidRadius = Math.floor(Math.random() * 300) + 50;
-
-
-  asteroid.x = asteroidX;
-  asteroid.y = asteroidY;
-  asteroid.asteroidIndex = asteroidIndex;
-  asteroid.r = asteroidRadius;
-  asteroid.health = asteroidRadius * 2;
-
-  let tempAsteroids = [];
-
-  tempAsteroids.push(asteroid);
-
-  io.sockets.emit("asteroids", tempAsteroids);
-}
-
-
 function hasBulletHit(i, playerOrAsteroid, radius) {
   return Math.abs(bullets[i].x - playerOrAsteroid.x) + Math.abs(bullets[i].y - playerOrAsteroid.y) < radius;
 }
@@ -441,7 +303,7 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
       console.log("Increasing players score!!!");
       players[i].score++;
       players[i].xp += 2000;
-      checkIfPlayerHasLeveledUp(players[i]);
+      playerService.processPlayerLevelingUp(players[i], io);
       if (isCurrentPlayerWinning) {
         let scoreIncrease = score * 100;
         scoreIncrease = scoreIncrease == 0 ? 100 : scoreIncrease;
@@ -461,28 +323,10 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
   }
 }
 
-function checkIfCurrentPlayerIsWinning(id) {
 
-  if (leaderboard.length > 0) {
-    if (id === leaderboard[0].id) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function setupPlayerLastShot(socket) {
-  let playerLastShot = {
-    id: socket.id,
-    date: Date.now()
-  };
-  playersLastShot.push(playerLastShot);
-}
 
 function processPlayerShooting(player, socket) {
-  for (let i = 0; i < playersLastShot.length; i++) {
-    if (canPlayerShoot(i, socket)) {
-      playersLastShot[i].date = Date.now();
+    if (playerService.canPlayerShoot(socket)) {
       io.to(socket.id).emit('processShotSound');
       lastBulletId = lastBulletId + 1;
       let bullet = {
@@ -491,46 +335,12 @@ function processPlayerShooting(player, socket) {
         angle: player.angle,
         id: lastBulletId,
         clientId: player.id,
-        bulletSize: 100
+        bulletSize: 100,
+        bulletSpeed: player.bulletSpeed
       };
       bullets.push(bullet);
     }
-  }
 }
 
 
-function canPlayerShoot(i, socket) {
-  if (playersLastShot[i].id === socket.id) {
-    let previousShot = playersLastShot[i].date;
-    let timeSinceLastShot = Date.now() - previousShot;
-    return timeSinceLastShot > 200;
-  }
-  return false;
-}
 
-function updateLeaderboard() {
-  for (let i = 0; i < leaderboard.length; i++) {
-    for (let j = 0; j < players.length; j++) {
-      if (leaderboard[i].id === players[j].id) {
-        leaderboard[i].score = players[j].score;
-        leaderboard[i].lvl  = players[j].lvl;
-      }
-    }
-  }
-
-  leaderboard.sort(function (a, b) {
-    return a.score < b.score;
-  });
-}
-
-function addNewPlayerToLeaderboard(playerData) {
-  let player = {
-    id: playerData.id,
-    name: playerData.name,
-    score: playerData.score,
-    lvl: playerData.lvl,
-    lastDeath: null
-  };
-
-  leaderboard.push(player);
-}

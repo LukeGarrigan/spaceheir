@@ -10,4 +10,5 @@ export default class RegenLevelOption extends LevelOptions {
     this.x = this.viewX + windowWidth / 2 - 160 - this.width / 2;
   }
 
+
 }
