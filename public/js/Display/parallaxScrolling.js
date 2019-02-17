@@ -1,17 +1,44 @@
 export default function(x, y, space){
 
-  image(space, -(x / 10), -(y / 10));
-  image(space, space.width - (x / 10), -(y / 10));
-  image(space, space.width * 2 - (x / 10), -(y / 10));
+  let parallaxEffect = 10;
+  let imageIndex = 0;
+  image(space[imageIndex], -(x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), -(y / parallaxEffect));
 
-  // second Hlayer
-  image(space, -(x / 10), space.height - (y / 10));
-  image(space, space.width - (x / 10), space.height - (y / 10));
-  image(space, space.width * 2 - (x / 10), space.height - (y / 10));
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
 
-  // third HLayer
-  image(space, -(x / 10), space.height * 2 - (y / 10));
-  image(space, space.width - (x / 10), space.height * 2 - (y / 10));
-  image(space, space.width * 2 - (x / 10), space.height * 2 - (y / 10));
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
 
+  parallaxEffect = 15;
+  imageIndex = 1;
+  image(space[imageIndex], -(x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), -(y / parallaxEffect));
+
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+
+  parallaxEffect = 20;
+  imageIndex = 2;
+  image(space[imageIndex], -(x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), -(y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), -(y / parallaxEffect));
+
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height - (y / parallaxEffect));
+
+  image(space[imageIndex], -(x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
+  image(space[imageIndex], space[imageIndex].width * 2 - (x / parallaxEffect), space[imageIndex].height * 2 - (y / parallaxEffect));
 }

@@ -104,7 +104,7 @@ function loadImages() {
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
   gemImage = loadImage("assets/images/gem.png");
-  space = loadImage("assets/images/space.png");
+  space = [loadImage("assets/images/space.png"), loadImage("assets/images/space2.png"), loadImage("assets/images/space3.png")];
 
   speedImage = loadImage("assets/images/speed.png");
   damageImage = loadImage("assets/images/damage.png");
