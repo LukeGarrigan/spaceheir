@@ -6,5 +6,7 @@ module.exports = {
   keyReleased: require('./keyReleased-event'),
   angle: require('./angle-event'),
   playerBullets: require('./playerBullets-event'),
-  lvlUp: require('./lvlUp-event')
+  lvlUp: require('./lvlUp-event'),
+  sendAllFood: require('./sendAllFood-event'),
+  sendAllAsteroids: require('./sendAllAsteroids-event')
 };

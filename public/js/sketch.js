@@ -92,15 +92,18 @@ let bulletSpeedOption;
 let isInvalidUsername = false;
 let invalidUsername;
 let invalidUsernameLabel;
+
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
+
 
 function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
-  foodImage = loadImage("assets/images/food.png");
+
   spaceShipImage = loadImage("assets/images/spaceship.png");
   winnerSpaceShipImage = loadImage("assets/images/winner.png");
+  foodImage = loadImage("assets/images/food.png", foodImageLoaded);
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
   gemImage = loadImage("assets/images/gem.png");
@@ -116,13 +119,25 @@ function loadImages() {
   transparentSpeedImage = loadImage("assets/images/speedTransparent.png");
   transparentBulletSpeedImage = loadImage("assets/images/bulletSpeedTransparent.png");
 
+  loadAsteroidImages();
+}
+
+function loadAsteroidImages() {
+
   let asteroidGreyImage = loadImage("assets/images/asteroidGrey.png");
   let asteroidGreyImage1 = loadImage("assets/images/asteroidGrey1.png");
   let asteroidGreyImage2 = loadImage("assets/images/asteroidGrey2.png");
   let asteroidOrangeImage = loadImage("assets/images/asteroidOrange.png");
-
-
   asteroidImages.push(asteroidGreyImage, asteroidGreyImage1, asteroidGreyImage2, asteroidOrangeImage);
+  asteroidImageLoaded();
+}
+
+function foodImageLoaded() {
+  socket.emit("sendAllFood");
+}
+
+function asteroidImageLoaded() {
+  socket.emit("sendAllAsteroids");
 }
 
 function loadSounds() {
@@ -144,6 +159,7 @@ function loadSounds() {
 
 window.setup = function () {
   clear();
+
   canvas = createCanvas(window.innerWidth, window.innerHeight);
 
   if (isInvalidUsername) {
@@ -225,6 +241,7 @@ window.setup = function () {
 
   loadSounds();
   loadImages();
+
 
 };
 

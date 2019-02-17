@@ -36,7 +36,9 @@ setInterval(broadcastGameStateToPlayers, 14);
 module.exports = {
   players,
   processPlayerShooting,
-  bullets
+  bullets,
+  foods,
+  asteroids
 };
 
 const events = require('./events');
@@ -45,15 +47,18 @@ const eventsList = Object.entries(events);
 io.sockets.on('connection', function newConnection(socket) {
   console.log("new connection " + socket.id);
 
+
   for (const [event, callback] of eventsList) {
     socket.on(event, (...args) => {
       callback({socket, io}, ...args);
     });
   }
+  // socket.emit('foods', foods);
+  // socket.emit('asteroids', asteroids);
+
 
   playerService.setupPlayerLastShot(socket);
-  socket.emit('foods', foods);
-  socket.emit('asteroids', asteroids);
+
 });
 
 
