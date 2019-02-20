@@ -1,12 +1,12 @@
 module.exports = {
-  player: require('./player-event'),
-  bullet: require('./bullet-event'),
-  disconnect: require('./disconnect-event'),
-  keyPressed: require('./keyPressed-event'),
-  keyReleased: require('./keyReleased-event'),
-  angle: require('./angle-event'),
-  playerBullets: require('./playerBullets-event'),
-  lvlUp: require('./lvlUp-event'),
-  sendAllFood: require('./sendAllFood-event'),
-  sendAllAsteroids: require('./sendAllAsteroids-event')
+  player: require('./playerEvent'),
+  bullet: require('./bulletEvent'),
+  disconnect: require('./disconnectEvent'),
+  keyPressed: require('./keyPressedEvent'),
+  keyReleased: require('./keyReleasedEvent'),
+  angle: require('./angleEvent'),
+  playerBullets: require('./playerBulletsEvent'),
+  lvlUp: require('./lvlUpEvent'),
+  sendAllFood: require('./sendAllFoodEvent'),
+  sendAllAsteroids: require('./sendAllAsteroidsEvent')
 };
