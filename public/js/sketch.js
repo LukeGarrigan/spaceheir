@@ -344,7 +344,7 @@ function drawOtherPlayers(currentPosition) {
       if (leaders.length > 0) {
         leaderBoardWinnersId = leaders[0].id;
       }
-      Player.drawOtherPlayer(otherPlayer, leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
+      otherPlayer.draw(leaderBoardWinnersId, spaceShipImage, winnerSpaceShipImage);
     }
   }
 }

@@ -7,6 +7,7 @@ import Asteroid from './Asteroid/Asteroid.js';
 import HitMarker from './Hitmarker/Hitmarker.js';
 import Gem from './Gem/Gem.js';
 import XpPopup from './Popup/IncreaseXp.js';
+import OtherPlayer from './OtherPlayer.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
@@ -32,6 +33,7 @@ export function displayIncreasedShieldMessage(data, popups, player) {
   }
 }
 
+
 export function updateOtherPlayers(data, player, otherPlayers) {
   const clientData = data.find(p => p.id === socket.id);
   const otherplayersData = data.filter(p => p.id !== socket.id);
@@ -52,9 +54,32 @@ export function updateOtherPlayers(data, player, otherPlayers) {
   }
 
   for (let i = 0; i < otherplayersData.length; i++) {
-    otherPlayers[i] = otherplayersData[i];
+
+    if (otherPlayers[i]) {
+
+      otherPlayers[i].x = otherplayersData[i].x;
+      otherPlayers[i].y = otherplayersData[i].y;
+      otherPlayers[i].lastDeath = otherplayersData[i].lastDeath;
+      otherPlayers[i].angle = otherplayersData[i].angle;
+      otherPlayers[i].shield = otherplayersData[i].shield;
+      otherPlayers[i].lvl = otherplayersData[i].lvl;
+    } else {
+      let x = otherplayersData[i].x;
+      let y = otherplayersData[i].y;
+      let lastDeath = otherplayersData[i].lastDeath;
+      let id = otherplayersData[i].id;
+      let name = otherplayersData[i].name;
+      let lvl = otherplayersData[i].lvl;
+      let angle = otherplayersData[i].angle;
+
+
+      otherPlayers[i] = new OtherPlayer(x, y, lastDeath, id, name, lvl, angle);
+    }
+
   }
 }
+
+
 
 export function updateBullets(data, bullets) {
   for (let i = 0; i < data.length; i++) {

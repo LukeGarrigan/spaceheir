@@ -53,9 +53,6 @@ io.sockets.on('connection', function newConnection(socket) {
       callback({socket, io}, ...args);
     });
   }
-  // socket.emit('foods', foods);
-  // socket.emit('asteroids', asteroids);
-
 
   playerService.setupPlayerLastShot(socket);
 

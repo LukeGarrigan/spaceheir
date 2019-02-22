@@ -1,5 +1,6 @@
 import socket from '../socket.js';
 import healthbar from "../Healthbar/healthbar.js";
+import Trail from "../Trail.js";
 
 export default class Player {
   constructor(name, spaceShipImage, winnerSpaceship) {
@@ -15,22 +16,15 @@ export default class Player {
     this.trail = [];
     this.lvl = 1;
 
+    this.trail = new Trail();
+
   }
 
   display(leaders) {
 
 
-    for (let i = 0; i < 10; i++) {
-      this.trail.push({x: this.pos.x, y: this.pos.y});
-    }
-    if (this.trail.length > 200) {
-
-      for (let i = 0; i < 10; i++) {
-        this.trail.splice(0, 1);
-      }
-    }
-
-    this.drawTrail();
+    this.trail.updateTrail(this.pos);
+    this.trail.drawTrail();
 
     push();
     translate(this.pos.x, this.pos.y);
@@ -84,52 +78,6 @@ export default class Player {
     text(this.score, this.pos.x, this.pos.y - height / 2 + 80);
     pop();
     healthbar(this);
-  }
-
-
-  static drawOtherPlayer(player, leaderBoardWinnersId, spaceShipImage, winnerSpaceship) {
-    // Other player is respawning
-    if (player.lastDeath !== null) {
-      return;
-    }
-
-    push();
-    translate(player.x, player.y);
-    let isWinning = leaderBoardWinnersId === player.id;
-
-    rotate(player.angle + HALF_PI);
-    imageMode(CENTER);
-
-    if (isWinning) {
-      image(winnerSpaceship, 0, 0);
-    } else {
-      image(spaceShipImage, 0, 0);
-    }
-
-    pop();
-    textAlign(CENTER);
-    textSize(15);
-    text(`${player.name} (${player.lvl})`, player.x, player.y + 49);
-
-    player.pos = {
-      x: player.x,
-      y: player.y
-    }
-    healthbar(player);
-
-  }
-
-
-  drawTrail() {
-    push();
-
-    fill(255, 127, 10);
-    blendMode(ADD);
-    for (let i = 75; i < this.trail.length; i++) {
-      let part = this.trail[i];
-      ellipse(part.x += random(-0.3, 0.3), part.y += random(-0.3, 0.3), (i - 75) / 6);
-    }
-    pop();
   }
 
 
