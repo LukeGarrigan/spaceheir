@@ -101,8 +101,8 @@ function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
 
-  spaceShipImage = loadImage("assets/images/spaceship.png");
-  winnerSpaceShipImage = loadImage("assets/images/winner.png");
+  spaceShipImage = loadImage("assets/images/bronzeSpaceship.png");
+  winnerSpaceShipImage = loadImage("assets/images/goldSpaceship.png");
   foodImage = loadImage("assets/images/food.png", foodImageLoaded);
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
@@ -267,6 +267,7 @@ window.draw = function () {
     parallaxScrolling(player.x, player.y, space);
     translate(width / 2 - player.pos.x, height / 2 - player.pos.y);
 
+    drawBullets(bullets, player);
     player.display(leaders);
     drawPopups(popups);
     drawFood(player, food);
@@ -279,7 +280,7 @@ window.draw = function () {
     }
 
     drawAsteroids(asteroids);
-    drawBullets(bullets, player);
+
     drawXpGems(player, xpGems);
 
 
