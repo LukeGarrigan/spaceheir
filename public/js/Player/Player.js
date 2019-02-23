@@ -21,11 +21,24 @@ export default class Player {
   }
 
   display(leaders) {
-
-
     this.trail.updateTrail(this.pos);
     this.trail.drawTrail();
+    this.drawShip(leaders);
+    textAlign(CENTER);
 
+
+    if (this.respawning) {
+      this.displayRespawningText();
+    } else {
+      text(`${this.name} (${this.lvl})`, this.pos.x, this.pos.y + 49);
+    }
+    this.displayScore();
+    healthbar(this);
+  }
+
+
+
+  drawShip(leaders) {
     push();
     translate(this.pos.x, this.pos.y);
     fill(0);
@@ -59,27 +72,24 @@ export default class Player {
     fill(0);
     translate(0, -this.offset);
     pop();
-    textAlign(CENTER);
+  }
+
+  displayRespawningText() {
+    push();
+    fill(255, 0, 0);
+    textSize(32);
+    text('respawning...', this.pos.x, this.pos.y + 49);
+    pop();
+  }
 
 
-    if (this.respawning) {
-      push();
-      fill(255, 0, 0);
-      textSize(32)
-      text('respawning...', this.pos.x, this.pos.y + 49);
-      pop();
-    } else {
-      text(`${this.name} (${this.lvl})`, this.pos.x, this.pos.y + 49);
-    }
-
+  displayScore() {
     push();
     textSize(30);
     fill(255);
     text(this.score, this.pos.x, this.pos.y - height / 2 + 80);
     pop();
-    healthbar(this);
   }
-
 
   get x() {
     return this.pos.x;

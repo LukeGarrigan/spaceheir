@@ -25,7 +25,6 @@ export default class Trail {
         this.trail.splice(0, 1);
       }
     }
-
   }
 
 
