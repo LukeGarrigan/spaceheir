@@ -1,6 +1,7 @@
 export default class Bullet{
   constructor(x, y, id) {
-    this.pos = createVector(x, y);
+    this.x = x;
+    this.y = y;
     this.r = 10;
     this.id = id;
   }
@@ -11,6 +12,6 @@ export default class Bullet{
 
   display() {
     fill(255);
-    ellipse(this.pos.x, this.pos.y, this.r, this.r);
+    ellipse(this.x, this.y, this.r, this.r);
   }
 }

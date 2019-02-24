@@ -26,7 +26,7 @@ export default class Minimap {
     rect(this.minimapX, this.minimapY, this.width, this.height);
     translate(this.minimapX, this.minimapY);
 
-    this.displayFoodOnMinimap(food);
+    this.displayFoodOnMiniMap(food);
     this.displayPlayerOnMinimap(playerX, playerY, this.minimapX, this.minimapY);
     pop();
 
@@ -42,15 +42,15 @@ export default class Minimap {
     triangle(-this.r, this.r,  0, -this.r, this.r, this.r);
   }
 
-  displayFoodOnMinimap(foods) {
+  displayFoodOnMiniMap(foods) {
 
     fill(255);
     for (const food of foods) {
       let actualFoodX = food.x;
       let actualFoodY = food.y;
-      let foodMinimapX = map(actualFoodX, 0, this.maxWidth, 0, this.width);
-      let foodMinimapY = map(actualFoodY, 0, this.maxHeight, 0, this.height);
-      ellipse(foodMinimapX, foodMinimapY, 2, 2);
+      let foodMiniMapX = map(actualFoodX, 0, this.maxWidth, 0, this.width);
+      let foodMiniMapY = map(actualFoodY, 0, this.maxHeight, 0, this.height);
+      ellipse(foodMiniMapX, foodMiniMapY, 2, 2);
     }
   }
 }

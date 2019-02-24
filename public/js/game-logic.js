@@ -87,8 +87,8 @@ export function updateBullets(data, bullets) {
     for (let j = 0; j < bullets.length; j++) {
       if (data[i].id === bullets[j].id) {
         exists = true;
-        bullets[j].pos.x = data[i].x;
-        bullets[j].pos.y = data[i].y;
+        bullets[j].x = data[i].x;
+        bullets[j].y = data[i].y;
         break;
       }
     }
@@ -128,19 +128,24 @@ export function processKillFeedAddition(kill, killfeed) {
 }
 
 
-export function isWithinScreen(player, to) {
-  const height = Math.floor(window.outerHeight/2);
-  const width = Math.floor(window.outerWidth/2);
+
+export function isWithinScreen(player, toVector) {
+  isWithinScreenXAndY(player, toVector.x, toVector.y);
+}
+
+export function isWithinScreenXAndY(player, toX, toY) {
+  const height = Math.floor(window.outerHeight/1.5);
+  const width = Math.floor(window.outerWidth/1.5);
 
 
-  const diffX = player.x - to.x;
-  const diffY = player.y - to.y;
+  const diffX = player.x - toX;
+  const diffY = player.y - toY;
 
 
   return !(diffX > width || diffX < -width || diffY > height || diffY < -height);
 
-
 }
+
 
 export function updateFoods(data, food, foodImage) {
   for (let i = 0; i < data.length; i++) {

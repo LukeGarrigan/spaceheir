@@ -279,7 +279,7 @@ window.draw = function () {
       processPlayerShooting();
     }
 
-    drawAsteroids(asteroids);
+    drawAsteroids(asteroids, player);
 
     drawXpGems(player, xpGems);
 
