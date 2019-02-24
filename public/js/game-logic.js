@@ -127,12 +127,6 @@ export function processKillFeedAddition(kill, killfeed) {
   killfeed.addKill(kill.killer, kill.deather, kill.killerWinner, kill.deatherWinner, kill.killerAngle, kill.deatherAngle);
 }
 
-
-
-export function isWithinScreen(player, toVector) {
-  isWithinScreenXAndY(player, toVector.x, toVector.y);
-}
-
 export function isWithinScreenXAndY(player, toX, toY) {
   const height = Math.floor(window.outerHeight/1.5);
   const width = Math.floor(window.outerWidth/1.5);

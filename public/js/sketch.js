@@ -27,7 +27,7 @@ import {IS_DEBUG_MODE} from "./Constants.js";
 import {
   createXpGems,
   displayIncreasedShieldMessage,
-  isWithinScreen,
+  isWithinScreenXAndY,
   playerDisconnected,
   processHitmarker,
   processKillFeedAddition,
@@ -341,7 +341,7 @@ function drawStartScreen() {
 
 function drawOtherPlayers(currentPosition) {
   for (const otherPlayer of otherPlayers) {
-    if (isWithinScreen(currentPosition, otherPlayer)) {
+    if (isWithinScreenXAndY(currentPosition, otherPlayer.x, otherPlayer.y)) {
       if (leaders.length > 0) {
         leaderBoardWinnersId = leaders[0].id;
       }

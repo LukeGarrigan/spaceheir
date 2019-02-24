@@ -1,8 +1,8 @@
-import {isWithinScreen} from '../game-logic.js';
+import {isWithinScreenXAndY} from '../game-logic.js';
 
 export default function(player,gems) {
   for (let gem of gems) {
-    if (isWithinScreen(player, gems)) {
+    if (isWithinScreenXAndY(player, gem.x, gem.y)) {
       gem.display();
     }
   }
