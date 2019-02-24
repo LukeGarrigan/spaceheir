@@ -140,7 +140,6 @@ export function isWithinScreenXAndY(player, toX, toY) {
 
 }
 
-
 export function updateFoods(data, food, foodImage) {
   for (let i = 0; i < data.length; i++) {
     let exists = false;

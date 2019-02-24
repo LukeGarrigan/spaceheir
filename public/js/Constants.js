@@ -1,2 +1,2 @@
 
-export const IS_DEBUG_MODE = false;
+export const IS_DEBUG_MODE = true;
