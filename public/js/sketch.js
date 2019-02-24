@@ -392,7 +392,9 @@ window.mousePressed = function () {
 
 
 function processPlayerShooting() {
-  socket.emit('bullet');
+  if (gameStarted) {
+    socket.emit('bullet');
+  }
 }
 
 function checkMuteToggled() {

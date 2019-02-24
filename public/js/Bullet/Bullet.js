@@ -4,10 +4,12 @@ export default class Bullet{
     this.y = y;
     this.r = 10;
     this.id = id;
+    this.timeAlive = 0;
   }
 
   update() {
     this.r -= 0.01;
+    this.timeAlive++;
   }
 
   display() {
