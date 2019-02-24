@@ -8,6 +8,7 @@ import HitMarker from './Hitmarker/Hitmarker.js';
 import Gem from './Gem/Gem.js';
 import XpPopup from './Popup/IncreaseXp.js';
 import OtherPlayer from './OtherPlayer.js';
+import Message from './Message/Message.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
@@ -103,7 +104,7 @@ export function updateBullets(data, bullets) {
 
 export function removeBullet(id, bullets) {
   let index = getBullet(id, bullets);
-  if (index) {
+  if (index !== null) {
     bullets.splice(index, 1);
   }
 }
@@ -114,6 +115,7 @@ function getBullet(id, bullets) {
       return i;
     }
   }
+  return null;
 }
 
 export function processHitmarker(player, hitMarkerImage, hitMarkerSound, isMuted) {
@@ -204,4 +206,11 @@ export function removeXpGem(gemId, gems, popups) {
       break;
     }
   }
+}
+
+export function updateMessages(serverMessage, messages) {
+  if (messages.length > 4) {
+    messages.splice(0, 1);
+  }
+  messages.push(new Message(serverMessage.message, serverMessage.sender));
 }

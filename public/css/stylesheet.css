@@ -3,9 +3,22 @@ body {
   margin: 0;
 }
 
-input {
+
+
+.username {
     font-size: 20px;
     width:500px;
+}
+
+.messageInput {
+    font-size: 15px;
+    width:250px;
+    height:40px;
+    opacity:0.3;
+}
+
+input:focus {
+    opacity: 1;
 }
 
 

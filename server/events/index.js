@@ -8,5 +8,6 @@ module.exports = {
   playerBullets: require('./playerBulletsEvent'),
   lvlUp: require('./lvlUpEvent'),
   sendAllFood: require('./sendAllFoodEvent'),
-  sendAllAsteroids: require('./sendAllAsteroidsEvent')
+  sendAllAsteroids: require('./sendAllAsteroidsEvent'),
+  chat: require('./chatEvent')
 };

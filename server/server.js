@@ -28,7 +28,6 @@ let asteroids = [];
 let xpGems = [];
 let lastLog = 0;
 
-
 foods = setupFood();
 asteroids = setupAsteroids();
 setInterval(broadcastGameStateToPlayers, 14);
@@ -38,7 +37,8 @@ module.exports = {
   processPlayerShooting,
   bullets,
   foods,
-  asteroids
+  asteroids,
+  io
 };
 
 const events = require('./events');
@@ -77,6 +77,8 @@ function broadcastGameStateToPlayers() {
   if (bullets.length > 0) {
     io.sockets.emit('bullets', bullets);
   }
+
+
 
 }
 

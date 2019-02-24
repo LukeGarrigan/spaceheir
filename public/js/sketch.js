@@ -22,7 +22,7 @@ import drawFood from "./Display/drawFood.js";
 import drawBullets from "./Display/drawBullets.js";
 import drawPopups from "./Display/drawPopups.js";
 import {IS_DEBUG_MODE} from "./Constants.js";
-
+import drawMessages from "./Display/drawMessages.js";
 
 import {
   createXpGems,
@@ -38,7 +38,10 @@ import {
   updateBullets,
   updateFoods,
   updateOtherPlayers,
+  updateMessages
+
 } from './game-logic.js'
+
 let player;
 let food = [];
 let asteroids = [];
@@ -92,6 +95,9 @@ let bulletSpeedOption;
 let isInvalidUsername = false;
 let invalidUsername;
 let invalidUsernameLabel;
+
+let messageInput;
+let messages = [];
 
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
@@ -171,6 +177,7 @@ window.setup = function () {
   }
 
   input = createInput().attribute('placeholder', 'username');
+  input.class('username');
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
 
   button = createButton("Play");
@@ -209,6 +216,7 @@ window.setup = function () {
       };
       socket.emit('player', playerPosition);
       gameStarted = true;
+      createMessageInput();
     }
   });
 
@@ -237,6 +245,7 @@ window.setup = function () {
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
   socket.on('invalidUsername', userEnteredInvalidUsername);
+  socket.on('chat', serverMessage => updateMessages(serverMessage, messages));
 
 
   loadSounds();
@@ -296,8 +305,9 @@ window.draw = function () {
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
-    drawXAndY(player.pos.x, player.pos.y);
-    displayFramesPerSecond(player.pos.x, player.pos.y);
+    drawMessages(messages, player.pos.x, player.pos.y);
+    //drawXAndY(player.pos.x, player.pos.y);
+    //displayFramesPerSecond(player.pos.x, player.pos.y);
   } else {
     drawStartScreen();
   }
@@ -350,6 +360,16 @@ function drawOtherPlayers(currentPosition) {
   }
 }
 
+function createMessageInput() {
+
+  messageInput = createInput().attribute('placeholder', 'message');
+  messageInput.class('messageInput');
+  messageInput.position(window.innerWidth / 1.2, window.innerHeight - 100);
+
+
+}
+
+
 window.oncontextmenu = function (e) {
   e.preventDefault();
 };
@@ -359,9 +379,18 @@ window.keyPressed = function () {
   if (gameStarted) {
     if (keyCode === UP_ARROW || keyCode === 87) {
       socket.emit('keyPressed', "isMoving");
+    } else if (keyCode === 13) {
+      processMessage();
     }
   }
 };
+
+function processMessage() {
+  if (messageInput.value() !== "" && messageInput.value().length < 30) {
+    socket.emit('chat', messageInput.value())
+    messageInput.value('');
+  }
+}
 
 window.keyReleased = function () {
   if (gameStarted) {
@@ -376,6 +405,7 @@ window.onresize = function () {
   canvas.size(window.innerWidth, window.innerHeight);
   input.position(window.innerWidth / 2 - 250, window.innerHeight / 2);
   button.position(window.innerWidth / 2 - 250, window.innerHeight / 2 + 80);
+  messageInput.position(window.innerWidth / 1.2, window.innerHeight - 100);
   if (invalidUsernameLabel) {
     invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
   }
