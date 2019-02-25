@@ -1,16 +1,6 @@
 # Codeheir space game
 ## Some of the stuff to do!
-* Add new ships
-* Add leveling system
-* Refactor to allow for easily adding new features
-* Potentially scale map to number of players
-* Sending too much data about other players to players
-* Despawn xp gems
-* Issue where xp gems are unobtainable 
-* Issue with text jittering
-
-
-
+https://trello.com/b/HBwddn26/stream-royale-game
 
 A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](https://www.twitch.tv/codeheir) as a fun little project, it started off as an asteroids replica, but idea after idea has led me to this space game! 
 
