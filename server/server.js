@@ -328,7 +328,6 @@ function updatePlayerScore(id, isCurrentPlayerWinning, score) {
 }
 
 
-
 function processPlayerShooting(player, socket) {
     if (playerService.canPlayerShoot(socket)) {
       io.to(socket.id).emit('processShotSound');

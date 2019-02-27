@@ -198,9 +198,6 @@ window.setup = function () {
       winnerLocation = new WinnerLocation(indicatorImage);
       minimap = new Minimap();
       muteButton = new MuteButton(soundOn, soundOff);
-
-
-
       speedOption = new SpeedLevelOption(speedImage, transparentSpeedImage );
       damageOption = new DamageLevelOption(damageImage, transparentDamageImage);
       regenOption = new RegenLevelOption(regenImage, transparentRegenImage);
@@ -306,8 +303,8 @@ window.draw = function () {
     socket.emit('angle', player.radians);
     clientLogging();
     drawMessages(messages, player.pos.x, player.pos.y);
-    //drawXAndY(player.pos.x, player.pos.y);
-    //displayFramesPerSecond(player.pos.x, player.pos.y);
+    drawXAndY(player.pos.x, player.pos.y);
+    displayFramesPerSecond(player.pos.x, player.pos.y);
   } else {
     drawStartScreen();
   }
@@ -411,7 +408,6 @@ window.onresize = function () {
   }
 };
 
-
 window.mousePressed = function () {
   if (mouseButton === LEFT) {
     checkMuteToggled();
@@ -419,7 +415,6 @@ window.mousePressed = function () {
     checkIfPlayerHasChosenALevelOption();
   }
 };
-
 
 function processPlayerShooting() {
   if (gameStarted) {

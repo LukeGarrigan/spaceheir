@@ -14,6 +14,8 @@ export default function displayFramesPerSecond(x, y) {
     frameRate = fps;
   }
 
-  text("FPS: " + floor(frameRate), x+ width/2 - 100, y + height /2- 50);
-  text("AVG FPS: " + floor(sumOfFrameRates /totalFrames), x + width/2  - 100, y + height/2 - 25);
+
+  textAlign(LEFT);
+  text("FPS: " + floor(frameRate), x+ width/2 - 450, y + height /2- 50);
+  text("AVG FPS: " + floor(sumOfFrameRates /totalFrames), x + width/2  - 450, y + height/2 - 25);
 }
