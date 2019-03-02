@@ -1,4 +1,4 @@
-import healthbar from "./Healthbar/healthbar.js";
+import healthbar from "./Display/healthbar.js";
 import Trail from "./Trail.js";
 
 export default class OtherPlayer {

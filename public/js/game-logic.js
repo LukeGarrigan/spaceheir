@@ -2,13 +2,13 @@ import socket from './socket.js';
 import BasicTextPopup from './Popup/BasicTextPopup.js';
 import IncreaseShield from './Popup/IncreaseShield.js';
 import Bullet from './Bullet/Bullet.js';
-import Food from './Food/Food.js';
+import Food from './classes/Food.js';
 import Asteroid from './Asteroid/Asteroid.js';
-import HitMarker from './Hitmarker/Hitmarker.js';
-import Gem from './Gem/Gem.js';
+import HitMarker from './classes/Hitmarker.js';
+import Gem from './classes/Gem.js';
 import XpPopup from './Popup/IncreaseXp.js';
 import OtherPlayer from './OtherPlayer.js';
-import Message from './Message/Message.js';
+import Message from './classes/Message.js';
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
