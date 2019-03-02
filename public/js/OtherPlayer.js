@@ -1,5 +1,5 @@
 import healthbar from "./Display/healthbar.js";
-import Trail from "./Trail.js";
+import Trail from "./classes/Trail.js";
 
 export default class OtherPlayer {
   constructor(x, y, lastDeath, id, name, lvl, angle) {
