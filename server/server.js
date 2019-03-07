@@ -127,7 +127,6 @@ function killPlayer(player) {
   }
 
   player.shield = 100;
-
   player.score = 0;
   player.additionalSpeed = 0;
   player.damage = 0;
@@ -139,7 +138,6 @@ function killPlayer(player) {
   player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
 
   leaderboardService.updateLeaderboard(players);
-  io.sockets.emit('heartbeat', players);
   io.to(player.id).emit('respawn-start', timeOutInSeconds);
   io.to(player.id).emit('playExplosion');
 }

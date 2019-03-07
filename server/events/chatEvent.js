@@ -11,7 +11,6 @@ module.exports = function ({socket}, message) {
         message: message
       };
 
-
       if (message.length < 30) {
         io.sockets.emit('chat', data);
       }

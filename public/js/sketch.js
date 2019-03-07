@@ -259,11 +259,6 @@ function userEnteredInvalidUsername(data) {
 }
 
 
-window.mouseWheel = function (event) {
-  return false;
-};
-
-
 window.draw = function () {
   background(0);
   fill(255);
@@ -465,5 +460,12 @@ function clientLogging() {
     console.log("Number of particles " + totalParticles);
   }
 }
+
+
+
+window.mouseWheel = function (event) {
+  return false;
+};
+
 
 
