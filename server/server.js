@@ -63,7 +63,7 @@ function broadcastGameStateToPlayers() {
   logServerInfo();
 
   for (let player of players) {
-    updatePlayerPosition(player);
+    updatePlayer(player);
   }
 
   updateBulletPositions();
@@ -117,7 +117,22 @@ function updateBulletPositions() {
 }
 
 
+
 function killPlayer(player) {
+  resetPlayerStats(player);
+
+
+  const timeOutInSeconds = 5;
+  player.lastDeath = new Date();
+  player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds);
+
+  leaderboardService.updateLeaderboard(players);
+  io.to(player.id).emit('respawn-start', timeOutInSeconds);
+  io.to(player.id).emit('playExplosion');
+}
+
+
+function resetPlayerStats(player) {
   if (config.settings.DEBUG_MODE) {
     player.x = config.settings.DEBUG_MODE_X;
     player.y = config.settings.DEBUG_MODE_Y;
@@ -126,24 +141,35 @@ function killPlayer(player) {
     player.y = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
   }
 
-  player.shield = 100;
+  player.shield = config.settings.MAX_SHIELD / 2;
   player.score = 0;
   player.additionalSpeed = 0;
   player.damage = 0;
   player.regen = 0;
   player.bulletSpeed = 0;
 
-  const timeOutInSeconds = 5;
-  player.lastDeath = new Date();
-  player.lastDeath.setSeconds(player.lastDeath.getSeconds() + timeOutInSeconds)
-
-  leaderboardService.updateLeaderboard(players);
-  io.to(player.id).emit('respawn-start', timeOutInSeconds);
-  io.to(player.id).emit('playExplosion');
 }
 
 
-function updatePlayerPosition(player) {
+function updatePlayerShield(player) {
+  if (player.shield < 0) {
+    killPlayer(player);
+  } else  {
+    constrainShield(player);
+  }
+
+}
+
+function constrainShield(player) {
+  if (player.shield > config.settings.MAX_SHIELD) {
+    player.shield = config.settings.MAX_SHIELD;
+  }
+
+}
+
+function updatePlayer(player) {
+
+
   if (player.lastDeath !== null) {
     const currentDate = new Date();
     if (player.lastDeath > currentDate) {
@@ -154,21 +180,13 @@ function updatePlayerPosition(player) {
     }
   }
 
-  if (player.shield < 0) {
-    killPlayer(player);
-    return
-  } else if (player.shield > config.settings.MAX_SHIELD) {
-    player.shield = config.settings.MAX_SHIELD;
-  }
   playerService.movePlayer(player);
-
-  // constrain - so moving to the edge of the screen
   playerService.constrain(player);
   playerService.updatePlayerEatingFood(player, foods, io);
   updatePlayerGettingShot(player);
   updatePlayerEatingGem(player);
-
   asteroidService.processPlayerHittingAsteroid(player, asteroids);
+  updatePlayerShield(player);
 }
 
 
@@ -204,8 +222,8 @@ function removeBulletFromGame(i) {
   io.sockets.emit('bulletHit', bullets[i].id);
 }
 
-function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning) {
-  updatePlayerScore(bullets[i].clientId, isCurrentPlayerWinning, player.score);
+function processPlayerDying(i, isDeadPlayerWinning, player, isCurrentKillerWinning) {
+  updatePlayerScore(bullets[i].clientId, isDeadPlayerWinning, player.score);
   player.score = 0;
   player.xp = 625;
   player.lvl = 1;
@@ -223,7 +241,7 @@ function processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWi
     killerWinner: isCurrentKillerWinning,
     deather: player.name,
     deatherAngle: player.angle,
-    deatherWinner: isCurrentPlayerWinning
+    deatherWinner: isDeadPlayerWinning
   };
   io.sockets.emit('killfeed', playerKill);
 }
@@ -233,16 +251,9 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (hasBulletHit(i, player, 37)) {
       removeBulletFromGame(i);
-      let shooter = getShooter(bullets[i].clientId);
-      player.shield -= config.settings.BASE_DAMAGE + shooter.damage * config.settings.DAMAGE_MULTIPLIER;
-      io.to(player.id).emit('increaseShield', -bullets[i].bulletSize);
-
-
-      // can shift into when the player dies
+      doDamage(player, getShooter(bullets[i].clientId));
       let isCurrentPlayerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(player.id);
       let isCurrentKillerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(bullets[i].clientId);
-      console.log("Is player winning" + isCurrentPlayerWinning);
-      console.log("Is killer winning" + isCurrentKillerWinning);
 
       if (player.shield <= 0) {
         processPlayerDying(i, isCurrentPlayerWinning, player, isCurrentKillerWinning);
@@ -254,6 +265,15 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
 
 
   }
+}
+
+function hasBulletHit(i, playerOrAsteroid, radius) {
+  return Math.abs(bullets[i].x - playerOrAsteroid.x) + Math.abs(bullets[i].y - playerOrAsteroid.y) < radius;
+}
+
+
+function doDamage(player, shooter) {
+  player.shield -= config.settings.BASE_DAMAGE + shooter.damage * config.settings.DAMAGE_MULTIPLIER;
 }
 
 
@@ -294,33 +314,27 @@ function createXpGem(asteroid) {
 }
 
 
-function hasBulletHit(i, playerOrAsteroid, radius) {
-  return Math.abs(bullets[i].x - playerOrAsteroid.x) + Math.abs(bullets[i].y - playerOrAsteroid.y) < radius;
+function updateKillersShield(isDeadPlayerWinning, score, killerPlayer) {
+  if (isDeadPlayerWinning) {
+    let scoreIncrease = score * 100;
+    scoreIncrease = scoreIncrease === 0 ? 100 : scoreIncrease;
+    killerPlayer.shield += scoreIncrease;
+  } else {
+    let scoreIncrease = score * 10;
+    scoreIncrease = scoreIncrease === 0 ? 50 : scoreIncrease;
+    killerPlayer.shield += scoreIncrease;
+  }
 }
 
-
-function updatePlayerScore(id, isCurrentPlayerWinning, score) {
+function updatePlayerScore(id, isDeadPlayerWinning, score) {
   for (let i = 0; i < players.length; i++) {
-    if (players[i].id == id) {
-      console.log("Increasing players score!!!");
-      players[i].score++;
-      players[i].xp += 2000;
-      playerService.processPlayerLevelingUp(players[i], io);
-      if (isCurrentPlayerWinning) {
-        let scoreIncrease = score * 100;
-        scoreIncrease = scoreIncrease == 0 ? 100 : scoreIncrease;
-        io.to(id).emit('increaseShield', scoreIncrease);
-        players[i].shield += scoreIncrease;
-      } else {
-        let scoreIncrease = score * 10;
-        scoreIncrease = scoreIncrease == 0 ? 50 : scoreIncrease;
-        io.to(id).emit('increaseShield', scoreIncrease);
-        players[i].shield += scoreIncrease;
-      }
-
-      if (players[i].shield > config.settings.MAX_SHIELD) {
-        players[i].shield = config.settings.MAX_SHIELD;
-      }
+    let killerPlayer = players[i];
+    if (killerPlayer.id === id) {
+      killerPlayer.score++;
+      killerPlayer.xp += 2000;
+      playerService.processPlayerLevelingUp(killerPlayer, io);
+      updateKillersShield(isDeadPlayerWinning, score, killerPlayer);
+      constrainShield(killerPlayer);
     }
   }
 }
