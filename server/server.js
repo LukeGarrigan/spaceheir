@@ -30,7 +30,8 @@ let lastLog = 0;
 
 foods = setupFood();
 asteroids = setupAsteroids();
-setInterval(broadcastGameStateToPlayers, 14);
+setInterval(broadcastGameStateToPlayers, 2);
+setInterval(updateGame, 14);
 
 module.exports = {
   players,
@@ -60,25 +61,24 @@ io.sockets.on('connection', function newConnection(socket) {
 
 
 function broadcastGameStateToPlayers() {
-  logServerInfo();
-
-  for (let player of players) {
-    updatePlayer(player);
-  }
-
-  updateBulletPositions();
 
 
-
-
-  leaderboardService.emitLeaderboard(io);
   io.sockets.emit('heartbeat', players);
 
   if (bullets.length > 0) {
     io.sockets.emit('bullets', bullets);
   }
 
+}
 
+function updateGame() {
+  leaderboardService.emitLeaderboard(io);
+  //logServerInfo();
+  for (let player of players) {
+    updatePlayer(player);
+  }
+
+  updateBulletPositions();
 
 }
 

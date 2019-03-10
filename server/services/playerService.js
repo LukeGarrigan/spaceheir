@@ -99,6 +99,7 @@ function setupPlayerLastShot(socket) {
   playersLastShot.push(playerLastShot);
 }
 
+
 function canPlayerShoot(socket) {
   for (let i = 0; i < playersLastShot.length; i++) {
     if (playersLastShot[i].id === socket.id) {
