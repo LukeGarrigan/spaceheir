@@ -357,8 +357,6 @@ function createMessageInput() {
   messageInput = createInput().attribute('placeholder', 'message');
   messageInput.class('messageInput');
   messageInput.position(window.innerWidth / 1.2, window.innerHeight - 100);
-
-
 }
 
 

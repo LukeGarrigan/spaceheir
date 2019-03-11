@@ -16,7 +16,7 @@ module.exports = function({ socket }, playerData) {
   playerData.velocity = 1;
 
   playerData.id = socket.id;
-  playerData.shield = config.settings.BASE_SHIELD;
+  playerData.shield = config.BASE_SHIELD;
   playerData.isMoving = false;
   playerData.isBoosting = false;
   playerData.r = 21;
@@ -33,7 +33,7 @@ module.exports = function({ socket }, playerData) {
   playerData.bulletSpeed = 0;
   playerData.establishedLevel = 1;
 
-  if (config.settings.DEBUG_MODE) {
+  if (config.DEBUG_MODE) {
     playerData.x = 1000;
     playerData.y = 1000;
   }

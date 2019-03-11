@@ -1,4 +1,4 @@
-const settings = {
+module.exports = {
    // Game Size
    PLAYAREA_WIDTH: 10000,
    PLAYAREA_HEIGHT: 6000,
@@ -27,6 +27,3 @@ const settings = {
   BULLET_SPEED_MULTIPLIER : 10,
 };
 
-module.exports= {
-  settings
-};

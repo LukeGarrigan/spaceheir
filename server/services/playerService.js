@@ -14,7 +14,7 @@ function movePlayer(player) {
 }
 
 function speedPlayerUp(player) {
-  if (player.velocity < config.settings.BASE_SPEED + player.additionalSpeed * config.settings.SPEED_MULTIPLIER) {
+  if (player.velocity < config.BASE_SPEED + player.additionalSpeed * config.SPEED_MULTIPLIER) {
     player.velocity += 0.2;
   }
   player.x += player.velocity * Math.cos(player.angle);
@@ -35,13 +35,13 @@ function slowPlayerDown(player) {
 
 function constrain(player) {
   if (player.x < -68) {
-    player.x = config.settings.PLAYAREA_WIDTH;
-  } else if (player.x > config.settings.PLAYAREA_WIDTH) {
+    player.x = config.PLAYAREA_WIDTH;
+  } else if (player.x > config.PLAYAREA_WIDTH) {
     player.x = 0;
   }
   if (player.y < -68) {
-    player.y = config.settings.PLAYAREA_HEIGHT;
-  } else if (player.y > config.settings.PLAYAREA_HEIGHT) {
+    player.y = config.PLAYAREA_HEIGHT;
+  } else if (player.y > config.PLAYAREA_HEIGHT) {
     player.y = 0;
   }
 }
@@ -57,9 +57,9 @@ function updatePlayerEatingFood(player, foods, io) {
 
 
 function playerAteFood(player, currentFood, io) {
-  if (player.shield < config.settings.MAX_SHIELD) {
-    player.shield += currentFood.r + player.regen * config.settings.REGEN_MULTIPLIER;
-    io.to(player.id).emit('increaseShield', currentFood.r + player.regen * config.settings.REGEN_MULTIPLIER);
+  if (player.shield < config.MAX_SHIELD) {
+    player.shield += currentFood.r + player.regen * config.REGEN_MULTIPLIER;
+    io.to(player.id).emit('increaseShield', currentFood.r + player.regen * config.REGEN_MULTIPLIER);
   }
   updateFoodLocation(currentFood);
   let foodArray = [];
@@ -69,8 +69,8 @@ function playerAteFood(player, currentFood, io) {
 
 
 function updateFoodLocation(currentFood) {
-  let foodX = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-  let foodY = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
+  let foodX = Math.floor(Math.random() * (config.PLAYAREA_WIDTH)) + 1;
+  let foodY = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT)) + 1;
   currentFood.x = foodX;
   currentFood.y = foodY;
 }

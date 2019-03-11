@@ -9,9 +9,9 @@ function respawnAsteroid(asteroid, io) {
 }
 
 function updateAsteroidWithNewLocation(asteroid) {
-  asteroid.x = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-  asteroid.y = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
-  asteroid.asteroidIndex  = Math.floor(Math.random() * config.settings.NUM_ASTEROID_IMAGES);
+  asteroid.x = Math.floor(Math.random() * (config.PLAYAREA_WIDTH)) + 1;
+  asteroid.y = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT)) + 1;
+  asteroid.asteroidIndex  = Math.floor(Math.random() * config.NUM_ASTEROID_IMAGES);
   asteroid.r = Math.floor(Math.random() * 300) + 50;
   asteroid.health = asteroid.r * 2;
 }

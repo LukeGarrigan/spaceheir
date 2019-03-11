@@ -21,17 +21,16 @@ let io = socket(server);
 let playersLastShot = [];
 const players = [];
 let bullets = [];
-let foods = [];
+let foods = setupFood();
 let lastBulletId = 0;
 let lastXpGemId = 0;
-let asteroids = [];
+let asteroids = setupAsteroids();
 let xpGems = [];
 let lastLog = 0;
 
-foods = setupFood();
-asteroids = setupAsteroids();
-setInterval(broadcastGameStateToPlayers, 2);
-setInterval(updateGame, 14);
+
+setInterval(broadcastGameStateToPlayers, 16);
+setInterval(updateGame, 16);
 
 module.exports = {
   players,
@@ -42,7 +41,7 @@ module.exports = {
   io
 };
 
-const events = require('./events');
+const events = require('./events/events.js');
 const eventsList = Object.entries(events);
 
 io.sockets.on('connection', function newConnection(socket) {
@@ -61,8 +60,6 @@ io.sockets.on('connection', function newConnection(socket) {
 
 
 function broadcastGameStateToPlayers() {
-
-
   io.sockets.emit('heartbeat', players);
 
   if (bullets.length > 0) {
@@ -84,7 +81,7 @@ function updateGame() {
 
 function logServerInfo() {
 
-  if (config.settings.SERVER_LOGGING && lastLog % 300 === 0) {
+  if (config.SERVER_LOGGING && lastLog % 300 === 0) {
     console.log("*****************************");
     console.log("players " + players.length);
     console.log("foods " + foods.length);
@@ -101,8 +98,8 @@ function logServerInfo() {
 function updateBulletPositions() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     let speed = 20;
-    bullets[i].x += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.cos(bullets[i].angle);
-    bullets[i].y += (bullets[i].bulletSpeed * config.settings.BULLET_SPEED_MULTIPLIER + speed) * Math.sin(bullets[i].angle);
+    bullets[i].x += (bullets[i].bulletSpeed * config.BULLET_SPEED_MULTIPLIER + speed) * Math.cos(bullets[i].angle);
+    bullets[i].y += (bullets[i].bulletSpeed * config.BULLET_SPEED_MULTIPLIER + speed) * Math.sin(bullets[i].angle);
     bullets[i].bulletSize--;
 
 
@@ -133,15 +130,15 @@ function killPlayer(player) {
 
 
 function resetPlayerStats(player) {
-  if (config.settings.DEBUG_MODE) {
-    player.x = config.settings.DEBUG_MODE_X;
-    player.y = config.settings.DEBUG_MODE_Y;
+  if (config.DEBUG_MODE) {
+    player.x = config.DEBUG_MODE_X;
+    player.y = config.DEBUG_MODE_Y;
   } else {
-    player.x = Math.floor(Math.random() * (config.settings.PLAYAREA_WIDTH)) + 1;
-    player.y = Math.floor(Math.random() * (config.settings.PLAYAREA_HEIGHT)) + 1;
+    player.x = Math.floor(Math.random() * (config.PLAYAREA_WIDTH)) + 1;
+    player.y = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT)) + 1;
   }
 
-  player.shield = config.settings.MAX_SHIELD / 2;
+  player.shield = config.MAX_SHIELD / 2;
   player.score = 0;
   player.additionalSpeed = 0;
   player.damage = 0;
@@ -161,8 +158,8 @@ function updatePlayerShield(player) {
 }
 
 function constrainShield(player) {
-  if (player.shield > config.settings.MAX_SHIELD) {
-    player.shield = config.settings.MAX_SHIELD;
+  if (player.shield > config.MAX_SHIELD) {
+    player.shield = config.MAX_SHIELD;
   }
 
 }
@@ -273,7 +270,7 @@ function hasBulletHit(i, playerOrAsteroid, radius) {
 
 
 function doDamage(player, shooter) {
-  player.shield -= config.settings.BASE_DAMAGE + shooter.damage * config.settings.DAMAGE_MULTIPLIER;
+  player.shield -= config.BASE_DAMAGE + shooter.damage * config.DAMAGE_MULTIPLIER;
 }
 
 
@@ -282,7 +279,7 @@ function hasBulletHitAnAsteroid(i, clientId) {
     if (hasBulletHit(i, asteroid, asteroid.r / 2)) {
 
       let shooter = getShooter(clientId);
-      asteroid.health -= 10 + shooter.damage * config.settings.DAMAGE_MULTIPLIER / 2;
+      asteroid.health -= 10 + shooter.damage * config.DAMAGE_MULTIPLIER / 2;
       if (asteroid.health <= 0) {
         createXpGem(asteroid);
         asteroidService.respawnAsteroid(asteroid, io);
