@@ -1,4 +1,4 @@
-# Spaceheir
+# Spaceheir 🚀
 
  [![GitHub contributors](https://img.shields.io/github/contributors/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/)
  [![GitHub issues](https://img.shields.io/github/issues/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/issues/) 
