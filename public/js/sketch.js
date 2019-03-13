@@ -300,10 +300,10 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
 
     xpBar.display(player);
+    drawBosses();
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
-    drawBosses();
     drawMessages(messages, player.pos.x, player.pos.y);
     drawXAndY(player.pos.x, player.pos.y);
     displayFramesPerSecond(player.pos.x, player.pos.y);
