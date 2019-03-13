@@ -8,6 +8,8 @@ let setupAsteroids = require('./setupAsteroids.js');
 let asteroidService = require('./services/asteroidService.js');
 let playerService = require('./services/playerService.js');
 let leaderboardService = require('./services/leaderboardService.js');
+let bossService = require('./services/bossService.js')
+let Boss = require('./Boss.js');
 let app = express();
 app.use(compression());
 
@@ -27,6 +29,12 @@ let lastXpGemId = 0;
 let asteroids = setupAsteroids();
 let xpGems = [];
 let lastLog = 0;
+
+let bosses = [];
+
+
+let boss = new Boss();
+bosses.push(boss);
 
 
 setInterval(broadcastGameStateToPlayers, 16);
@@ -66,6 +74,8 @@ function broadcastGameStateToPlayers() {
     io.sockets.emit('bullets', bullets);
   }
 
+  io.sockets.emit('boss', bosses);
+
 }
 
 function updateGame() {
@@ -77,6 +87,9 @@ function updateGame() {
 
   updateBulletPositions();
 
+  for (let boss of bosses) {
+    bossService.move(boss, players);
+  }
 }
 
 function logServerInfo() {

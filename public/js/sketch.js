@@ -38,7 +38,8 @@ import {
   updateBullets,
   updateFoods,
   updateOtherPlayers,
-  updateMessages
+  updateMessages,
+  updateBosses
 
 } from './game-logic.js'
 
@@ -99,6 +100,9 @@ let invalidUsernameLabel;
 let messageInput;
 let messages = [];
 
+let bosses = [];
+let bossImage;
+
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
@@ -124,6 +128,8 @@ function loadImages() {
   transparentRegenImage = loadImage("assets/images/regenTransparent.png");
   transparentSpeedImage = loadImage("assets/images/speedTransparent.png");
   transparentBulletSpeedImage = loadImage("assets/images/bulletSpeedTransparent.png");
+
+  bossImage = loadImage("assets/images/blueship.png");
 
   loadAsteroidImages();
 }
@@ -243,7 +249,7 @@ window.setup = function () {
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
   socket.on('invalidUsername', userEnteredInvalidUsername);
   socket.on('chat', serverMessage => updateMessages(serverMessage, messages));
-
+  socket.on('boss', updatedBosses => updateBosses(updatedBosses, bosses, bossImage));
 
   loadSounds();
   loadImages();
@@ -297,6 +303,7 @@ window.draw = function () {
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
+    drawBosses();
     drawMessages(messages, player.pos.x, player.pos.y);
     drawXAndY(player.pos.x, player.pos.y);
     displayFramesPerSecond(player.pos.x, player.pos.y);
@@ -328,6 +335,8 @@ function drawLevelUpButtons() {
 
 
 }
+
+
 
 function drawStartScreen() {
   let position = {
@@ -465,5 +474,11 @@ window.mouseWheel = function (event) {
   return false;
 };
 
+
+function drawBosses() {
+  for (let boss of bosses) {
+    boss.draw();
+  }
+}
 
 

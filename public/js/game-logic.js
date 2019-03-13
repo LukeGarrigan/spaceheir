@@ -9,6 +9,8 @@ import Gem from './classes/Gem.js';
 import XpPopup from './Popup/IncreaseXp.js';
 import OtherPlayer from './OtherPlayer.js';
 import Message from './classes/Message.js';
+import Boss from './classes/Boss.js';
+
 
 export function processRespawn(player, popups, timeOutInSeconds) {
   player.respawning = true;
@@ -184,7 +186,6 @@ export function updateAsteroids(data, asteroids, asteroidImages) {
       let asteroid = new Asteroid(data[i].x, data[i].y, data[i].id, asteroidImages[data[i].asteroidIndex], data[i].r);
       asteroids.push(asteroid);
     }
-
   }
 }
 
@@ -213,4 +214,24 @@ export function updateMessages(serverMessage, messages) {
     messages.splice(0, 1);
   }
   messages.push(new Message(serverMessage.message, serverMessage.sender));
+}
+
+export function updateBosses(updatedBosses, bosses, bossImage) {
+  for (let i = 0; i < updatedBosses.length; i++) {
+    let exists = false;
+
+    for (let boss of bosses) {
+      if (boss.id === updatedBosses[i].id) {
+        boss.x = updatedBosses[i].x;
+        boss.y = updatedBosses[i].y;
+        boss.angle = updatedBosses[i].angle;
+        exists = true;
+      }
+    }
+
+    if (!exists) {
+      let boss = new Boss(updatedBosses[i].id, updatedBosses[i].x, updatedBosses[i].y, bossImage);
+      bosses.push(boss);
+    }
+  }
 }
