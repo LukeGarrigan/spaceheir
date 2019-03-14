@@ -1,3 +1,7 @@
+<a href="https://twitter.com/codeheir">
+    <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
+</a>
+
 # Spaceheir 🚀
 
  [![GitHub contributors](https://img.shields.io/github/contributors/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/)
