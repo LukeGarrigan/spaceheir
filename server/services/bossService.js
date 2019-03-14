@@ -31,14 +31,7 @@ function move(boss, players) {
 }
 
 function setAngle(player, boss) {
-  let actualAngle = Math.atan2(player.y - boss.y, player.x - boss.x);
-
-  if (actualAngle > boss.angle) {
-    boss.angle += 0.002;
-  } else {
-    boss.angle -= 0.002;
-  }
-
+  boss.angle = Math.atan2(player.y - boss.y, player.x - boss.x);
 }
 
 
