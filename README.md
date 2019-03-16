@@ -1,15 +1,25 @@
+<h1 align="center">
+  <br>
+  🚀
+  <br>
+  Spaceheir
+  <br>
+</h1>
+
+<h4 align="center">A pretty bloody brilliant multiplayer space shooting game</h4>
+
+
+<p align="center">
 <a href="https://twitter.com/codeheir">
     <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
 </a>
-
-# Spaceheir 🚀
 
  [![GitHub contributors](https://img.shields.io/github/contributors/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/)
  [![GitHub issues](https://img.shields.io/github/issues/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/issues/) 
  [![Trello Board](https://img.shields.io/badge/trello-board-purple.svg)](https://trello.com/b/HBwddn26/stream-royale-game)
 
 [![Twitter @codeheir](https://img.shields.io/twitter/follow/codeheir.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=codeheir)
-
+</p>
 A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](https://www.twitch.tv/codeheir) as a fun little project, it started off as an asteroids replica, but idea after idea has led me to this space game! 
 
 Go play the game in its current state at [spaceheir.com!](http://spaceheir.com/)
