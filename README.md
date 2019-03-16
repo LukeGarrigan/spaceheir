@@ -12,11 +12,23 @@
     <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
 </a>
 
- [![GitHub contributors](https://img.shields.io/github/contributors/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/)
- [![GitHub issues](https://img.shields.io/github/issues/LukeGarrigan/spaceheir.svg)](https://GitHub.com/LukeGarrigan/spaceheir/issues/) 
- [![Trello Board](https://img.shields.io/badge/trello-board-purple.svg)](https://trello.com/b/HBwddn26/stream-royale-game)
+<p align="center">
+  <a href="https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/">
+      <img src="https://img.shields.io/github/contributors/LukeGarrigan/spaceheir.svg">
+  </a>
+   <a href="https://GitHub.com/LukeGarrigan/spaceheir/issues/">
+      <img src="https://img.shields.io/github/issues/LukeGarrigan/spaceheir.svg">
+  </a>
+   <a href="https://trello.com/b/HBwddn26/stream-royale-game">
+      <img src="https://img.shields.io/badge/trello-board-purple.svg">
+  </a>
+ 
+  
+</p>
 
 [![Twitter @codeheir](https://img.shields.io/twitter/follow/codeheir.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=codeheir)
+
+
 A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](https://www.twitch.tv/codeheir) as a fun little project, it started off as an asteroids replica, but idea after idea has led me to this space game! 
 
 Go play the game in its current state at [spaceheir.com!](http://spaceheir.com/)
