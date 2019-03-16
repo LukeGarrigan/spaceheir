@@ -8,9 +8,7 @@
 
 <h4 align="center">A pretty bloody brilliant multiplayer space shooting game</h4>
 
-<a href="https://twitter.com/codeheir">
-    <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
-</a>
+
 
 <p align="center">
   <a href="https://GitHub.com/LukeGarrigan/spaceheir/graphs/contributors/">
@@ -29,6 +27,10 @@
  
   
 </p>
+
+<a href="https://twitter.com/codeheir">
+    <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
+</a>
 
 
 
