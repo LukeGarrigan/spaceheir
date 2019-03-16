@@ -22,11 +22,14 @@
    <a href="https://trello.com/b/HBwddn26/stream-royale-game">
       <img src="https://img.shields.io/badge/trello-board-purple.svg">
   </a>
+  
+  <a href="https://twitter.com/intent/follow?screen_name=codeheir">
+      <img src="https://img.shields.io/twitter/follow/codeheir.svg?label=Follow">
+  </a>
  
   
 </p>
 
-[![Twitter @codeheir](https://img.shields.io/twitter/follow/codeheir.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=codeheir)
 
 
 A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](https://www.twitch.tv/codeheir) as a fun little project, it started off as an asteroids replica, but idea after idea has led me to this space game! 
