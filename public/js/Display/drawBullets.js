@@ -1,4 +1,4 @@
-import {isWithinScreenXAndY} from "../game-logic.js";
+import {isWithinScreenXAndY} from "../gameLogic.js";
 
 export default function(bullets, player) {
   for (let i = bullets.length - 1; i >= 0; i--) {

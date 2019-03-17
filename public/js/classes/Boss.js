@@ -6,16 +6,20 @@ export default class Boss {
     this.y = y;
     this.image = bossImage;
     this.angle = 2;
+    this.isLaser = false;
 
   }
 
   draw() {
     this.drawRing();
+
     imageMode(CENTER);
     push();
     translate(this.x, this.y);
     rotate(this.angle);
+    this.drawLaser();
     image(this.image, 0, 0, this.image.width * 1.5, this.image.height * 1.5);
+
     pop();
   }
 
@@ -26,5 +30,14 @@ export default class Boss {
     noFill();
     ellipse(this.x, this.y, 3000, 3000);
     pop();
+  }
+
+  drawLaser() {
+    if (this.isLaser) {
+      fill(255,0, 0, 50);
+      noStroke();
+      rect(0, -14, 1500, 25);
+
+    }
   }
 }

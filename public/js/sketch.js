@@ -41,7 +41,7 @@ import {
   updateMessages,
   updateBosses
 
-} from './game-logic.js'
+} from './gameLogic.js'
 
 let player;
 let food = [];

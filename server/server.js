@@ -10,6 +10,7 @@ let playerService = require('./services/playerService.js');
 let leaderboardService = require('./services/leaderboardService.js');
 let bossService = require('./services/bossService.js')
 let Boss = require('./Boss.js');
+let LaserBoss = require('./LaserBoss.js');
 let app = express();
 app.use(compression());
 
@@ -33,7 +34,7 @@ let lastLog = 0;
 let bosses = [];
 
 
-let boss = new Boss();
+let boss = new LaserBoss();
 bosses.push(boss);
 
 
@@ -88,7 +89,8 @@ function updateGame() {
   updateBulletPositions();
 
   for (let boss of bosses) {
-    bossService.move(boss, players);
+    bossService.update(boss, players);
+
   }
 }
 

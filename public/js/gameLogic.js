@@ -225,6 +225,7 @@ export function updateBosses(updatedBosses, bosses, bossImage) {
         boss.x = updatedBosses[i].x;
         boss.y = updatedBosses[i].y;
         boss.angle = updatedBosses[i].angle;
+        boss.isLaser = updatedBosses[i].isLaser;
         exists = true;
       }
     }

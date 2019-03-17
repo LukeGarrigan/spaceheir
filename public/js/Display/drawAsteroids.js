@@ -1,4 +1,4 @@
-import {isWithinScreenXAndY} from "../game-logic.js";
+import {isWithinScreenXAndY} from "../gameLogic.js";
 
 export default function(asteroids, player) {
   for (let asteroid of asteroids) {
