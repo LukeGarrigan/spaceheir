@@ -8,7 +8,7 @@ let setupAsteroids = require('./setupAsteroids.js');
 let asteroidService = require('./services/asteroidService.js');
 let playerService = require('./services/playerService.js');
 let leaderboardService = require('./services/leaderboardService.js');
-let bossService = require('./services/bossService.js')
+
 let Boss = require('./Boss.js');
 let LaserBoss = require('./LaserBoss.js');
 let app = express();
@@ -49,6 +49,7 @@ module.exports = {
   asteroids,
   io
 };
+let bossService = require('./services/bossService.js');
 
 const events = require('./events/events.js');
 const eventsList = Object.entries(events);
@@ -89,8 +90,7 @@ function updateGame() {
   updateBulletPositions();
 
   for (let boss of bosses) {
-    bossService.update(boss, players);
-
+    bossService.update(boss, players, asteroids);
   }
 }
 
