@@ -1,11 +1,11 @@
 
 export default class Boss {
-  constructor(id, x, y, bossImage) {
+  constructor(id, x, y, bossImage, angle) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.image = bossImage;
-    this.angle = 2;
+    this.angle = angle;
     this.isLaser = false;
 
   }
@@ -13,14 +13,23 @@ export default class Boss {
   draw() {
     this.drawRing();
 
+
+
+
+
+
     imageMode(CENTER);
     push();
     translate(this.x, this.y);
     rotate(this.angle);
     this.drawLaser();
-    image(this.image, 0, 0, this.image.width * 1.5, this.image.height * 1.5);
-
+    image(this.image, 0, 0, this.image.width, this.image.height);
     pop();
+
+
+
+
+
   }
 
   drawRing() {
@@ -36,8 +45,7 @@ export default class Boss {
     if (this.isLaser) {
       fill(255,0, 0, 50);
       noStroke();
-      rect(0, -14, 1500, 25);
-
+      rect(0, -14, 1500, 40);
     }
   }
 }

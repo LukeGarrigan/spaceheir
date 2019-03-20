@@ -6,7 +6,7 @@ class Boss {
       this.x = Math.floor(Math.random() * (config.PLAYAREA_WIDTH - 800)) + 800;
       this.y = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT - 700)) + 700;
       this.id = 1;
-      this.angle = 0;
+      this.angle = 2;
 
   }
 

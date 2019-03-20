@@ -231,7 +231,7 @@ export function updateBosses(updatedBosses, bosses, bossImage) {
     }
 
     if (!exists) {
-      let boss = new Boss(updatedBosses[i].id, updatedBosses[i].x, updatedBosses[i].y, bossImage);
+      let boss = new Boss(updatedBosses[i].id, updatedBosses[i].x, updatedBosses[i].y, bossImage, updatedBosses[i].angle);
       bosses.push(boss);
     }
   }

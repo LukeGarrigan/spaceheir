@@ -1,9 +1,12 @@
 let config = require('../../configs/defaults.js');
 const {asteroids} = require('../server');
+
+
 function update(boss, players) {
   move(boss, players);
   updateShooting(boss);
   hitAsteroid(boss);
+  processHittingPlayers(boss,players);
 }
 
 
@@ -62,6 +65,35 @@ function hitAsteroid(boss) {
   //     asteroids.splice(i, 1);
   //   }
   // }
+}
+
+
+function processHittingPlayers(boss,players) {
+  let destinationX = boss.x + 1500 * Math.cos(boss.angle);
+  let destinationY = boss.y + 1500 * Math.sin(boss.angle);
+
+  if (boss.isLaser) {
+    for (let player of players) {
+      processHittingPlayer(player, boss, destinationX, destinationY);
+    }
+  }
+}
+
+
+function processHittingPlayer(player, boss, destinationX, destinationY) {
+  if (isWithinLaserX(player, boss, destinationX)) {
+    if (isWithinLaserY(player, boss, destinationY)) {
+      player.shield -= 1;
+    }
+  }
+}
+
+function isWithinLaserX(player, boss, destinationX) {
+  return player.x < boss.x && player.x > destinationX || player.x > boss.x && player.x < destinationX;
+}
+
+function isWithinLaserY(player, boss, destinationY) {
+  return player.y < boss.y && player.y > destinationY || player.y > boss.y && player.y < destinationY;
 }
 
 

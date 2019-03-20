@@ -111,8 +111,12 @@ function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
   indicatorImage = loadImage("assets/images/indicator.png");
 
-  spaceShipImage = loadImage("assets/images/bronzeSpaceship.png");
-  winnerSpaceShipImage = loadImage("assets/images/goldSpaceship.png");
+  spaceShipImage = loadImage("assets/images/playerShip.png");
+  winnerSpaceShipImage = loadImage("assets/images/playerShip.png");
+
+  //
+  // spaceShipImage = loadImage("assets/images/bronzeSpaceship.png");
+  // winnerSpaceShipImage = loadImage("assets/images/goldSpaceship.png");
   foodImage = loadImage("assets/images/food.png", foodImageLoaded);
   soundOn = loadImage("assets/images/soundOn.png");
   soundOff = loadImage("assets/images/soundOff.png");
@@ -129,7 +133,7 @@ function loadImages() {
   transparentSpeedImage = loadImage("assets/images/speedTransparent.png");
   transparentBulletSpeedImage = loadImage("assets/images/bulletSpeedTransparent.png");
 
-  bossImage = loadImage("assets/images/blueship.png");
+  bossImage = loadImage("assets/images/redship.png");
 
   loadAsteroidImages();
 }
