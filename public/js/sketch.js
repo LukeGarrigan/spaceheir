@@ -179,6 +179,10 @@ window.setup = function () {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
 
   if (isInvalidUsername) {
+    //bugfix: if three or more invalidUsername attempts happen, text will be shown correctly
+    if(invalidUsernameLabel){
+      invalidUsernameLabel.remove();
+    }
     invalidUsernameLabel = createElement('h2', `Username ${invalidUsername} already taken`);
     invalidUsernameLabel.position(window.innerWidth / 2 - 250, window.innerHeight / 2 - 80);
     let colour = color(255, 23, 32);
