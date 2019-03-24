@@ -91,7 +91,43 @@ function updateGame() {
 
   for (let boss of bosses) {
     bossService.update(boss, players, asteroids);
+    updateBossGettingShot(boss);
   }
+}
+
+function updateBossGettingShot(boss) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    if (hasBulletHit(i, boss, 500)) {
+
+      let shooter = getShooter(bullets[i].clientId);
+      boss.health -= config.BASE_DAMAGE + shooter.damage * config.DAMAGE_MULTIPLIER;
+      removeBulletFromGame(i);
+
+
+      if (boss.health <= 0) {
+
+        createXpGemsForBoss(boss);
+        boss.respawn();
+      }
+    }
+  }
+}
+
+function createXpGemsForBoss(boss) {
+  let numberOfGems = 140;
+  let bossGems = [];
+
+  for (let i = 0; i < numberOfGems; i++) {
+    let xpGem = {
+      id: lastXpGemId++,
+      x: boss.x + Math.random() * (2000 / 2) - (2000 / 2),
+      y: boss.y + Math.random() * (2000/ 2) - (2000 / 2)
+    };
+
+    bossGems.push(xpGem);
+    xpGems.push(xpGem);
+  }
+  io.sockets.emit("createXpGem", bossGems);
 }
 
 function logServerInfo() {
@@ -120,10 +156,8 @@ function updateBulletPositions() {
 
     if (hasBulletHitAnAsteroid(i, bullets[i].clientId)) {
       removeBulletFromGame(i);
-      bullets.splice(i, 1);
     } else if (bullets[i].bulletSize <= 1) {
       removeBulletFromGame(i);
-      bullets.splice(i, 1);
     }
   }
 }
@@ -232,6 +266,7 @@ function getShooter(clientId) {
 
 function removeBulletFromGame(i) {
   io.sockets.emit('bulletHit', bullets[i].id);
+  bullets.splice(i, 1);
 }
 
 function processPlayerDying(i, isDeadPlayerWinning, player, isCurrentKillerWinning) {
@@ -296,7 +331,7 @@ function hasBulletHitAnAsteroid(i, clientId) {
       let shooter = getShooter(clientId);
       asteroid.health -= 10 + shooter.damage * config.DAMAGE_MULTIPLIER / 2;
       if (asteroid.health <= 0) {
-        createXpGem(asteroid);
+        createXpGems(asteroid);
         asteroidService.respawnAsteroid(asteroid, io);
       }
       return true;
@@ -305,7 +340,7 @@ function hasBulletHitAnAsteroid(i, clientId) {
   return false;
 }
 
-function createXpGem(asteroid) {
+function createXpGems(asteroid) {
   let sizeOfAsteroid = asteroid.r;
   let numberOfGems = Math.floor(sizeOfAsteroid / 30);
   let asteroidsGems = [];

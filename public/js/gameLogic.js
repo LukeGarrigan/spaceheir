@@ -226,12 +226,13 @@ export function updateBosses(updatedBosses, bosses, bossImage) {
         boss.y = updatedBosses[i].y;
         boss.angle = updatedBosses[i].angle;
         boss.isLaser = updatedBosses[i].isLaser;
+        boss.health = updatedBosses[i].health;
         exists = true;
       }
     }
 
     if (!exists) {
-      let boss = new Boss(updatedBosses[i].id, updatedBosses[i].x, updatedBosses[i].y, bossImage, updatedBosses[i].angle);
+      let boss = new Boss(updatedBosses[i].id, updatedBosses[i].x, updatedBosses[i].y, bossImage, updatedBosses[i].angle, updatedBosses[i].health);
       bosses.push(boss);
     }
   }

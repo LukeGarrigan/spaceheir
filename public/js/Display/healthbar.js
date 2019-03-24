@@ -14,6 +14,6 @@ export default function (player) {
 
   percentageHealth = map(percentageHealth, 0, 1000, 0, 100);
 
-  text(floor(percentageHealth) + "%", player.pos.x, player.pos.y + 80,);
+  text(floor(percentageHealth) + "%", player.pos.x, player.pos.y + 80);
   pop();
 }
