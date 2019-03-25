@@ -1,12 +1,13 @@
 let config = require('../../configs/defaults.js');
-const {asteroids} = require('../server');
+let asteroidService = require('./asteroidService.js');
+const {asteroids, killPlayer, io} = require('../server'); // I don't love that the server calls this but we use a method from the server, need to refactor the server to pull that out into its own service
 
 
 function update(boss, players) {
   move(boss, players);
   updateShooting(boss);
   hitAsteroid(boss);
-  processHittingPlayers(boss,players);
+  processHittingPlayers(boss, players);
 }
 
 
@@ -37,6 +38,9 @@ function move(boss, players) {
 
     setAngle(player, boss);
   }
+
+  processMovingIntoAPlayer(boss, players);
+  processMovingIntoAnAsteroid(boss);
 }
 
 function setAngle(player, boss) {
@@ -49,6 +53,29 @@ function setAngle(player, boss) {
   }
   boss.angle += (playerAngle - boss.angle) * 0.02;
 }
+
+function processMovingIntoAPlayer(boss, players) {
+  for (let player of players) {
+    if (playerFlewIntoBoss(player, boss)) {
+      killPlayer(player);
+    }
+  }
+}
+
+
+function processMovingIntoAnAsteroid(boss) {
+  for (let asteroid of asteroids) {
+    if (playerFlewIntoBoss(asteroid, boss)) {
+       asteroidService.respawnAsteroid(asteroid, io);
+    }
+  }
+}
+
+
+function playerFlewIntoBoss(player, boss) {
+  return Math.abs(player.x - boss.x) + Math.abs(player.y - boss.y) < 450;
+}
+
 
 function updateShooting(boss) {
   boss.update();
@@ -68,7 +95,7 @@ function hitAsteroid(boss) {
 }
 
 
-function processHittingPlayers(boss,players) {
+function processHittingPlayers(boss, players) {
   let destinationX = boss.x + 1500 * Math.cos(boss.angle);
   let destinationY = boss.y + 1500 * Math.sin(boss.angle);
 

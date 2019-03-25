@@ -39,10 +39,10 @@ export default class Killfeed {
     rotate(currentKill.killAngle + HALF_PI);
     if (currentKill.killerWinner) {
       imageMode(CENTER);
-      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 4, winnerSpaceshipImage.height / 4);
     } else {
       imageMode(CENTER);
-      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 4, winnerSpaceshipImage.height / 4);
     }
     pop();
     return currentX;
@@ -71,10 +71,10 @@ export default class Killfeed {
     rotate(currentKill.deatherAngle + HALF_PI);
     if (currentKill.deatherWinner) {
       imageMode(CENTER);
-      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+      image(winnerSpaceshipImage, 0, 0, winnerSpaceshipImage.width / 4, winnerSpaceshipImage.height / 4);
     } else {
       imageMode(CENTER);
-      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 2, winnerSpaceshipImage.height / 2);
+      image(spaceshipImage, 0, 0, winnerSpaceshipImage.width / 4, winnerSpaceshipImage.height / 4);
     }
     pop();
   }

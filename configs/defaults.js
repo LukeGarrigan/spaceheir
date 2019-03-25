@@ -15,7 +15,7 @@ module.exports = {
 
    BASE_DAMAGE: 75,
 
-   DEBUG_MODE: false,
+   DEBUG_MODE: true,
    SERVER_LOGGING: false,
    DEBUG_MODE_X : 1000,
    DEBUG_MODE_Y : 1000,

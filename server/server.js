@@ -47,7 +47,8 @@ module.exports = {
   bullets,
   foods,
   asteroids,
-  io
+  io,
+  killPlayer
 };
 let bossService = require('./services/bossService.js');
 
@@ -297,8 +298,9 @@ function processPlayerDying(i, isDeadPlayerWinning, player, isCurrentKillerWinni
 function processPlayerGettingShotByAnotherPlayer(player, i) {
   if (player.id !== bullets[i].clientId) {
     if (hasBulletHit(i, player, 37)) {
-      removeBulletFromGame(i);
+
       doDamage(player, getShooter(bullets[i].clientId));
+
       let isCurrentPlayerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(player.id);
       let isCurrentKillerWinning = leaderboardService.checkIfCurrentPlayerIsWinning(bullets[i].clientId);
 
@@ -307,7 +309,7 @@ function processPlayerGettingShotByAnotherPlayer(player, i) {
       }
 
       io.to(bullets[i].clientId).emit('hitMarker', player);
-      bullets.splice(i, 1);
+      removeBulletFromGame(i);
     }
 
 

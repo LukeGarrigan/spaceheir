@@ -299,6 +299,7 @@ window.draw = function () {
     drawXpGems(player, xpGems);
 
 
+    drawBosses();
     minimap.displayMinimap(player.pos.x, player.pos.y, player.radians, food);
     muteButton.displayMuteButton(player.pos.x - width / 2, player.pos.y - height / 2);
 
@@ -308,7 +309,7 @@ window.draw = function () {
     leaderboard.displayLeaderboard();
 
     xpBar.display(player);
-    drawBosses();
+
     drawLevelUpButtons();
     socket.emit('angle', player.radians);
     clientLogging();
