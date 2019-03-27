@@ -13,8 +13,8 @@ export default class Boss {
 
   draw() {
     this.drawRing();
-    imageMode(CENTER);
     push();
+    imageMode(CENTER);
     translate(this.x, this.y);
     rotate(this.angle);
     this.drawLaser();
