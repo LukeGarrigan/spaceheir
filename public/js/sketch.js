@@ -252,7 +252,11 @@ window.setup = function () {
       // shotSound.play();
     }
   });
-  socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
+  socket.on('createXpGem', new function(gems) {
+    if (gems) {
+      xpGems.push(...createXpGems(gems, gemImage));
+    }
+  });
   socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
   socket.on('invalidUsername', userEnteredInvalidUsername);
