@@ -1,5 +1,6 @@
 let config = require('../../configs/defaults.js');
 let asteroidService = require('./asteroidService.js');
+let playerService = require('./playerService.js');
 const {asteroids, killPlayer, io} = require('../server'); // I don't love that the server calls this but we use a method from the server, need to refactor the server to pull that out into its own service
 
 
@@ -101,6 +102,10 @@ function processHittingPlayers(boss, players) {
 function processHittingPlayer(player, boss, endPoint) {
   if (hasBeenHitByLaser(boss, endPoint, player)) {
     player.shield -= 10;
+
+    if (player.shield <= 0) {
+      playerService.playerReset(player);
+    }
   }
 }
 

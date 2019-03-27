@@ -166,8 +166,7 @@ function updateBulletPositions() {
 
 
 function killPlayer(player) {
-  resetPlayerStats(player);
-
+  playerService.resetPlayerStats(player);
 
   const timeOutInSeconds = 5;
   player.lastDeath = new Date();
@@ -179,23 +178,6 @@ function killPlayer(player) {
 }
 
 
-function resetPlayerStats(player) {
-  if (config.DEBUG_MODE) {
-    player.x = config.DEBUG_MODE_X;
-    player.y = config.DEBUG_MODE_Y;
-  } else {
-    player.x = Math.floor(Math.random() * (config.PLAYAREA_WIDTH)) + 1;
-    player.y = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT)) + 1;
-  }
-
-  player.shield = config.MAX_SHIELD / 2;
-  player.score = 0;
-  player.additionalSpeed = 0;
-  player.damage = 0;
-  player.regen = 0;
-  player.bulletSpeed = 0;
-
-}
 
 
 function updatePlayerShield(player) {
@@ -272,10 +254,6 @@ function removeBulletFromGame(i) {
 
 function processPlayerDying(i, isDeadPlayerWinning, player, isCurrentKillerWinning) {
   updatePlayerScore(bullets[i].clientId, isDeadPlayerWinning, player.score);
-  player.score = 0;
-  player.xp = 625;
-  player.lvl = 1;
-  player.establishedLevel = 1;
   io.to(player.id).emit('playExplosion');
   io.to(bullets[i].clientId).emit('playExplosion');
 
@@ -293,6 +271,8 @@ function processPlayerDying(i, isDeadPlayerWinning, player, isCurrentKillerWinni
   };
   io.sockets.emit('killfeed', playerKill);
 }
+
+
 
 
 function processPlayerGettingShotByAnotherPlayer(player, i) {

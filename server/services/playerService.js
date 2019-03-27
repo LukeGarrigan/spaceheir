@@ -116,6 +116,36 @@ function canPlayerShoot(socket) {
   return false;
 }
 
+function resetPlayerStats(player) {
+
+  playerReset(player);
+  if (config.DEBUG_MODE) {
+    player.x = config.DEBUG_MODE_X;
+    player.y = config.DEBUG_MODE_Y;
+  } else {
+    player.x = Math.floor(Math.random() * (config.PLAYAREA_WIDTH)) + 1;
+    player.y = Math.floor(Math.random() * (config.PLAYAREA_HEIGHT)) + 1;
+  }
+
+  player.shield = config.MAX_SHIELD / 2;
+  player.score = 0;
+  player.additionalSpeed = 0;
+  player.damage = 0;
+  player.regen = 0;
+  player.bulletSpeed = 0;
+
+}
+
+
+
+function playerReset(player) {
+  player.score = 0;
+  player.xp = 625;
+  player.lvl = 1;
+  player.establishedLevel = 1;
+}
+
+
 
 module.exports = {
   movePlayer,
@@ -123,7 +153,9 @@ module.exports = {
   updatePlayerEatingFood,
   processPlayerLevelingUp,
   setupPlayerLastShot,
-  canPlayerShoot
+  canPlayerShoot,
+  playerReset,
+  resetPlayerStats
 };
 
 
