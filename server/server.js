@@ -47,6 +47,7 @@ module.exports = {
   bullets,
   foods,
   asteroids,
+  xpGems,
   io,
   killPlayer
 };

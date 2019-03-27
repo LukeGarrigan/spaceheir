@@ -9,5 +9,6 @@ module.exports = {
   lvlUp: require('./lvlUpEvent'),
   sendAllFood: require('./sendAllFoodEvent'),
   sendAllAsteroids: require('./sendAllAsteroidsEvent'),
+  createXpGem: require('./sendAllGemsEvent'),
   chat: require('./chatEvent')
 };
