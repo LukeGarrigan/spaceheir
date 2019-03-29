@@ -34,12 +34,12 @@ function slowPlayerDown(player) {
 
 
 function constrain(player) {
-  if (player.x < -68) {
+  if (player.x < 0) {
     player.x = config.PLAYAREA_WIDTH;
   } else if (player.x > config.PLAYAREA_WIDTH) {
     player.x = 0;
   }
-  if (player.y < -68) {
+  if (player.y < 0) {
     player.y = config.PLAYAREA_HEIGHT;
   } else if (player.y > config.PLAYAREA_HEIGHT) {
     player.y = 0;

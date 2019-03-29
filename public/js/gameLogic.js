@@ -141,7 +141,6 @@ export function isWithinScreenXAndY(player, toX, toY) {
 
 
   return !(diffX > width || diffX < -width || diffY > height || diffY < -height);
-
 }
 
 export function updateFoods(data, food, foodImage) {

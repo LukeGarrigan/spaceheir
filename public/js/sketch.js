@@ -106,6 +106,8 @@ let bossImage;
 socket.on('foods', data => updateFoods(data, food, foodImage));
 socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages));
 
+socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
+socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
 
 function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
@@ -252,12 +254,7 @@ window.setup = function () {
       // shotSound.play();
     }
   });
-  socket.on('createXpGem', new function(gems) {
-    if (gems) {
-      xpGems.push(...createXpGems(gems, gemImage));
-    }
-  });
-  socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
+
   socket.on('leveledUp', () => playerLevelUpPoints += 1);
   socket.on('invalidUsername', userEnteredInvalidUsername);
   socket.on('chat', serverMessage => updateMessages(serverMessage, messages));
@@ -357,7 +354,7 @@ function drawStartScreen() {
     y: 500
   };
   parallaxScrolling(position.x, position.y, space);
-  drawFood(position);
+  // drawFood(position);
   drawOtherPlayers(position);
 
 }
