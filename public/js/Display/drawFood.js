@@ -1,12 +1,14 @@
 import {isWithinScreenXAndY} from "../gameLogic.js";
 import Food from "../classes/Food.js";
 
+import {PLAYAREA_WIDTH} from "../Constants.js";
+import {PLAYAREA_HEIGHT} from "../Constants.js";
+
 
 
 export default function (position, foods) {
 
   let foodClones = createFoodClones(foods);
-  createFoodClones(foods, foodClones, PLAYAREA_WIDTH, PLAYAREA_HEIGHT);
   if (foodClones) {
     for (let i = foodClones.length - 1; i >= 0; i--) {
       if (isWithinScreenXAndY(position, foodClones[i].x, foodClones[i].y)) {
@@ -19,13 +21,11 @@ export default function (position, foods) {
 
 
 
-function createFoodClones(foods, foodClones) {
+function createFoodClones(foods) {
+  let foodClones = [];
 
-  const PLAYAREA_WIDTH = 10000;
-  const PLAYAREA_HEIGHT = 6000;
   if (foods) {
     foods.forEach(food => {
-      // the original screen
       foodClones.push(food);
 
       let foodImage = food.foodImage;
@@ -41,8 +41,8 @@ function createFoodClones(foods, foodClones) {
 
 
       foodClones.push(topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left);
-
     });
-
   }
+
+  return foodClones;
 }

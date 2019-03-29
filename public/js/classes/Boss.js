@@ -1,3 +1,4 @@
+import {PLAYAREA_HEIGHT, PLAYAREA_WIDTH} from "../Constants.js";
 
 export default class Boss {
   constructor(id, x, y, bossImage, angle, health) {
@@ -12,30 +13,54 @@ export default class Boss {
   }
 
   draw() {
-    this.drawRing();
-    push();
-    imageMode(CENTER);
-    translate(this.x, this.y);
-    rotate(this.angle);
-    this.drawLaser();
-    image(this.image, 0, 0, this.image.width, this.image.height);
-    pop();
+
+
+
+    this.clones = this.getBossClones();
+
+    for (let clone of this.clones) {
+      push();
+      imageMode(CENTER);
+      translate(clone.x, clone.y);
+      this.drawRing();
+      rotate(this.angle);
+      this.drawLaser();
+      image(this.image, 0, 0, this.image.width, this.image.height);
+      pop();
+    }
 
     this.drawHealth();
+  }
+
+
+  getBossClones() {
+    let clones = [];
+    clones.push({x: this.x, y: this.y});
+    clones.push({x: this.x - PLAYAREA_WIDTH, y: this.y - PLAYAREA_HEIGHT});
+    clones.push({x: this.x, y: this.y - PLAYAREA_HEIGHT});
+    clones.push({x: this.x + PLAYAREA_WIDTH, y: this.y + -PLAYAREA_HEIGHT});
+    clones.push({x: this.x + PLAYAREA_WIDTH, y: this.y});
+    clones.push({x: this.x + PLAYAREA_WIDTH, y: this.y + PLAYAREA_HEIGHT});
+    clones.push({x: this.x, y: this.y + PLAYAREA_HEIGHT});
+    clones.push({x: this.x - PLAYAREA_WIDTH, y: this.y + PLAYAREA_HEIGHT});
+    clones.push({x: this.x - PLAYAREA_WIDTH, y: this.y});
+
+    return clones;
+
   }
 
   drawRing() {
     push();
     strokeWeight(10);
-    stroke(42,245,255, 100);
+    stroke(42, 245, 255, 100);
     noFill();
-    ellipse(this.x, this.y, 3000, 3000);
+    ellipse(0, 0, 3000, 3000);
     pop();
   }
 
   drawLaser() {
     if (this.isLaser) {
-      fill(255,0, 0, 50);
+      fill(255, 0, 0, 50);
       noStroke();
       rect(0, -14, 1500, 40);
     }
