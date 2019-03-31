@@ -1,12 +1,11 @@
-const { players} = require('../server');
+const {players} = require('../server');
 const config = require('../../configs/defaults');
 let leaderboardService = require('../services/leaderboardService')
 
-module.exports = function({ socket }, playerData) {
+module.exports = function ({socket}, playerData) {
 
 
-
-  if(!validName(playerData)) {
+  if (!validName(playerData)) {
     socket.emit("invalidUsername", playerData.name);
     return;
   }
@@ -49,7 +48,6 @@ function playerAlreadyExists(socket) {
   }
   return false;
 }
-
 
 
 function validName(playerData) {

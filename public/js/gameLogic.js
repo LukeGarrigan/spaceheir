@@ -54,6 +54,8 @@ export function updateOtherPlayers(data, player, otherPlayers) {
     player.damage = clientData.damage;
     player.regen = clientData.regen;
     player.bulletSpeed = clientData.bulletSpeed;
+    player.ax = clientData.ax;
+    player.ay = clientData.ay;
   }
 
   for (let i = 0; i < otherplayersData.length; i++) {

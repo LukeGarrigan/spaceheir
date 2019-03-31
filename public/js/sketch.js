@@ -42,6 +42,7 @@ import {
   updateBosses
 
 } from './gameLogic.js'
+import {PLAYAREA_WIDTH, PLAYAREA_HEIGHT} from "./Constants.js";
 
 let player;
 let food = [];
@@ -108,6 +109,8 @@ socket.on('asteroids', data => updateAsteroids(data, asteroids, asteroidImages))
 
 socket.on('createXpGem', gems => xpGems.push(...createXpGems(gems, gemImage)));
 socket.on('removeXpGem', gemId => removeXpGem(gemId, xpGems, popups));
+
+let stars = [];
 
 function loadImages() {
   hitMarkerImage = loadImage("assets/images/hitmarker.png");
@@ -180,6 +183,9 @@ window.setup = function () {
 
   canvas = createCanvas(window.innerWidth, window.innerHeight);
 
+  for (let i = 0; i < 1000; i++) {
+    stars[i] = {x: random(PLAYAREA_WIDTH), y: random(PLAYAREA_HEIGHT), speed: random(0, 1), moveRate: random(500)};
+  }
   if (isInvalidUsername) {
     //bugfix: if three or more invalidUsername attempts happen, text will be shown correctly
     if(invalidUsernameLabel){

@@ -17,8 +17,14 @@ function speedPlayerUp(player) {
   if (player.velocity < config.BASE_SPEED + player.additionalSpeed * config.SPEED_MULTIPLIER) {
     player.velocity += 0.2;
   }
-  player.x += player.velocity * Math.cos(player.angle);
-  player.y += player.velocity * Math.sin(player.angle);
+  let accelerationX = player.velocity * Math.cos(player.angle);
+  let accelerationY = player.velocity * Math.sin(player.angle);
+
+  player.ax = accelerationX;
+  player.ay = accelerationY;
+
+  player.x += accelerationX;
+  player.y += accelerationY;
 }
 
 
@@ -28,8 +34,15 @@ function slowPlayerDown(player) {
   } else if (player.velocity <= 0) {
     player.velocity = 0;
   }
-  player.x += player.velocity * Math.cos(player.angle);
-  player.y += player.velocity * Math.sin(player.angle);
+  let accelerationX = player.velocity * Math.cos(player.angle);
+  let accelerationY = player.velocity * Math.sin(player.angle);
+
+  player.ax = accelerationX;
+  player.ay = accelerationY;
+
+
+  player.x += accelerationX;
+  player.y += accelerationY;
 }
 
 
@@ -76,7 +89,7 @@ function updateFoodLocation(currentFood) {
 }
 
 
-function processPlayerLevelingUp(player,  io) {
+function processPlayerLevelingUp(player, io) {
   if (hasPlayerLeveledUp(player)) {
     player.lvl++;
     leaderboardService.updatePlayerOnLeaderboard(player);
@@ -137,14 +150,12 @@ function resetPlayerStats(player) {
 }
 
 
-
 function playerReset(player) {
   player.score = 0;
   player.xp = 625;
   player.lvl = 1;
   player.establishedLevel = 1;
 }
-
 
 
 module.exports = {

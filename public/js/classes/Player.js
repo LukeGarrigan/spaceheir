@@ -16,6 +16,9 @@ export default class Player {
     this.trail = [];
     this.lvl = 1;
 
+    this.ax = 0;
+    this.ay = 0;
+
     this.trail = new Trail();
 
   }
