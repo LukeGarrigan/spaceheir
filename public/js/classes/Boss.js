@@ -60,9 +60,13 @@ export default class Boss {
 
   drawLaser() {
     if (this.isLaser) {
-      fill(255, 0, 0, 50);
-      noStroke();
-      rect(0, -14, 1500, 40);
+      strokeWeight(5);
+      stroke(237 ,30 ,48, 200);
+      fill(253, 253, 251, 200);
+
+      // 237 30 48 is the red
+      // noStroke();
+      rect(0, -14, 1500, 30);
     }
   }
 
