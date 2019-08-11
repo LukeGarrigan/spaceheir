@@ -21,7 +21,7 @@
       <img src="https://img.shields.io/badge/trello-board-purple.svg">
   </a>
   
-  <a href="https://twitter.com/intent/follow?screen_name=codeheir">
+  <a href="https://twitter.com/luke_garrigan">
       <img src="https://img.shields.io/twitter/follow/codeheir.svg?label=Follow">
   </a>
  
