@@ -28,7 +28,7 @@
   
 </p>
 
-<a href="https://twitter.com/codeheir">
+<a href="https://twitter.com/luke_garrigan">
     <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
 </a>
 
