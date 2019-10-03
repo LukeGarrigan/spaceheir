@@ -22,7 +22,7 @@
   </a>
   
   <a href="https://twitter.com/intent/follow?screen_name=luke_garrigan">
-      <img src="https://img.shields.io/twitter/follow/codeheir.svg?label=Follow">
+      <img src="https://img.shields.io/twitter/follow/luke_garrigan.svg?label=Follow">
   </a>
  
   
