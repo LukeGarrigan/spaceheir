@@ -24,15 +24,8 @@
   <a href="https://twitter.com/intent/follow?screen_name=luke_garrigan">
       <img src="https://img.shields.io/twitter/follow/luke_garrigan.svg?label=Follow">
   </a>
- 
-  
+
 </p>
-
-<a href="https://twitter.com/luke_garrigan">
-    <img src="https://pbs.twimg.com/profile_images/1025347326037159936/XI_T6kun_400x400.jpg" alt="codeheir logo" title="Codeheir" align="right" height="100" />
-</a>
-
-
 
 A multiplayer game that I've been creating on stream at [twitch.tv/codeheir](https://www.twitch.tv/codeheir) as a fun little project, it started off as an asteroids replica, but idea after idea has led me to this space game! 
 
